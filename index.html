@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Architect Pro // High-Fidelity Finance</title>
+    <title>Architect Pro // Full System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -30,7 +30,7 @@
             </div>
             <div class="flex items-center gap-4">
                 <button onclick="toggleConfigModal()" class="bg-neutral-800 hover:bg-neutral-700 px-6 py-3 rounded-xl text-xs font-bold transition flex items-center gap-2 border border-neutral-700">
-                    <i data-lucide="user-cog" class="w-4 h-4"></i> CONFIG INCOME
+                    <i data-lucide="user-cog" class="w-4 h-4"></i> CONFIG PROFILE
                 </button>
             </div>
         </div>
@@ -41,11 +41,11 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="card p-6 border-l-4 border-emerald-500 shadow-lg">
                     <p class="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-2">Daily Spend Limit</p>
-                    <p id="dsl-val" class="serif text-4xl text-emerald-400">$0.00</p>
+                    <p id="dsl-val" class="serif text-4xl text-emerald-400">0.00</p>
                 </div>
                 <div class="card p-6">
                     <p class="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-2">Active Surplus (10%)</p>
-                    <p id="surplus-val" class="serif text-4xl text-white">$0</p>
+                    <p id="surplus-val" class="serif text-4xl text-white">0</p>
                 </div>
                 <div class="card p-6">
                     <p class="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-2">Health Score</p>
@@ -56,45 +56,49 @@
                 </div>
             </div>
 
+            <section class="bg-emerald-950/10 border border-emerald-900/30 rounded-2xl p-6 relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-8 opacity-10"><i data-lucide="bot" class="w-20 h-20 text-emerald-400"></i></div>
+                <h3 class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i> Payment Support Agent
+                </h3>
+                <div id="strategist-content">
+                    <p class="serif text-lg text-neutral-400">Analyzing financial architecture...</p>
+                </div>
+            </section>
+
             <section class="card p-6">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="serif text-xl flex items-center gap-2"><i data-lucide="calendar"></i> Payment Schedule</h2>
-                    <button onclick="openAddEntry()" class="bg-emerald-600/10 hover:bg-emerald-600 text-emerald-500 hover:text-white px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all flex items-center gap-2">
+                    <button onclick="toggleEntryModal()" class="bg-emerald-600/10 hover:bg-emerald-600 text-emerald-500 hover:text-white px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all flex items-center gap-2">
                         <i data-lucide="plus" class="w-3 h-3"></i> ADD OBLIGATION
                     </button>
                 </div>
                 <div id="ledger-list" class="space-y-3"></div>
-                
                 <div id="completed-header" class="mt-8 mb-4 hidden">
                     <p class="text-[10px] font-bold text-neutral-600 uppercase tracking-widest flex items-center gap-2">
-                        <span class="h-[1px] flex-1 bg-neutral-800"></span>
-                        Settled This Month
-                        <span class="h-[1px] flex-1 bg-neutral-800"></span>
+                        <span class="h-[1px] flex-1 bg-neutral-800"></span> Settled Obligations <span class="h-[1px] flex-1 bg-neutral-800"></span>
                     </p>
                 </div>
                 <div id="completed-list" class="space-y-3 opacity-40 grayscale"></div>
             </section>
 
             <section class="card p-6 border-dashed border-neutral-800 bg-transparent">
-                <h3 class="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-4">Calendar Integrations</h3>
-                <div class="flex flex-wrap gap-4">
-                    <button onclick="exportICS()" class="flex-1 min-w-[140px] bg-neutral-900 border border-neutral-800 p-4 rounded-xl hover:bg-neutral-800 transition text-left group">
-                        <i data-lucide="download" class="w-5 h-5 text-emerald-500 mb-2"></i>
-                        <p class="text-xs font-bold">Download .ICS</p>
-                        <p class="text-[9px] text-neutral-500">For Apple & Outlook</p>
+                <h3 class="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-4 text-neutral-400">External Sync</h3>
+                <div class="flex gap-4">
+                    <button onclick="exportICS()" class="flex-1 bg-neutral-900 border border-neutral-800 p-4 rounded-xl hover:bg-neutral-800 transition text-left flex items-center justify-between group">
+                        <div>
+                            <p class="text-xs font-bold text-white group-hover:text-emerald-400 transition">Download .ICS</p>
+                            <p class="text-[9px] text-neutral-500">Universal Calendar Format</p>
+                        </div>
+                        <i data-lucide="calendar-arrow-down" class="w-5 h-5 text-emerald-500"></i>
                     </button>
-                    <a href="https://calendar.google.com" target="_blank" class="flex-1 min-w-[140px] bg-neutral-900 border border-neutral-800 p-4 rounded-xl hover:bg-neutral-800 transition text-left group">
-                        <i data-lucide="calendar-plus" class="w-5 h-5 text-blue-500 mb-2"></i>
-                        <p class="text-xs font-bold">Google Calendar</p>
-                        <p class="text-[9px] text-neutral-500">Sync obligations</p>
-                    </a>
                 </div>
             </section>
         </div>
 
         <div class="lg:col-span-4 space-y-8">
             <div class="card p-8 sticky top-28">
-                <h3 class="text-[10px] font-bold text-neutral-500 uppercase text-center mb-8">Allocation</h3>
+                <h3 class="text-[10px] font-bold text-neutral-500 uppercase text-center mb-8 tracking-widest">Allocation Matrix</h3>
                 <div class="h-64 relative mb-8"><canvas id="donutChart"></canvas></div>
                 <div id="legend" class="space-y-4"></div>
             </div>
@@ -103,11 +107,17 @@
 
     <div id="config-modal" class="hidden fixed inset-0 bg-black/95 backdrop-blur-md z-[100] items-center justify-center p-4" style="display: none;">
         <div class="card w-full max-w-lg p-10">
-            <h2 class="serif text-3xl mb-6">Income Config</h2>
-            <div class="space-y-4">
-                <label class="text-[10px] font-bold text-neutral-500 uppercase">Monthly Take-Home Pay</label>
-                <input type="number" id="e-income" class="w-full p-4 input-dark" placeholder="Income Amount">
-                <button onclick="saveIncomeOnly()" class="w-full bg-emerald-600 py-4 rounded-xl font-bold uppercase text-[10px]">Save Profile</button>
+            <h2 class="serif text-3xl mb-6">Profile Config</h2>
+            <div class="space-y-6">
+                <div>
+                    <label class="text-[10px] font-bold text-neutral-500 uppercase block mb-2">Monthly Take-Home</label>
+                    <input type="number" id="e-income" class="w-full p-4 input-dark">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-neutral-500 uppercase block mb-2">Currency Symbol</label>
+                    <input type="text" id="e-currency" class="w-full p-4 input-dark" placeholder="$">
+                </div>
+                <button onclick="saveProfile()" class="w-full bg-emerald-600 py-4 rounded-xl font-bold uppercase text-[10px]">Save Changes</button>
                 <button onclick="toggleConfigModal()" class="w-full py-4 text-neutral-500 text-[10px]">Cancel</button>
             </div>
         </div>
@@ -115,18 +125,19 @@
 
     <div id="entry-modal" class="hidden fixed inset-0 bg-black/95 backdrop-blur-md z-[100] items-center justify-center p-4" style="display: none;">
         <div class="card w-full max-w-lg p-10">
-            <h2 class="serif text-3xl mb-6">New Obligation</h2>
+            <h2 class="serif text-3xl mb-6">New Entry</h2>
             <div class="space-y-4">
                 <div class="grid grid-cols-2 gap-4">
                     <select id="e-type" class="p-4 input-dark text-sm" onchange="toggleDebtInputs()"><option value="fixed">Fixed Bill</option><option value="debt">Debt</option></select>
                     <input type="number" id="e-date" placeholder="Due Date (1-31)" class="p-4 input-dark text-sm">
                 </div>
-                <input type="text" id="e-name" placeholder="Label" class="w-full p-4 input-dark">
-                <input type="number" id="e-amount" placeholder="Monthly Amount" class="w-full p-4 input-dark">
+                <input type="text" id="e-name" placeholder="Label (e.g. Rent)" class="w-full p-4 input-dark">
+                <input type="number" id="e-amount" placeholder="Amount" class="w-full p-4 input-dark">
                 <div id="debt-inputs" class="hidden grid grid-cols-2 gap-4">
-                    <input type="number" id="e-balance" placeholder="Total Balance" class="p-4 input-dark"><input type="number" id="e-apr" placeholder="APR %" class="p-4 input-dark">
+                    <input type="number" id="e-balance" placeholder="Total Balance" class="p-4 input-dark">
+                    <input type="number" id="e-apr" placeholder="APR %" class="p-4 input-dark">
                 </div>
-                <button onclick="saveEntry()" class="w-full bg-emerald-600 py-4 rounded-xl font-bold uppercase text-[10px]">Add to Ledger</button>
+                <button onclick="saveEntry()" class="w-full bg-emerald-600 py-4 rounded-xl font-bold uppercase text-[10px]">Add Entry</button>
                 <button onclick="toggleEntryModal()" class="w-full py-4 text-neutral-500 text-[10px]">Close</button>
             </div>
         </div>
@@ -134,36 +145,26 @@
 
     <div id="payment-modal" class="fixed inset-0 items-center justify-center p-4" style="z-index: 9999; background: rgba(0,0,0,0.9); backdrop-filter: blur(8px); display: none;">
         <div class="card w-full max-w-sm p-8 bg-[#141414]">
-            <h2 class="serif text-2xl mb-2">Confirm Payment</h2>
+            <h2 class="serif text-2xl mb-2 text-white">Execute Payment</h2>
             <p id="pay-target-name" class="text-[10px] text-emerald-500 uppercase font-bold mb-6"></p>
             <div class="space-y-4">
-                <input type="number" id="pay-extra-amount" class="w-full p-4 input-dark" placeholder="Extra Payment $">
-                <button onclick="confirmTransaction()" class="w-full bg-emerald-600 py-4 rounded-xl font-bold text-[10px]">EXECUTE</button>
+                <input type="number" id="pay-extra-amount" class="w-full p-4 input-dark" placeholder="Additional Extra $">
+                <button onclick="confirmTransaction()" class="w-full bg-emerald-600 py-4 rounded-xl font-bold text-[10px] text-white">CONFIRM TRANSACTION</button>
                 <button onclick="closePaymentModal()" class="w-full py-4 text-neutral-500 text-[10px]">CANCEL</button>
             </div>
         </div>
     </div>
 
     <script>
-        let state = { 
-            income: 0, 
-            items: [], 
-            strategy: 'avalanche',
-            lastResetMonth: new Date().getMonth() 
-        };
+        let state = { income: 0, currency: '$', items: [], lastResetMonth: new Date().getMonth() };
         let activePaymentId = null;
         let donutChart = null;
 
         window.onload = () => {
-            const saved = localStorage.getItem('arch_pro_v5');
+            const saved = localStorage.getItem('arch_pro_master');
             if (saved) state = JSON.parse(saved);
-            
             const currentMonth = new Date().getMonth();
-            if (state.lastResetMonth !== currentMonth) {
-                state.items.forEach(i => i.paid = false);
-                state.lastResetMonth = currentMonth;
-            }
-
+            if (state.lastResetMonth !== currentMonth) { state.items.forEach(i => i.paid = false); state.lastResetMonth = currentMonth; }
             document.getElementById('current-month-label').innerText = new Date().toLocaleString('default', { month: 'long', year: 'numeric' });
             render();
             lucide.createIcons();
@@ -177,7 +178,6 @@
 
             const unpaid = state.items.filter(i => !i.paid);
             const paid = state.items.filter(i => i.paid);
-            
             const fixed = unpaid.reduce((acc, i) => acc + i.amount, 0);
             const buffer = state.income * 0.3;
             const liquidRemainder = Math.max(0, state.income - fixed - buffer);
@@ -185,165 +185,104 @@
             const savings = liquidRemainder * 0.9;
             const dsl = Math.max(0, (state.income - fixed) / daysRemaining);
 
-            document.getElementById('dsl-val').innerText = `$${dsl.toFixed(2)}`;
-            document.getElementById('surplus-val').innerText = `$${surplus.toFixed(0)}`;
+            document.getElementById('dsl-val').innerText = `${state.currency}${dsl.toFixed(2)}`;
+            document.getElementById('surplus-val').innerText = `${state.currency}${surplus.toFixed(0)}`;
             
             updateHealthScore(fixed, buffer, surplus + savings);
             renderLedgers(currentDay, unpaid, paid);
             updateCharts(fixed, buffer, surplus, savings);
-            localStorage.setItem('arch_pro_v5', JSON.stringify(state));
+            runStrategist(surplus);
+            localStorage.setItem('arch_pro_master', JSON.stringify(state));
+        }
+
+        function runStrategist(surplus) {
+            const debts = state.items.filter(i => i.type === 'debt' && !i.paid);
+            const container = document.getElementById('strategist-content');
+            if (debts.length === 0) {
+                container.innerHTML = `<p class="serif text-lg text-emerald-400">Architecture clear. No active liabilities detected.</p>`;
+                return;
+            }
+            const priority = [...debts].sort((a,b) => b.apr - a.apr)[0];
+            container.innerHTML = `<p class="serif text-lg text-neutral-300 leading-relaxed">Surplus Optimization: Apply <span class="text-white font-bold">${state.currency}${surplus.toFixed(0)}</span> to <span class="text-white font-bold">${priority.name}</span> (APR: ${priority.apr}%). This preserves the 50/30/20 balance while accelerating debt-free timeline.</p>`;
         }
 
         function updateHealthScore(fixed, buffer, savings) {
             if (state.income === 0) return;
-            const fixedPct = (fixed / state.income) * 100;
-            const savingsPct = (savings / state.income) * 100;
-            let score = 100;
-            if (fixedPct > 50) score -= (fixedPct - 50) * 1.5;
-            if (savingsPct < 20) score -= (20 - savingsPct) * 2;
-            const finalScore = Math.max(0, Math.min(100, Math.round(score)));
-            document.getElementById('health-score').innerText = finalScore;
-            document.getElementById('health-bar').style.width = `${finalScore}%`;
+            const fPct = (fixed / state.income) * 100;
+            const sPct = (savings / state.income) * 100;
+            let score = 100 - (Math.max(0, fPct - 50) * 1.5) - (Math.max(0, 20 - sPct) * 2);
+            const final = Math.max(0, Math.min(100, Math.round(score)));
+            document.getElementById('health-score').innerText = final;
+            document.getElementById('health-bar').style.width = final + '%';
         }
 
         function renderLedgers(today, unpaid, paid) {
             const unpaidList = document.getElementById('ledger-list');
             const paidList = document.getElementById('completed-list');
-            const compHeader = document.getElementById('completed-header');
-
-            unpaid.sort((a,b) => a.date - b.date);
-            paid.sort((a,b) => a.date - b.date);
-
-            unpaidList.innerHTML = unpaid.map(i => {
+            
+            unpaidList.innerHTML = unpaid.sort((a,b) => a.date - b.date).map(i => {
                 const isOverdue = today > i.date;
                 const isUrgent = i.date - today <= 3 && i.date - today >= 0;
+                
                 return `
-                <div class="flex justify-between items-center p-4 bg-neutral-900/30 rounded-xl border ${isOverdue ? 'border-rose-900/50' : isUrgent ? 'border-amber-900/50' : 'border-neutral-800'}">
+                <div class="flex justify-between items-center p-4 bg-neutral-900/30 rounded-xl border ${isOverdue ? 'border-rose-900/50' : isUrgent ? 'border-amber-900/50' : 'border-neutral-800'} transition-all">
                     <div class="flex items-center gap-4">
                         <div class="relative">
                             <div class="text-emerald-500 font-bold text-xs bg-neutral-800 p-2 rounded">D${i.date}</div>
-                            ${isUrgent || isOverdue ? `<div class="absolute -top-2 -right-2 bg-${isOverdue ? 'rose' : 'amber'}-500 rounded-full p-0.5 pulse-warn"><i data-lucide="alert-circle" class="w-3 h-3 text-white"></i></div>` : ''}
+                            ${isUrgent || isOverdue ? `
+                                <div class="absolute -top-2 -right-2 bg-${isOverdue ? 'rose' : 'amber'}-500 rounded-full p-0.5 pulse-warn border border-black">
+                                    <i data-lucide="alert-circle" class="w-3 h-3 text-white"></i>
+                                </div>
+                            ` : ''}
                         </div>
                         <div>
-                            <p class="text-[9px] text-neutral-500 uppercase font-bold">${isOverdue ? '<span class="text-rose-500">OVERDUE</span>' : isUrgent ? '<span class="text-amber-500">DUE SOON</span>' : i.type}</p>
-                            <h4 class="text-sm font-bold">${i.name}</h4>
+                            <p class="text-[9px] text-neutral-500 uppercase font-bold tracking-widest">
+                                ${isOverdue ? '<span class="text-rose-500">OVERDUE</span>' : isUrgent ? '<span class="text-amber-500">DUE SOON</span>' : i.type}
+                            </p>
+                            <h4 class="text-sm font-bold text-white">${i.name}</h4>
                         </div>
                     </div>
                     <div class="flex items-center gap-4">
-                        <p class="serif">$${i.amount}</p>
-                        <button onclick="openPaymentModal('${i.id}')" class="bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded-lg text-[9px] font-bold transition-colors">PAID</button>
-                        <button onclick="removeEntry('${i.id}')" class="text-neutral-600 hover:text-rose-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        <p class="serif font-bold text-white">${state.currency}${i.amount}</p>
+                        <button onclick="openPaymentModal('${i.id}')" class="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded-lg text-[9px] font-bold text-white uppercase tracking-tighter">Paid</button>
+                        <button onclick="removeEntry('${i.id}')" class="text-neutral-600 hover:text-rose-500 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                     </div>
                 </div>`;
             }).join('');
 
-            if (paid.length > 0) {
-                compHeader.classList.remove('hidden');
-                paidList.innerHTML = paid.map(i => `
-                <div class="flex justify-between items-center p-4 bg-neutral-900/10 rounded-xl border border-neutral-800">
-                    <div class="flex items-center gap-4">
-                        <div class="text-neutral-600 font-bold text-xs bg-neutral-900 p-2 rounded">D${i.date}</div>
-                        <h4 class="text-sm font-bold text-neutral-500 line-through">${i.name}</h4>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <p class="serif text-neutral-600">$${i.amount}</p>
-                        <i data-lucide="check-circle" class="w-4 h-4 text-emerald-500/50"></i>
-                    </div>
-                </div>`).join('');
-            } else {
-                compHeader.classList.add('hidden');
-                paidList.innerHTML = '';
-            }
+            document.getElementById('completed-header').classList.toggle('hidden', paid.length === 0);
+            paidList.innerHTML = paid.map(i => `<div class="flex justify-between items-center p-4 bg-neutral-900/10 rounded-xl border border-neutral-800"><div class="flex items-center gap-4"><div class="text-neutral-600 text-xs p-2">D${i.date}</div><h4 class="text-sm line-through text-neutral-600">${i.name}</h4></div><p class="serif text-neutral-600">${state.currency}${i.amount}</p></div>`).join('');
             lucide.createIcons();
         }
 
-        function updateCharts(fixed, buffer, surplus, savings) {
+        function updateCharts(f, b, s, sav) {
             const ctx = document.getElementById('donutChart').getContext('2d');
             if (donutChart) donutChart.destroy();
-            donutChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: { datasets: [{ data: [fixed, buffer, surplus, savings], backgroundColor: ['#f43f5e', '#f59e0b', '#10b981', '#3b82f6'], borderWidth: 0 }] },
-                options: { cutout: '85%', plugins: { legend: { display: false } } }
-            });
-            document.getElementById('legend').innerHTML = ['Remaining Bills', 'Buffer', 'Surplus', 'Savings'].map((l, i) => `
-                <div class="flex justify-between text-xs"><span>${l}</span><span class="font-bold">$${[fixed, buffer, surplus, savings][i].toFixed(0)}</span></div>`).join('');
+            donutChart = new Chart(ctx, { type: 'doughnut', data: { datasets: [{ data: [f, b, s, sav], backgroundColor: ['#f43f5e', '#f59e0b', '#10b981', '#3b82f6'], borderWidth: 0 }] }, options: { cutout: '85%', plugins: { legend: { display: false } } } });
+            document.getElementById('legend').innerHTML = ['Fixed Bills', 'Buffer (30%)', 'Surplus (10%)', 'Forced Savings'].map((l, i) => `<div class="flex justify-between text-xs text-neutral-400"><span>${l}</span><span class="font-bold text-white">${state.currency}${[f, b, s, sav][i].toFixed(0)}</span></div>`).join('');
         }
 
-        // ICS Export Logic
         function exportICS() {
-            let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//ArchitectPro//NONSGML v1.0//EN\n";
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-
-            state.items.forEach(item => {
-                const day = String(item.date).padStart(2, '0');
-                icsContent += "BEGIN:VEVENT\n";
-                icsContent += `SUMMARY:Pay ${item.name} ($${item.amount})\n`;
-                icsContent += `DTSTART:${year}${month}${day}T090000\n`;
-                icsContent += `DTEND:${year}${month}${day}T100000\n`;
-                icsContent += `DESCRIPTION:Financial obligation due via Architect Pro dashboard.\n`;
-                icsContent += "END:VEVENT\n";
+            let ics = "BEGIN:VCALENDAR\nVERSION:2.0\n";
+            const year = new Date().getFullYear();
+            const month = String(new Date().getMonth() + 1).padStart(2, '0');
+            state.items.forEach(i => {
+                const day = String(i.date).padStart(2, '0');
+                ics += `BEGIN:VEVENT\nSUMMARY:Pay ${i.name} (${state.currency}${i.amount})\nDTSTART:${year}${month}${day}T090000\nDESCRIPTION:Architect Pro Obligation\nEND:VEVENT\n`;
             });
-            icsContent += "END:VCALENDAR";
-
-            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+            ics += "END:VCALENDAR";
             const link = document.createElement('a');
-            link.href = window.URL.createObjectURL(blob);
-            link.setAttribute('download', 'obligations.ics');
-            link.click();
+            link.href = window.URL.createObjectURL(new Blob([ics], {type:'text/calendar'}));
+            link.download = 'architect_obligations.ics'; link.click();
         }
 
-        // Modal Controls
-        function toggleConfigModal() { 
-            const m = document.getElementById('config-modal');
-            m.style.display = m.style.display === 'none' ? 'flex' : 'none';
-            if (state.income) document.getElementById('e-income').value = state.income;
-        }
-        function toggleEntryModal() {
-            const m = document.getElementById('entry-modal');
-            m.style.display = m.style.display === 'none' ? 'flex' : 'none';
-        }
-        function openAddEntry() { toggleEntryModal(); }
-        function openPaymentModal(id) {
-            activePaymentId = id;
-            const item = state.items.find(i => i.id === id);
-            document.getElementById('pay-target-name').innerText = `${item.name} Settlement`;
-            document.getElementById('payment-modal').style.display = 'flex';
-        }
+        function toggleConfigModal() { const m = document.getElementById('config-modal'); m.style.display = m.style.display === 'none' ? 'flex' : 'none'; if (state.income) document.getElementById('e-income').value = state.income; document.getElementById('e-currency').value = state.currency; }
+        function saveProfile() { state.income = parseFloat(document.getElementById('e-income').value) || 0; state.currency = document.getElementById('e-currency').value || '$'; render(); toggleConfigModal(); }
+        function toggleEntryModal() { const m = document.getElementById('entry-modal'); m.style.display = m.style.display === 'none' ? 'flex' : 'none'; }
+        function saveEntry() { state.items.push({ id: Date.now().toString(), type: document.getElementById('e-type').value, name: document.getElementById('e-name').value, amount: parseFloat(document.getElementById('e-amount').value) || 0, date: parseInt(document.getElementById('e-date').value) || 1, balance: parseFloat(document.getElementById('e-balance').value) || 0, apr: parseFloat(document.getElementById('e-apr').value) || 0, paid: false }); render(); toggleEntryModal(); }
+        function openPaymentModal(id) { activePaymentId = id; document.getElementById('payment-modal').style.display = 'flex'; }
         function closePaymentModal() { document.getElementById('payment-modal').style.display = 'none'; }
-        
-        function confirmTransaction() {
-            const extra = parseFloat(document.getElementById('pay-extra-amount').value) || 0;
-            const item = state.items.find(i => i.id === activePaymentId);
-            if (item) {
-                if (item.type === 'debt') {
-                    item.balance = Math.max(0, item.balance - (item.amount + extra));
-                }
-                item.paid = true;
-            }
-            render(); closePaymentModal();
-        }
-
-        function saveIncomeOnly() {
-            const inc = parseFloat(document.getElementById('e-income').value);
-            if (inc) state.income = inc;
-            render(); toggleConfigModal();
-        }
-
-        function saveEntry() {
-            state.items.push({
-                id: Date.now().toString(),
-                type: document.getElementById('e-type').value,
-                name: document.getElementById('e-name').value,
-                amount: parseFloat(document.getElementById('e-amount').value) || 0,
-                date: parseInt(document.getElementById('e-date').value) || 1,
-                balance: parseFloat(document.getElementById('e-balance').value) || 0,
-                paid: false
-            });
-            render(); toggleEntryModal();
-        }
-
+        function confirmTransaction() { const extra = parseFloat(document.getElementById('pay-extra-amount').value) || 0; const item = state.items.find(i => i.id === activePaymentId); if (item) { if (item.type === 'debt') item.balance = Math.max(0, item.balance - (item.amount + extra)); item.paid = true; } render(); closePaymentModal(); }
         function toggleDebtInputs() { document.getElementById('debt-inputs').classList.toggle('hidden', document.getElementById('e-type').value !== 'debt'); }
         function removeEntry(id) { state.items = state.items.filter(i => i.id !== id); render(); }
     </script>
