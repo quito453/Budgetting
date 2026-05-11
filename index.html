@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Architect Pro // Unified Financial System</title>
+    <title>Architect Pro // High-Fidelity Finance</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -13,346 +13,339 @@
         body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: #e5e5e5; overflow-x: hidden; }
         .serif { font-family: 'DM Serif Display', serif; }
         .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; }
-        .input-dark { background: #0f0f0f; border: 1px solid #333; color: white; border-radius: 8px; transition: border 0.2s; }
-        .input-dark:focus { border-color: #10b981; outline: none; }
+        .input-dark { background: #000; border: 1px solid #333; color: white; border-radius: 8px; }
+        .pulse-warn { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
     </style>
 </head>
 <body class="pb-20">
 
-    <!-- Header System -->
     <header class="border-b border-neutral-800 bg-[#0a0a0a]/90 sticky top-0 z-50 backdrop-blur-md">
         <div class="max-w-7xl mx-auto px-6 py-6 flex flex-wrap items-center justify-between gap-6">
             <div>
                 <h1 class="serif text-3xl">Architect Pro</h1>
                 <p id="current-month-label" class="text-[10px] text-neutral-500 uppercase tracking-[0.2em] mt-1"></p>
             </div>
-            
             <div class="flex items-center gap-4">
-                <div class="hidden md:block bg-emerald-950/20 border border-emerald-900/30 p-3 rounded-xl max-w-xs">
-                    <p id="insight-text" class="serif italic text-xs text-neutral-300"></p>
-                </div>
-                <button onclick="toggleModal()" class="bg-emerald-600 hover:bg-emerald-500 px-6 py-3 rounded-xl text-xs font-bold transition flex items-center gap-2">
-                    <i data-lucide="settings-2" class="w-4 h-4"></i> CONFIG SYSTEM
+                <button onclick="toggleConfigModal()" class="bg-neutral-800 hover:bg-neutral-700 px-6 py-3 rounded-xl text-xs font-bold transition flex items-center gap-2 border border-neutral-700">
+                    <i data-lucide="user-cog" class="w-4 h-4"></i> CONFIG INCOME
                 </button>
             </div>
         </div>
     </header>
 
     <main class="max-w-7xl mx-auto px-6 mt-10 grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
-        <!-- Left: Financial Performance -->
         <div class="lg:col-span-8 space-y-8">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="card p-6 border-l-4 border-emerald-500 shadow-lg">
                     <p class="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-2">Daily Spend Limit</p>
                     <p id="dsl-val" class="serif text-4xl text-emerald-400">$0.00</p>
-                    <p class="text-[10px] text-neutral-600 mt-2">Adjusted for remaining days</p>
                 </div>
                 <div class="card p-6">
-                    <p class="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-2">Monthly Surplus</p>
+                    <p class="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-2">Active Surplus (10%)</p>
                     <p id="surplus-val" class="serif text-4xl text-white">$0</p>
-                    <p id="buffer-val" class="text-[10px] text-amber-500 mt-2"></p>
                 </div>
                 <div class="card p-6">
                     <p class="text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-2">Health Score</p>
                     <p id="health-score" class="serif text-4xl text-amber-500">0</p>
-                    <div id="health-bar" class="w-full bg-neutral-800 h-1 mt-3 rounded-full overflow-hidden">
-                        <div id="health-progress" class="bg-emerald-500 h-full transition-all duration-1000"></div>
+                    <div class="w-full bg-neutral-800 h-1 mt-2 rounded-full overflow-hidden">
+                        <div id="health-bar" class="h-full bg-emerald-500 transition-all duration-700" style="width: 0%"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- Sorted Financial Ledger (Payment Dates) -->
             <section class="card p-6">
                 <div class="flex justify-between items-center mb-6">
-                    <h2 class="serif text-xl flex items-center gap-2">
-                        <i data-lucide="calendar" class="w-5 h-5 text-emerald-500"></i> Payment Schedule
-                    </h2>
-                    <span class="text-[10px] text-neutral-500 font-bold uppercase tracking-widest">Sorted by Due Date</span>
+                    <h2 class="serif text-xl flex items-center gap-2"><i data-lucide="calendar"></i> Payment Schedule</h2>
+                    <button onclick="openAddEntry()" class="bg-emerald-600/10 hover:bg-emerald-600 text-emerald-500 hover:text-white px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all flex items-center gap-2">
+                        <i data-lucide="plus" class="w-3 h-3"></i> ADD OBLIGATION
+                    </button>
                 </div>
-                <div id="ledger-list" class="space-y-3">
-                    <!-- Chronological entries injected here -->
+                <div id="ledger-list" class="space-y-3"></div>
+                
+                <div id="completed-header" class="mt-8 mb-4 hidden">
+                    <p class="text-[10px] font-bold text-neutral-600 uppercase tracking-widest flex items-center gap-2">
+                        <span class="h-[1px] flex-1 bg-neutral-800"></span>
+                        Settled This Month
+                        <span class="h-[1px] flex-1 bg-neutral-800"></span>
+                    </p>
                 </div>
+                <div id="completed-list" class="space-y-3 opacity-40 grayscale"></div>
             </section>
 
-            <!-- Debt Strategy Engine -->
-            <section class="card p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="serif text-xl">Liability Velocity</h2>
-                    <div class="flex bg-neutral-900 p-1 rounded-lg border border-neutral-800">
-                        <button onclick="setStrategy('snowball')" id="btn-snowball" class="px-4 py-2 text-[10px] font-bold rounded transition-all">SNOWBALL</button>
-                        <button onclick="setStrategy('avalanche')" id="btn-avalanche" class="px-4 py-2 text-[10px] font-bold rounded transition-all">AVALANCHE</button>
-                    </div>
-                </div>
-                <div id="debt-viz" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Debt Free Projections -->
+            <section class="card p-6 border-dashed border-neutral-800 bg-transparent">
+                <h3 class="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-4">Calendar Integrations</h3>
+                <div class="flex flex-wrap gap-4">
+                    <button onclick="exportICS()" class="flex-1 min-w-[140px] bg-neutral-900 border border-neutral-800 p-4 rounded-xl hover:bg-neutral-800 transition text-left group">
+                        <i data-lucide="download" class="w-5 h-5 text-emerald-500 mb-2"></i>
+                        <p class="text-xs font-bold">Download .ICS</p>
+                        <p class="text-[9px] text-neutral-500">For Apple & Outlook</p>
+                    </button>
+                    <a href="https://calendar.google.com" target="_blank" class="flex-1 min-w-[140px] bg-neutral-900 border border-neutral-800 p-4 rounded-xl hover:bg-neutral-800 transition text-left group">
+                        <i data-lucide="calendar-plus" class="w-5 h-5 text-blue-500 mb-2"></i>
+                        <p class="text-xs font-bold">Google Calendar</p>
+                        <p class="text-[9px] text-neutral-500">Sync obligations</p>
+                    </a>
                 </div>
             </section>
         </div>
 
-        <!-- Right: Allocation & Insights -->
         <div class="lg:col-span-4 space-y-8">
-            <div class="card p-8 sticky top-28 shadow-2xl">
-                <h3 class="text-[10px] font-bold text-neutral-500 uppercase text-center tracking-[0.2em] mb-8">Allocation Breakdown</h3>
-                <div class="h-64 relative mb-8">
-                    <canvas id="donutChart"></canvas>
-                </div>
+            <div class="card p-8 sticky top-28">
+                <h3 class="text-[10px] font-bold text-neutral-500 uppercase text-center mb-8">Allocation</h3>
+                <div class="h-64 relative mb-8"><canvas id="donutChart"></canvas></div>
                 <div id="legend" class="space-y-4"></div>
-                <hr class="border-neutral-800 my-8">
-                <div class="text-center">
-                    <p class="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-2">Projected Debt Free</p>
-                    <p id="debt-free-date" class="serif text-3xl text-emerald-400">---</p>
-                </div>
             </div>
         </div>
     </main>
 
-    <!-- Global Config Modal -->
-    <div id="modal" class="hidden fixed inset-0 bg-black/95 backdrop-blur-md z-[100] flex items-center justify-center p-4">
-        <div class="card w-full max-w-lg p-10 shadow-2xl border-emerald-900/20">
-            <h2 class="serif text-3xl mb-2 text-white">System Config</h2>
-            <p class="text-xs text-neutral-500 mb-8 uppercase tracking-widest">Setup Income & Financial Obligations</p>
-            
-            <div class="space-y-6">
-                <!-- Income Core -->
-                <div class="p-4 bg-emerald-950/10 rounded-xl border border-emerald-900/20">
-                    <label class="text-[10px] font-bold text-emerald-400 uppercase block mb-2">Monthly Net Income</label>
-                    <div class="relative">
-                        <span class="absolute left-4 top-3.5 text-emerald-700">$</span>
-                        <input type="number" id="e-income" class="w-full p-4 pl-10 input-dark" placeholder="e.g. 5000">
-                    </div>
-                </div>
+    <div id="config-modal" class="hidden fixed inset-0 bg-black/95 backdrop-blur-md z-[100] items-center justify-center p-4" style="display: none;">
+        <div class="card w-full max-w-lg p-10">
+            <h2 class="serif text-3xl mb-6">Income Config</h2>
+            <div class="space-y-4">
+                <label class="text-[10px] font-bold text-neutral-500 uppercase">Monthly Take-Home Pay</label>
+                <input type="number" id="e-income" class="w-full p-4 input-dark" placeholder="Income Amount">
+                <button onclick="saveIncomeOnly()" class="w-full bg-emerald-600 py-4 rounded-xl font-bold uppercase text-[10px]">Save Profile</button>
+                <button onclick="toggleConfigModal()" class="w-full py-4 text-neutral-500 text-[10px]">Cancel</button>
+            </div>
+        </div>
+    </div>
 
-                <!-- Add Entry Sub-form -->
-                <div class="space-y-4">
-                    <div class="grid grid-cols-2 gap-4">
-                        <select id="e-type" class="p-4 input-dark text-sm" onchange="toggleDebtInputs()">
-                            <option value="fixed">Fixed Bill</option>
-                            <option value="debt">Debt/Liability</option>
-                        </select>
-                        <input type="number" id="e-date" placeholder="Due Date (1-31)" class="p-4 input-dark text-sm">
-                    </div>
-                    <input type="text" id="e-name" placeholder="Entry Label (e.g. Rent, Visa)" class="w-full p-4 input-dark text-sm">
-                    <input type="number" id="e-amount" placeholder="Monthly Payment Amount" class="w-full p-4 input-dark text-sm">
-                    
-                    <div id="debt-inputs" class="hidden grid grid-cols-2 gap-4 pt-2">
-                        <input type="number" id="e-balance" placeholder="Total Balance" class="p-4 input-dark text-sm">
-                        <input type="number" id="e-apr" placeholder="APR %" class="p-4 input-dark text-sm">
-                    </div>
+    <div id="entry-modal" class="hidden fixed inset-0 bg-black/95 backdrop-blur-md z-[100] items-center justify-center p-4" style="display: none;">
+        <div class="card w-full max-w-lg p-10">
+            <h2 class="serif text-3xl mb-6">New Obligation</h2>
+            <div class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <select id="e-type" class="p-4 input-dark text-sm" onchange="toggleDebtInputs()"><option value="fixed">Fixed Bill</option><option value="debt">Debt</option></select>
+                    <input type="number" id="e-date" placeholder="Due Date (1-31)" class="p-4 input-dark text-sm">
                 </div>
+                <input type="text" id="e-name" placeholder="Label" class="w-full p-4 input-dark">
+                <input type="number" id="e-amount" placeholder="Monthly Amount" class="w-full p-4 input-dark">
+                <div id="debt-inputs" class="hidden grid grid-cols-2 gap-4">
+                    <input type="number" id="e-balance" placeholder="Total Balance" class="p-4 input-dark"><input type="number" id="e-apr" placeholder="APR %" class="p-4 input-dark">
+                </div>
+                <button onclick="saveEntry()" class="w-full bg-emerald-600 py-4 rounded-xl font-bold uppercase text-[10px]">Add to Ledger</button>
+                <button onclick="toggleEntryModal()" class="w-full py-4 text-neutral-500 text-[10px]">Close</button>
+            </div>
+        </div>
+    </div>
 
-                <div class="flex gap-4 pt-6">
-                    <button onclick="processSave()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 py-4 rounded-xl font-bold uppercase text-[10px] tracking-widest transition-all">Apply Architecture</button>
-                    <button onclick="toggleModal()" class="px-8 py-4 bg-neutral-800 rounded-xl font-bold uppercase text-[10px] tracking-widest">Close</button>
-                </div>
+    <div id="payment-modal" class="fixed inset-0 items-center justify-center p-4" style="z-index: 9999; background: rgba(0,0,0,0.9); backdrop-filter: blur(8px); display: none;">
+        <div class="card w-full max-w-sm p-8 bg-[#141414]">
+            <h2 class="serif text-2xl mb-2">Confirm Payment</h2>
+            <p id="pay-target-name" class="text-[10px] text-emerald-500 uppercase font-bold mb-6"></p>
+            <div class="space-y-4">
+                <input type="number" id="pay-extra-amount" class="w-full p-4 input-dark" placeholder="Extra Payment $">
+                <button onclick="confirmTransaction()" class="w-full bg-emerald-600 py-4 rounded-xl font-bold text-[10px]">EXECUTE</button>
+                <button onclick="closePaymentModal()" class="w-full py-4 text-neutral-500 text-[10px]">CANCEL</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Data Architecture[cite: 1]
-        let state = {
-            income: 0,
-            items: [],
-            strategy: 'avalanche'
+        let state = { 
+            income: 0, 
+            items: [], 
+            strategy: 'avalanche',
+            lastResetMonth: new Date().getMonth() 
         };
-
-        const insights = [
-            "Automation is the antidote to willpower.",
-            "Do not save what is left after spending, but spend what is left after saving. — Warren Buffett",
-            "A budget is telling your money where to go instead of wondering where it went.",
-            "The 50/30/20 rule: 50% Needs, 30% Wants, 20% Financial Goals.",
-            "Decision Fatigue: Automate your bills to save mental energy for earning."
-        ];
-
+        let activePaymentId = null;
         let donutChart = null;
 
-        // Initialize[cite: 1]
         window.onload = () => {
-            const saved = localStorage.getItem('architect_pro_v1');
+            const saved = localStorage.getItem('arch_pro_v5');
             if (saved) state = JSON.parse(saved);
             
-            document.getElementById('current-month-label').innerText = 
-                new Date().toLocaleString('default', { month: 'long', year: 'numeric' }) + " // System Pulse";
-            document.getElementById('insight-text').innerText = insights[Math.floor(Math.random() * insights.length)];
-            
+            const currentMonth = new Date().getMonth();
+            if (state.lastResetMonth !== currentMonth) {
+                state.items.forEach(i => i.paid = false);
+                state.lastResetMonth = currentMonth;
+            }
+
+            document.getElementById('current-month-label').innerText = new Date().toLocaleString('default', { month: 'long', year: 'numeric' });
             render();
             lucide.createIcons();
         };
 
         function render() {
-            const { fixed, surplus, dsl, buffer } = calculateStats();
-
-            // Header Stats
-            document.getElementById('dsl-val').innerText = `$${dsl.toFixed(2)}`;
-            document.getElementById('surplus-val').innerText = `$${surplus.toFixed(0)}`;
-            document.getElementById('buffer-val').innerText = `Buffer (30%): $${buffer.toFixed(0)}`;
-
-            renderLedger();
-            renderDebtEngine(surplus);
-            updateVisuals(fixed, buffer, surplus);
-            
-            localStorage.setItem('architect_pro_v1', JSON.stringify(state));
-        }
-
-        function calculateStats() {
             const now = new Date();
+            const currentDay = now.getDate();
             const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-            const daysRemaining = daysInMonth - now.getDate() + 1;
+            const daysRemaining = daysInMonth - currentDay + 1;
 
-            const fixed = state.items.reduce((acc, item) => acc + item.amount, 0);
-            const buffer = state.income * 0.3; // 30% Discretionary Buffer[cite: 1]
-            const surplus = Math.max(0, state.income - fixed - buffer);
+            const unpaid = state.items.filter(i => !i.paid);
+            const paid = state.items.filter(i => i.paid);
+            
+            const fixed = unpaid.reduce((acc, i) => acc + i.amount, 0);
+            const buffer = state.income * 0.3;
+            const liquidRemainder = Math.max(0, state.income - fixed - buffer);
+            const surplus = liquidRemainder * 0.1;
+            const savings = liquidRemainder * 0.9;
             const dsl = Math.max(0, (state.income - fixed) / daysRemaining);
 
-            return { fixed, buffer, surplus, dsl };
+            document.getElementById('dsl-val').innerText = `$${dsl.toFixed(2)}`;
+            document.getElementById('surplus-val').innerText = `$${surplus.toFixed(0)}`;
+            
+            updateHealthScore(fixed, buffer, surplus + savings);
+            renderLedgers(currentDay, unpaid, paid);
+            updateCharts(fixed, buffer, surplus, savings);
+            localStorage.setItem('arch_pro_v5', JSON.stringify(state));
         }
 
-        function renderLedger() {
-            const list = document.getElementById('ledger-list');
-            // Sort by Date (1-31)[cite: 1]
-            const sorted = [...state.items].sort((a, b) => a.date - b.date);
-            
-            list.innerHTML = sorted.length ? sorted.map(i => `
-                <div class="flex justify-between items-center p-4 bg-neutral-900/30 rounded-xl border border-neutral-800 group hover:border-emerald-900/50 transition-all">
+        function updateHealthScore(fixed, buffer, savings) {
+            if (state.income === 0) return;
+            const fixedPct = (fixed / state.income) * 100;
+            const savingsPct = (savings / state.income) * 100;
+            let score = 100;
+            if (fixedPct > 50) score -= (fixedPct - 50) * 1.5;
+            if (savingsPct < 20) score -= (20 - savingsPct) * 2;
+            const finalScore = Math.max(0, Math.min(100, Math.round(score)));
+            document.getElementById('health-score').innerText = finalScore;
+            document.getElementById('health-bar').style.width = `${finalScore}%`;
+        }
+
+        function renderLedgers(today, unpaid, paid) {
+            const unpaidList = document.getElementById('ledger-list');
+            const paidList = document.getElementById('completed-list');
+            const compHeader = document.getElementById('completed-header');
+
+            unpaid.sort((a,b) => a.date - b.date);
+            paid.sort((a,b) => a.date - b.date);
+
+            unpaidList.innerHTML = unpaid.map(i => {
+                const isOverdue = today > i.date;
+                const isUrgent = i.date - today <= 3 && i.date - today >= 0;
+                return `
+                <div class="flex justify-between items-center p-4 bg-neutral-900/30 rounded-xl border ${isOverdue ? 'border-rose-900/50' : isUrgent ? 'border-amber-900/50' : 'border-neutral-800'}">
                     <div class="flex items-center gap-4">
-                        <div class="bg-neutral-800 h-10 w-10 rounded border border-neutral-700 flex flex-col items-center justify-center">
-                            <span class="text-[7px] text-neutral-500 uppercase leading-none mb-0.5">Day</span>
-                            <span class="font-bold text-sm text-emerald-500">${i.date}</span>
+                        <div class="relative">
+                            <div class="text-emerald-500 font-bold text-xs bg-neutral-800 p-2 rounded">D${i.date}</div>
+                            ${isUrgent || isOverdue ? `<div class="absolute -top-2 -right-2 bg-${isOverdue ? 'rose' : 'amber'}-500 rounded-full p-0.5 pulse-warn"><i data-lucide="alert-circle" class="w-3 h-3 text-white"></i></div>` : ''}
                         </div>
                         <div>
-                            <span class="text-[9px] font-bold text-neutral-500 uppercase tracking-widest">${i.type}</span>
-                            <h4 class="text-sm font-bold text-white">${i.name}</h4>
+                            <p class="text-[9px] text-neutral-500 uppercase font-bold">${isOverdue ? '<span class="text-rose-500">OVERDUE</span>' : isUrgent ? '<span class="text-amber-500">DUE SOON</span>' : i.type}</p>
+                            <h4 class="text-sm font-bold">${i.name}</h4>
                         </div>
                     </div>
-                    <div class="text-right flex items-center gap-6">
-                        <div>
-                            <p class="serif text-lg text-white">$${i.amount.toLocaleString()}</p>
-                        </div>
-                        <button onclick="removeEntry('${i.id}')" class="opacity-0 group-hover:opacity-100 transition-opacity p-2 text-rose-500 hover:bg-rose-500/10 rounded">
-                            <i data-lucide="trash-2" class="w-4 h-4"></i>
-                        </button>
+                    <div class="flex items-center gap-4">
+                        <p class="serif">$${i.amount}</p>
+                        <button onclick="openPaymentModal('${i.id}')" class="bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded-lg text-[9px] font-bold transition-colors">PAID</button>
+                        <button onclick="removeEntry('${i.id}')" class="text-neutral-600 hover:text-rose-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                     </div>
-                </div>
-            `).join('') : '<p class="text-xs text-neutral-600 text-center py-10">No obligations defined in ledger.</p>';
+                </div>`;
+            }).join('');
+
+            if (paid.length > 0) {
+                compHeader.classList.remove('hidden');
+                paidList.innerHTML = paid.map(i => `
+                <div class="flex justify-between items-center p-4 bg-neutral-900/10 rounded-xl border border-neutral-800">
+                    <div class="flex items-center gap-4">
+                        <div class="text-neutral-600 font-bold text-xs bg-neutral-900 p-2 rounded">D${i.date}</div>
+                        <h4 class="text-sm font-bold text-neutral-500 line-through">${i.name}</h4>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <p class="serif text-neutral-600">$${i.amount}</p>
+                        <i data-lucide="check-circle" class="w-4 h-4 text-emerald-500/50"></i>
+                    </div>
+                </div>`).join('');
+            } else {
+                compHeader.classList.add('hidden');
+                paidList.innerHTML = '';
+            }
             lucide.createIcons();
         }
 
-        function renderDebtEngine(surplus) {
-            const debts = state.items.filter(i => i.type === 'debt');
-            const viz = document.getElementById('debt-viz');
-            
-            // Strategy Sorting[cite: 1]
-            if (state.strategy === 'avalanche') debts.sort((a, b) => b.apr - a.apr);
-            else debts.sort((a, b) => a.balance - b.balance);
-
-            viz.innerHTML = debts.map((d, idx) => `
-                <div class="card p-5 bg-neutral-900/50 border-t-2 ${idx === 0 ? 'border-emerald-500' : 'border-rose-500'}">
-                    <div class="flex justify-between items-start mb-4">
-                        <span class="text-xs font-bold text-neutral-400 uppercase tracking-tighter">${d.name} (${d.apr}%)</span>
-                        <span class="text-sm font-bold text-white">$${d.balance.toLocaleString()}</span>
-                    </div>
-                    <div class="w-full bg-neutral-800 h-1 rounded-full mb-3">
-                        <div class="bg-rose-500 h-full w-full rounded-full"></div>
-                    </div>
-                    ${idx === 0 && surplus > 0 ? `<p class="text-[9px] font-bold text-emerald-400 uppercase tracking-widest">+ $${surplus.toFixed(0)} Payoff Multiplier Applied</p>` : ''}
-                </div>
-            `).join('');
-
-            updateProjections(debts, surplus);
-            
-            // Button Styles
-            document.getElementById('btn-snowball').className = `px-4 py-2 text-[10px] font-bold rounded ${state.strategy === 'snowball' ? 'bg-emerald-600 text-white' : 'text-neutral-500'}`;
-            document.getElementById('btn-avalanche').className = `px-4 py-2 text-[10px] font-bold rounded ${state.strategy === 'avalanche' ? 'bg-emerald-600 text-white' : 'text-neutral-500'}`;
-        }
-
-        function updateProjections(debts, surplus) {
-            const totalDebt = debts.reduce((s, i) => s + i.balance, 0);
-            const totalMonthly = debts.reduce((s, i) => s + i.amount, 0) + surplus;
-            
-            if (totalDebt > 0 && totalMonthly > 0) {
-                const months = Math.ceil(totalDebt / totalMonthly);
-                const date = new Date(); date.setMonth(date.getMonth() + months);
-                document.getElementById('debt-free-date').innerText = date.toLocaleDateString('default', { month: 'short', year: 'numeric' });
-            } else {
-                document.getElementById('debt-free-date').innerText = "CLEARED";
-            }
-        }
-
-        function updateVisuals(fixed, buffer, surplus) {
-            const total = state.income || 1;
+        function updateCharts(fixed, buffer, surplus, savings) {
             const ctx = document.getElementById('donutChart').getContext('2d');
-            const dataValues = [fixed, buffer, surplus];
-            const colors = ['#f43f5e', '#f59e0b', '#10b981'];
-
             if (donutChart) donutChart.destroy();
             donutChart = new Chart(ctx, {
                 type: 'doughnut',
-                data: {
-                    labels: ['Fixed', 'Buffer', 'Surplus'],
-                    datasets: [{ data: dataValues, backgroundColor: colors, borderWidth: 0, hoverOffset: 10 }]
-                },
-                options: { cutout: '85%', plugins: { legend: { display: false } }, responsive: true, maintainAspectRatio: false }
+                data: { datasets: [{ data: [fixed, buffer, surplus, savings], backgroundColor: ['#f43f5e', '#f59e0b', '#10b981', '#3b82f6'], borderWidth: 0 }] },
+                options: { cutout: '85%', plugins: { legend: { display: false } } }
             });
-
-            document.getElementById('legend').innerHTML = ['Fixed Obligations', 'Discretionary Buffer', 'Debt/Savings Surplus'].map((label, i) => `
-                <div class="flex justify-between items-center text-xs">
-                    <div class="flex items-center gap-2">
-                        <div class="w-1.5 h-1.5 rounded-full" style="background:${colors[i]}"></div>
-                        <span class="text-neutral-400 font-medium">${label}</span>
-                    </div>
-                    <span class="font-bold text-white">$${dataValues[i].toFixed(0)}</span>
-                </div>
-            `).join('');
-
-            // Health Score logic[cite: 1]
-            const fixedPct = (fixed / total) * 100;
-            let score = 100 - Math.max(0, fixedPct - 40);
-            if (state.income === 0) score = 0;
-            
-            const scoreEl = document.getElementById('health-score');
-            scoreEl.innerText = Math.round(score);
-            scoreEl.className = `serif text-4xl ${score > 70 ? 'text-emerald-500' : 'text-amber-500'}`;
-            document.getElementById('health-progress').style.width = score + '%';
+            document.getElementById('legend').innerHTML = ['Remaining Bills', 'Buffer', 'Surplus', 'Savings'].map((l, i) => `
+                <div class="flex justify-between text-xs"><span>${l}</span><span class="font-bold">$${[fixed, buffer, surplus, savings][i].toFixed(0)}</span></div>`).join('');
         }
 
-        // Global Actions
-        function toggleModal() { document.getElementById('modal').classList.toggle('hidden'); }
-        function toggleDebtInputs() { document.getElementById('debt-inputs').classList.toggle('hidden', document.getElementById('e-type').value !== 'debt'); }
-        function setStrategy(s) { state.strategy = s; render(); }
+        // ICS Export Logic
+        function exportICS() {
+            let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//ArchitectPro//NONSGML v1.0//EN\n";
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
 
-        function processSave() {
-            const incomeVal = parseFloat(document.getElementById('e-income').value);
-            if (!isNaN(incomeVal)) state.income = incomeVal;
+            state.items.forEach(item => {
+                const day = String(item.date).padStart(2, '0');
+                icsContent += "BEGIN:VEVENT\n";
+                icsContent += `SUMMARY:Pay ${item.name} ($${item.amount})\n`;
+                icsContent += `DTSTART:${year}${month}${day}T090000\n`;
+                icsContent += `DTEND:${year}${month}${day}T100000\n`;
+                icsContent += `DESCRIPTION:Financial obligation due via Architect Pro dashboard.\n`;
+                icsContent += "END:VEVENT\n";
+            });
+            icsContent += "END:VCALENDAR";
 
-            const name = document.getElementById('e-name').value;
-            const amount = parseFloat(document.getElementById('e-amount').value);
-            const date = parseInt(document.getElementById('e-date').value) || 1;
+            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.setAttribute('download', 'obligations.ics');
+            link.click();
+        }
 
-            if (name && !isNaN(amount)) {
-                state.items.push({
-                    id: Date.now().toString(),
-                    type: document.getElementById('e-type').value,
-                    name, amount, date,
-                    balance: parseFloat(document.getElementById('e-balance').value) || 0,
-                    apr: parseFloat(document.getElementById('e-apr').value) || 0
-                });
+        // Modal Controls
+        function toggleConfigModal() { 
+            const m = document.getElementById('config-modal');
+            m.style.display = m.style.display === 'none' ? 'flex' : 'none';
+            if (state.income) document.getElementById('e-income').value = state.income;
+        }
+        function toggleEntryModal() {
+            const m = document.getElementById('entry-modal');
+            m.style.display = m.style.display === 'none' ? 'flex' : 'none';
+        }
+        function openAddEntry() { toggleEntryModal(); }
+        function openPaymentModal(id) {
+            activePaymentId = id;
+            const item = state.items.find(i => i.id === id);
+            document.getElementById('pay-target-name').innerText = `${item.name} Settlement`;
+            document.getElementById('payment-modal').style.display = 'flex';
+        }
+        function closePaymentModal() { document.getElementById('payment-modal').style.display = 'none'; }
+        
+        function confirmTransaction() {
+            const extra = parseFloat(document.getElementById('pay-extra-amount').value) || 0;
+            const item = state.items.find(i => i.id === activePaymentId);
+            if (item) {
+                if (item.type === 'debt') {
+                    item.balance = Math.max(0, item.balance - (item.amount + extra));
+                }
+                item.paid = true;
             }
-
-            // Reset inputs
-            document.getElementById('e-name').value = '';
-            document.getElementById('e-amount').value = '';
-            
-            render();
-            toggleModal();
+            render(); closePaymentModal();
         }
 
-        function removeEntry(id) {
-            state.items = state.items.filter(i => i.id !== id);
-            render();
+        function saveIncomeOnly() {
+            const inc = parseFloat(document.getElementById('e-income').value);
+            if (inc) state.income = inc;
+            render(); toggleConfigModal();
         }
+
+        function saveEntry() {
+            state.items.push({
+                id: Date.now().toString(),
+                type: document.getElementById('e-type').value,
+                name: document.getElementById('e-name').value,
+                amount: parseFloat(document.getElementById('e-amount').value) || 0,
+                date: parseInt(document.getElementById('e-date').value) || 1,
+                balance: parseFloat(document.getElementById('e-balance').value) || 0,
+                paid: false
+            });
+            render(); toggleEntryModal();
+        }
+
+        function toggleDebtInputs() { document.getElementById('debt-inputs').classList.toggle('hidden', document.getElementById('e-type').value !== 'debt'); }
+        function removeEntry(id) { state.items = state.items.filter(i => i.id !== id); render(); }
     </script>
 </body>
 </html>
