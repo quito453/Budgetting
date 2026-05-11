@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Architect Pro // Full System</title>
+    <title>Architect Pro // Unified Financial System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -83,16 +83,13 @@
             </section>
 
             <section class="card p-6 border-dashed border-neutral-800 bg-transparent">
-                <h3 class="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-4 text-neutral-400">External Sync</h3>
-                <div class="flex gap-4">
-                    <button onclick="exportICS()" class="flex-1 bg-neutral-900 border border-neutral-800 p-4 rounded-xl hover:bg-neutral-800 transition text-left flex items-center justify-between group">
-                        <div>
-                            <p class="text-xs font-bold text-white group-hover:text-emerald-400 transition">Download .ICS</p>
-                            <p class="text-[9px] text-neutral-500">Universal Calendar Format</p>
-                        </div>
-                        <i data-lucide="calendar-arrow-down" class="w-5 h-5 text-emerald-500"></i>
-                    </button>
-                </div>
+                <button onclick="exportICS()" class="w-full bg-neutral-900 border border-neutral-800 p-4 rounded-xl hover:bg-neutral-800 transition text-left flex items-center justify-between group">
+                    <div>
+                        <p class="text-xs font-bold text-white group-hover:text-emerald-400 transition">Download .ICS</p>
+                        <p class="text-[9px] text-neutral-500">Sync with External Calendars</p>
+                    </div>
+                    <i data-lucide="calendar-arrow-down" class="w-5 h-5 text-emerald-500"></i>
+                </button>
             </section>
         </div>
 
@@ -128,15 +125,24 @@
             <h2 class="serif text-3xl mb-6">New Entry</h2>
             <div class="space-y-4">
                 <div class="grid grid-cols-2 gap-4">
-                    <select id="e-type" class="p-4 input-dark text-sm" onchange="toggleDebtInputs()"><option value="fixed">Fixed Bill</option><option value="debt">Debt</option></select>
+                    <select id="e-type" class="p-4 input-dark text-sm" onchange="toggleDebtInputs()"><option value="fixed">Fixed Bill</option><option value="debt">Debt / Loan</option></select>
                     <input type="number" id="e-date" placeholder="Due Date (1-31)" class="p-4 input-dark text-sm">
                 </div>
                 <input type="text" id="e-name" placeholder="Label (e.g. Rent)" class="w-full p-4 input-dark">
-                <input type="number" id="e-amount" placeholder="Amount" class="w-full p-4 input-dark">
-                <div id="debt-inputs" class="hidden grid grid-cols-2 gap-4">
-                    <input type="number" id="e-balance" placeholder="Total Balance" class="p-4 input-dark">
-                    <input type="number" id="e-apr" placeholder="APR %" class="p-4 input-dark">
+                <input type="number" id="e-amount" placeholder="Monthly Installment" class="w-full p-4 input-dark">
+                
+                <div id="debt-inputs" class="hidden space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <select id="e-debt-subtype" class="p-4 input-dark text-sm" onchange="toggleLoanInputs()"><option value="cc">Credit Card</option><option value="loan">Loan</option></select>
+                        <input type="number" id="e-apr" placeholder="APR %" class="p-4 input-dark text-sm">
+                    </div>
+                    <input type="number" id="e-balance" placeholder="Total Balance Remaining" class="w-full p-4 input-dark">
+                    <div id="loan-duration-field" class="hidden">
+                        <label class="text-[9px] text-neutral-500 uppercase font-bold mb-1 block">Total Loan Duration (Months)</label>
+                        <input type="number" id="e-months" placeholder="e.g., 24" class="w-full p-4 input-dark">
+                    </div>
                 </div>
+
                 <button onclick="saveEntry()" class="w-full bg-emerald-600 py-4 rounded-xl font-bold uppercase text-[10px]">Add Entry</button>
                 <button onclick="toggleEntryModal()" class="w-full py-4 text-neutral-500 text-[10px]">Close</button>
             </div>
@@ -149,8 +155,8 @@
             <p id="pay-target-name" class="text-[10px] text-emerald-500 uppercase font-bold mb-6"></p>
             <div class="space-y-4">
                 <input type="number" id="pay-extra-amount" class="w-full p-4 input-dark" placeholder="Additional Extra $">
-                <button onclick="confirmTransaction()" class="w-full bg-emerald-600 py-4 rounded-xl font-bold text-[10px] text-white">CONFIRM TRANSACTION</button>
-                <button onclick="closePaymentModal()" class="w-full py-4 text-neutral-500 text-[10px]">CANCEL</button>
+                <button onclick="confirmTransaction()" class="w-full bg-emerald-600 py-4 rounded-xl font-bold text-[10px] text-white uppercase">Confirm Transaction</button>
+                <button onclick="closePaymentModal()" class="w-full py-4 text-neutral-500 text-[10px] uppercase">Cancel</button>
             </div>
         </div>
     </div>
@@ -161,10 +167,13 @@
         let donutChart = null;
 
         window.onload = () => {
-            const saved = localStorage.getItem('arch_pro_master');
+            const saved = localStorage.getItem('arch_pro_v9');
             if (saved) state = JSON.parse(saved);
             const currentMonth = new Date().getMonth();
-            if (state.lastResetMonth !== currentMonth) { state.items.forEach(i => i.paid = false); state.lastResetMonth = currentMonth; }
+            if (state.lastResetMonth !== currentMonth) { 
+                state.items.forEach(i => i.paid = false); 
+                state.lastResetMonth = currentMonth; 
+            }
             document.getElementById('current-month-label').innerText = new Date().toLocaleString('default', { month: 'long', year: 'numeric' });
             render();
             lucide.createIcons();
@@ -176,34 +185,29 @@
             const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
             const daysRemaining = daysInMonth - currentDay + 1;
 
+            // CORE FIX: Fixed costs are calculated based on ALL items for the month (paid or unpaid)
+            // This prevents the Daily Spend Limit from increasing when a bill is paid.
+            const totalFixedForMonth = state.items.reduce((acc, i) => acc + i.amount, 0);
+            
             const unpaid = state.items.filter(i => !i.paid);
             const paid = state.items.filter(i => i.paid);
-            const fixed = unpaid.reduce((acc, i) => acc + i.amount, 0);
+            
             const buffer = state.income * 0.3;
-            const liquidRemainder = Math.max(0, state.income - fixed - buffer);
+            const liquidRemainder = Math.max(0, state.income - totalFixedForMonth - buffer);
             const surplus = liquidRemainder * 0.1;
             const savings = liquidRemainder * 0.9;
-            const dsl = Math.max(0, (state.income - fixed) / daysRemaining);
+            
+            // DSL remains stable because it uses the full monthly commitment
+            const dsl = Math.max(0, (state.income - totalFixedForMonth) / daysRemaining);
 
             document.getElementById('dsl-val').innerText = `${state.currency}${dsl.toFixed(2)}`;
             document.getElementById('surplus-val').innerText = `${state.currency}${surplus.toFixed(0)}`;
             
-            updateHealthScore(fixed, buffer, surplus + savings);
+            updateHealthScore(totalFixedForMonth, buffer, surplus + savings);
             renderLedgers(currentDay, unpaid, paid);
-            updateCharts(fixed, buffer, surplus, savings);
+            updateCharts(totalFixedForMonth, buffer, surplus, savings);
             runStrategist(surplus);
-            localStorage.setItem('arch_pro_master', JSON.stringify(state));
-        }
-
-        function runStrategist(surplus) {
-            const debts = state.items.filter(i => i.type === 'debt' && !i.paid);
-            const container = document.getElementById('strategist-content');
-            if (debts.length === 0) {
-                container.innerHTML = `<p class="serif text-lg text-emerald-400">Architecture clear. No active liabilities detected.</p>`;
-                return;
-            }
-            const priority = [...debts].sort((a,b) => b.apr - a.apr)[0];
-            container.innerHTML = `<p class="serif text-lg text-neutral-300 leading-relaxed">Surplus Optimization: Apply <span class="text-white font-bold">${state.currency}${surplus.toFixed(0)}</span> to <span class="text-white font-bold">${priority.name}</span> (APR: ${priority.apr}%). This preserves the 50/30/20 balance while accelerating debt-free timeline.</p>`;
+            localStorage.setItem('arch_pro_v9', JSON.stringify(state));
         }
 
         function updateHealthScore(fixed, buffer, savings) {
@@ -221,30 +225,25 @@
             const paidList = document.getElementById('completed-list');
             
             unpaidList.innerHTML = unpaid.sort((a,b) => a.date - b.date).map(i => {
-                const isOverdue = today > i.date;
-                const isUrgent = i.date - today <= 3 && i.date - today >= 0;
+                const over = today > i.date;
+                const soon = i.date - today <= 3 && i.date - today >= 0;
+                const isLoan = i.subtype === 'loan';
                 
-                return `
-                <div class="flex justify-between items-center p-4 bg-neutral-900/30 rounded-xl border ${isOverdue ? 'border-rose-900/50' : isUrgent ? 'border-amber-900/50' : 'border-neutral-800'} transition-all">
+                return `<div class="flex justify-between items-center p-4 bg-neutral-900/30 rounded-xl border ${over ? 'border-rose-900/50' : soon ? 'border-amber-900/50' : 'border-neutral-800'} transition-all">
                     <div class="flex items-center gap-4">
                         <div class="relative">
                             <div class="text-emerald-500 font-bold text-xs bg-neutral-800 p-2 rounded">D${i.date}</div>
-                            ${isUrgent || isOverdue ? `
-                                <div class="absolute -top-2 -right-2 bg-${isOverdue ? 'rose' : 'amber'}-500 rounded-full p-0.5 pulse-warn border border-black">
-                                    <i data-lucide="alert-circle" class="w-3 h-3 text-white"></i>
-                                </div>
-                            ` : ''}
+                            ${soon || over ? `<div class="absolute -top-2 -right-2 bg-${over ? 'rose' : 'amber'}-500 rounded-full p-0.5 pulse-warn border border-black"><i data-lucide="alert-circle" class="w-3 h-3 text-white"></i></div>` : ''}
                         </div>
                         <div>
-                            <p class="text-[9px] text-neutral-500 uppercase font-bold tracking-widest">
-                                ${isOverdue ? '<span class="text-rose-500">OVERDUE</span>' : isUrgent ? '<span class="text-amber-500">DUE SOON</span>' : i.type}
-                            </p>
+                            <p class="text-[9px] text-neutral-500 uppercase font-bold tracking-widest">${over ? '<span class="text-rose-500">OVERDUE</span>' : soon ? '<span class="text-amber-500">DUE SOON</span>' : i.type}</p>
                             <h4 class="text-sm font-bold text-white">${i.name}</h4>
+                            ${isLoan ? `<p class="text-[9px] text-emerald-600 font-bold">Month ${i.monthsPaid + 1} of ${i.totalMonths}</p>` : ''}
                         </div>
                     </div>
                     <div class="flex items-center gap-4">
                         <p class="serif font-bold text-white">${state.currency}${i.amount}</p>
-                        <button onclick="openPaymentModal('${i.id}')" class="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded-lg text-[9px] font-bold text-white uppercase tracking-tighter">Paid</button>
+                        <button onclick="openPaymentModal('${i.id}')" class="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded-lg text-[9px] font-bold text-white uppercase tracking-tighter transition-all">Paid</button>
                         <button onclick="removeEntry('${i.id}')" class="text-neutral-600 hover:text-rose-500 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                     </div>
                 </div>`;
@@ -259,32 +258,79 @@
             const ctx = document.getElementById('donutChart').getContext('2d');
             if (donutChart) donutChart.destroy();
             donutChart = new Chart(ctx, { type: 'doughnut', data: { datasets: [{ data: [f, b, s, sav], backgroundColor: ['#f43f5e', '#f59e0b', '#10b981', '#3b82f6'], borderWidth: 0 }] }, options: { cutout: '85%', plugins: { legend: { display: false } } } });
-            document.getElementById('legend').innerHTML = ['Fixed Bills', 'Buffer (30%)', 'Surplus (10%)', 'Forced Savings'].map((l, i) => `<div class="flex justify-between text-xs text-neutral-400"><span>${l}</span><span class="font-bold text-white">${state.currency}${[f, b, s, sav][i].toFixed(0)}</span></div>`).join('');
+            document.getElementById('legend').innerHTML = ['Monthly Bills', 'Buffer (30%)', 'Surplus (10%)', 'Forced Savings'].map((l, i) => `<div class="flex justify-between text-xs text-neutral-400"><span>${l}</span><span class="font-bold text-white">${state.currency}${[f, b, s, sav][i].toFixed(0)}</span></div>`).join('');
         }
 
+        function runStrategist(surplus) {
+            const debts = state.items.filter(i => i.type.includes('debt') && !i.paid);
+            const container = document.getElementById('strategist-content');
+            if (debts.length === 0) { container.innerHTML = `<p class="serif text-lg text-emerald-400">Architecture clear. No active liabilities detected.</p>`; return; }
+            const priority = [...debts].sort((a,b) => b.apr - a.apr)[0];
+            container.innerHTML = `<p class="serif text-lg text-neutral-300">Surplus Advice: Send <span class="text-white font-bold">${state.currency}${surplus.toFixed(0)}</span> to <span class="text-white font-bold">${priority.name}</span>. Total monthly commitments are locked for stability.</p>`;
+        }
+
+        // --- Core Actions ---
+        function toggleConfigModal() { const m = document.getElementById('config-modal'); m.style.display = m.style.display === 'none' ? 'flex' : 'none'; if (state.income) document.getElementById('e-income').value = state.income; document.getElementById('e-currency').value = state.currency; }
+        function saveProfile() { state.income = parseFloat(document.getElementById('e-income').value) || 0; state.currency = document.getElementById('e-currency').value || '$'; render(); toggleConfigModal(); }
+        
+        function toggleEntryModal() { const m = document.getElementById('entry-modal'); m.style.display = m.style.display === 'none' ? 'flex' : 'none'; }
+        function toggleDebtInputs() { document.getElementById('debt-inputs').classList.toggle('hidden', document.getElementById('e-type').value !== 'debt'); }
+        function toggleLoanInputs() { document.getElementById('loan-duration-field').classList.toggle('hidden', document.getElementById('e-debt-subtype').value !== 'loan'); }
+
+        function saveEntry() {
+            const type = document.getElementById('e-type').value;
+            const subtype = type === 'debt' ? document.getElementById('e-debt-subtype').value : null;
+            
+            state.items.push({
+                id: Date.now().toString(),
+                type: type,
+                subtype: subtype,
+                name: document.getElementById('e-name').value,
+                amount: parseFloat(document.getElementById('e-amount').value) || 0,
+                date: parseInt(document.getElementById('e-date').value) || 1,
+                balance: parseFloat(document.getElementById('e-balance').value) || 0,
+                apr: parseFloat(document.getElementById('e-apr').value) || 0,
+                totalMonths: parseInt(document.getElementById('e-months').value) || 0,
+                monthsPaid: 0,
+                paid: false
+            });
+            render(); toggleEntryModal();
+        }
+
+        function openPaymentModal(id) { activePaymentId = id; document.getElementById('payment-modal').style.display = 'flex'; }
+        function closePaymentModal() { document.getElementById('payment-modal').style.display = 'none'; }
+
+        function confirmTransaction() {
+            const extra = parseFloat(document.getElementById('pay-extra-amount').value) || 0;
+            const item = state.items.find(i => i.id === activePaymentId);
+            if (item) {
+                if (item.type === 'debt') {
+                    item.balance = Math.max(0, item.balance - (item.amount + extra));
+                    if (item.subtype === 'loan') item.monthsPaid++;
+                }
+                item.paid = true;
+                
+                // If loan is finished, remove it
+                if (item.subtype === 'loan' && item.monthsPaid >= item.totalMonths) {
+                    state.items = state.items.filter(i => i.id !== item.id);
+                }
+            }
+            render(); closePaymentModal();
+        }
+
+        function removeEntry(id) { state.items = state.items.filter(i => i.id !== id); render(); }
+        
         function exportICS() {
             let ics = "BEGIN:VCALENDAR\nVERSION:2.0\n";
             const year = new Date().getFullYear();
             const month = String(new Date().getMonth() + 1).padStart(2, '0');
             state.items.forEach(i => {
                 const day = String(i.date).padStart(2, '0');
-                ics += `BEGIN:VEVENT\nSUMMARY:Pay ${i.name} (${state.currency}${i.amount})\nDTSTART:${year}${month}${day}T090000\nDESCRIPTION:Architect Pro Obligation\nEND:VEVENT\n`;
+                ics += `BEGIN:VEVENT\nSUMMARY:Pay ${i.name} (${state.currency}${i.amount})\nDTSTART:${year}${month}${day}T090000\nEND:VEVENT\n`;
             });
             ics += "END:VCALENDAR";
-            const link = document.createElement('a');
-            link.href = window.URL.createObjectURL(new Blob([ics], {type:'text/calendar'}));
-            link.download = 'architect_obligations.ics'; link.click();
+            const link = document.createElement('a'); link.href = window.URL.createObjectURL(new Blob([ics], {type:'text/calendar'})); link.download = 'budget_ledger.ics'; link.click();
         }
-
-        function toggleConfigModal() { const m = document.getElementById('config-modal'); m.style.display = m.style.display === 'none' ? 'flex' : 'none'; if (state.income) document.getElementById('e-income').value = state.income; document.getElementById('e-currency').value = state.currency; }
-        function saveProfile() { state.income = parseFloat(document.getElementById('e-income').value) || 0; state.currency = document.getElementById('e-currency').value || '$'; render(); toggleConfigModal(); }
-        function toggleEntryModal() { const m = document.getElementById('entry-modal'); m.style.display = m.style.display === 'none' ? 'flex' : 'none'; }
-        function saveEntry() { state.items.push({ id: Date.now().toString(), type: document.getElementById('e-type').value, name: document.getElementById('e-name').value, amount: parseFloat(document.getElementById('e-amount').value) || 0, date: parseInt(document.getElementById('e-date').value) || 1, balance: parseFloat(document.getElementById('e-balance').value) || 0, apr: parseFloat(document.getElementById('e-apr').value) || 0, paid: false }); render(); toggleEntryModal(); }
-        function openPaymentModal(id) { activePaymentId = id; document.getElementById('payment-modal').style.display = 'flex'; }
-        function closePaymentModal() { document.getElementById('payment-modal').style.display = 'none'; }
-        function confirmTransaction() { const extra = parseFloat(document.getElementById('pay-extra-amount').value) || 0; const item = state.items.find(i => i.id === activePaymentId); if (item) { if (item.type === 'debt') item.balance = Math.max(0, item.balance - (item.amount + extra)); item.paid = true; } render(); closePaymentModal(); }
-        function toggleDebtInputs() { document.getElementById('debt-inputs').classList.toggle('hidden', document.getElementById('e-type').value !== 'debt'); }
-        function removeEntry(id) { state.items = state.items.filter(i => i.id !== id); render(); }
     </script>
 </body>
 </html>
