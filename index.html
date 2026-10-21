@@ -2,6 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#f4f6fb" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#0b1330" media="(prefers-color-scheme: dark)">
@@ -1743,7 +1745,14 @@
         state = migrate(saved);
     }
 
+    // Data can arrive from a backup file, a transfer code or the server: ids and periods end up inside
+    // onclick="…" attributes, so only allow plain characters there (prevents script injection).
+    const SAFE_ID = /^[A-Za-z0-9_-]{1,40}$/;
+    function sid(v) { const x = String(v ?? ''); return SAFE_ID.test(x) ? x : uid(); }
+    function okPeriod(p) { return typeof p === 'string' && /^\d{4}-\d{2}$/.test(p); }
+    function safeEmoji(e, dflt) { const x = String(e || '').replace(/[<>"'&\\`=\s]/g, ''); return x && [...x].length <= 4 ? x : dflt; }
     function migrate(s) {
+        if (!s || typeof s !== 'object' || Array.isArray(s)) s = {};
         const d = defaults();
         const out = { ...d, ...s };
         if (!s.currencyCode) out.currencyCode = SYMBOL_TO_CODE[(s.currency || '').trim()] || 'USD';
@@ -1753,7 +1762,7 @@
         }
         delete out.currency; delete out.lastResetMonth;
         out.items = (Array.isArray(s.items) ? s.items : []).map(i => ({
-            id: String(i.id || uid()), type: i.type === 'debt' ? 'debt' : 'fixed', subtype: i.subtype || null,
+            id: sid(i.id), type: i.type === 'debt' ? 'debt' : 'fixed', subtype: i.subtype === 'loan' ? 'loan' : i.subtype === 'cc' ? 'cc' : null,
             name: String(i.name || '—'), amount: +i.amount || 0, date: clampInt(i.date, 1, 31, 1),
             balance: +i.balance || 0, startBalance: +(i.startBalance ?? i.balance) || 0, apr: +i.apr || 0,
             totalMonths: +i.totalMonths || 0, monthsPaid: +i.monthsPaid || 0,
@@ -1762,17 +1771,19 @@
             stmt: sanitizeStmt(i.stmt)
         }));
         out.expenses = (Array.isArray(s.expenses) ? s.expenses : []).filter(e => e && +e.amount > 0).map(e => ({
-            id: String(e.id || uid()), amount: +e.amount, note: String(e.note || ''), ts: +e.ts || Date.now(),
-            period: e.period || periodKey(new Date(+e.ts || Date.now())), cat: CAT_IDS.has(e.cat) ? e.cat : 'other'
+            id: sid(e.id), amount: +e.amount, note: String(e.note || '').slice(0, 120), ts: +e.ts || Date.now(),
+            period: okPeriod(e.period) ? e.period : periodKey(new Date(+e.ts || Date.now())), cat: CAT_IDS.has(e.cat) ? e.cat : 'other'
         }));
-        out.archive = (Array.isArray(s.archive) ? s.archive : []).filter(a => a && a.name);
+        out.archive = (Array.isArray(s.archive) ? s.archive : []).filter(a => a && a.name).map(a => ({ ...a, id: a.id == null ? a.id : sid(a.id), period: a.period == null || okPeriod(a.period) ? a.period : periodKey() }));
         out.planMethod = s.planMethod === 'snowball' ? 'snowball' : 'avalanche';
         out.planExtra = (s.planExtra === null || s.planExtra === undefined || isNaN(+s.planExtra)) ? null : Math.max(0, +s.planExtra);
-        out.consExcluded = Array.isArray(s.consExcluded) ? s.consExcluded.map(String) : [];
+        out.consExcluded = Array.isArray(s.consExcluded) ? s.consExcluded.map(String).filter(x => SAFE_ID.test(x)) : [];
         out.offers = (Array.isArray(s.offers) ? s.offers : []).filter(o => o && +o.term >= 1).map(o => ({
-            id: String(o.id || uid()), name: String(o.name || '—'), rate: Math.max(0, +o.rate || 0), term: Math.round(+o.term),
+            id: sid(o.id), name: String(o.name || '—'), rate: Math.max(0, +o.rate || 0), term: Math.round(+o.term),
             feePct: Math.max(0, +o.feePct || 0), insurance: Math.max(0, +o.insurance || 0), feeFinanced: !!o.feeFinanced
         }));
+        if (!okPeriod(out.period) && out.period !== '0000-00') out.period = periodKey();
+        if (!/^[A-Z]{3}$/.test(String(out.currencyCode))) out.currencyCode = 'USD';
         if (!LOCALES[out.lang]) out.lang = d.lang;
         if (!['system', 'light', 'dark'].includes(out.theme)) out.theme = 'system';
         if (!TABS.includes(out.tab)) out.tab = 'today';
@@ -2038,11 +2049,11 @@
         const d = moneyDefaults();
         out.payFreq = s.payFreq === 'biweekly' ? 'biweekly' : 'monthly';
         out.incomes = (Array.isArray(s.incomes) ? s.incomes : []).filter(x => x && +x.amount > 0).map(x => ({
-            id: String(x.id || uid()), amount: +x.amount, note: String(x.note || ''), ts: +x.ts || Date.now(),
-            period: x.period || periodKey(new Date(+x.ts || Date.now())), dest: String(x.dest || 'spend'), bonus: x.bonus || null
+            id: sid(x.id), amount: +x.amount, note: String(x.note || '').slice(0, 120), ts: +x.ts || Date.now(),
+            period: okPeriod(x.period) ? x.period : periodKey(new Date(+x.ts || Date.now())), dest: /^(spend|debt|savings|goal:[A-Za-z0-9_-]{1,40})$/.test(String(x.dest)) ? String(x.dest) : 'spend', bonus: x.bonus || null
         }));
         out.goals = (Array.isArray(s.goals) ? s.goals : []).filter(g => g && g.name).map(g => ({
-            id: String(g.id || uid()), name: String(g.name), emoji: String(g.emoji || '🎯'), target: Math.max(0, +g.target || 0),
+            id: sid(g.id), name: String(g.name).slice(0, 60), emoji: safeEmoji(g.emoji, '🎯'), target: Math.max(0, +g.target || 0),
             saved: Math.max(0, +g.saved || 0), due: /^\d{4}-\d{2}$/.test(g.due || '') ? g.due : null, kind: g.kind === 'emergency' ? 'emergency' : 'custom',
             history: Array.isArray(g.history) ? g.history.filter(h => h && +h.ts) : []
         }));
@@ -2054,7 +2065,7 @@
             split: { debt: clampInt(sp.debt, 0, 100, 50), save: clampInt(sp.save, 0, 100, 30), fun: 0 } };
         out.bonus.split.save = Math.min(out.bonus.split.save, 100 - out.bonus.split.debt);
         out.bonus.split.fun = 100 - out.bonus.split.debt - out.bonus.split.save;
-        out.months = (Array.isArray(s.months) ? s.months : []).filter(m => m && m.period).slice(-24);
+        out.months = (Array.isArray(s.months) ? s.months : []).filter(m => m && okPeriod(m.period)).slice(-24);
         const earliest = Math.min(...[...(out.expenses || []).map(e => e.ts), Date.now()]);
         out.startedAt = +s.startedAt || earliest;
         out.streakCarry = Math.max(0, +s.streakCarry || 0);
@@ -2062,7 +2073,7 @@
         out.pinHash = typeof s.pinHash === 'string' ? s.pinHash : null;
         out.pinSalt = typeof s.pinSalt === 'string' ? s.pinSalt : null;
         out.pinLen = clampInt(s.pinLen, 0, 6, out.pinHash ? 4 : 0);
-        out.pendingRecap = s.pendingRecap || null;
+        out.pendingRecap = okPeriod(s.pendingRecap) ? s.pendingRecap : null;
         const inv = s.inv || {};
         out.inv = { amount: +inv.amount > 0 ? +inv.amount : d.inv.amount, rate: inv.rate === '' || inv.rate == null ? '' : +inv.rate, years: clampInt(inv.years, 1, 30, 5) };
         out.updatedAt = +s.updatedAt || 0;
@@ -3546,7 +3557,7 @@
     }
     function renderEmojiPick() {
         const list = GOAL_EMOJIS.includes(goalEmoji) ? GOAL_EMOJIS : [goalEmoji, ...GOAL_EMOJIS];
-        $('g-emojis').innerHTML = list.map(e => `<button class="${e === goalEmoji ? 'on' : ''}" onclick="pickGoalEmoji('${e}')">${e}</button>`).join('');
+        $('g-emojis').innerHTML = list.map(e => `<button class="${e === goalEmoji ? 'on' : ''}" onclick="pickGoalEmoji(${esc(JSON.stringify(e))})">${esc(e)}</button>`).join('');
     }
     function pickGoalEmoji(e) { goalEmoji = e; renderEmojiPick(); }
     function saveGoal() {
@@ -4725,7 +4736,7 @@
             </form>
             <div class="auth-links"><p class="small muted">${esc(t('aHaveAccount'))} <button class="btn-link small" onclick="showAuth('login')">${esc(t('aLoginLink'))}</button></p></div>`;
         else if (view === 'check') html = `<h2 class="auth-h">📬 ${esc(t('aCheckTitle'))}</h2><p class="muted">${esc(t('aCheckBody', { email: opts.email || '' }))}</p>
-            <button class="btn btn-ghost btn-block mt-4" onclick="showAuth('login', {email: '${esc(opts.email || '')}'})">${esc(t('aBack'))}</button>`;
+            <button class="btn btn-ghost btn-block mt-4" onclick="showAuth('login', {email: ${esc(JSON.stringify(String(opts.email || '')))}})">${esc(t('aBack'))}</button>`;
         else if (view === 'forgot') html = `<h2 class="auth-h">${esc(t('aForgotTitle'))}</h2><p class="small muted mb-3">${esc(t('aForgotBody'))}</p>
             <form class="stack" style="gap:12px" onsubmit="event.preventDefault(); doForgot()">
                 ${field('a-email', t('aEmail'), 'email', opts.email || '', 'autocomplete="email" inputmode="email" required')}

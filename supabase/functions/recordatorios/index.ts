@@ -55,8 +55,20 @@ export function remindersFor(data: any, today: string) {
     }));
 }
 
+// Only send to the real push services (defense in depth: the database also checks this).
+const PUSH_HOST = /^(fcm\.googleapis\.com|android\.googleapis\.com|[a-z0-9.-]+\.push\.apple\.com|updates\.push\.services\.mozilla\.com|[a-z0-9.-]+\.notify\.windows\.com)$/;
+function validEndpoint(u: string): boolean {
+  try { const x = new URL(u); return x.protocol === "https:" && PUSH_HOST.test(x.hostname); } catch { return false; }
+}
+function sameSecret(a: string | null, b: string | undefined): boolean {
+  if (!a || !b || a.length !== b.length) return false;
+  let r = 0;
+  for (let k = 0; k < a.length; k++) r |= a.charCodeAt(k) ^ b.charCodeAt(k);
+  return r === 0;
+}
+
 Deno.serve(async (req) => {
-  if (!Deno.env.get("CRON_SECRET") || req.headers.get("x-cron-secret") !== Deno.env.get("CRON_SECRET")) {
+  if (!sameSecret(req.headers.get("x-cron-secret"), Deno.env.get("CRON_SECRET"))) {
     return new Response("forbidden", { status: 403 });
   }
   const dryRun = new URL(req.url).searchParams.get("dry") === "1";
@@ -80,7 +92,7 @@ Deno.serve(async (req) => {
   for (const row of rows ?? []) {
     const msgs = remindersFor(row.data, today);
     if (!msgs.length) continue;
-    for (const sub of (subs ?? []).filter((s) => s.user_id === row.user_id)) {
+    for (const sub of (subs ?? []).filter((s) => s.user_id === row.user_id && validEndpoint(s.endpoint))) {
       for (const payload of msgs) {
         if (dryRun) { preview.push({ user: row.user_id, ...payload }); continue; }
         try {
@@ -89,7 +101,7 @@ Deno.serve(async (req) => {
             subscription: { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
             message: { payload, adminContact, options: { ttl: 43200, urgency: "high", topic: payload.tag.slice(0, 32).replace(/[^A-Za-z0-9_-]/g, "") } },
           });
-          const res = await fetch(endpoint, { method: "POST", headers, body });
+          const res = await fetch(endpoint, { method: "POST", headers, body, redirect: "manual" });
           if (res.status === 404 || res.status === 410) {
             await sb.from("push_subscriptions").delete().eq("endpoint", sub.endpoint);
             removed++;
