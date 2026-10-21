@@ -3,53 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#f6f3ec" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#121412" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#f4f6fb" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0b1330" media="(prefers-color-scheme: dark)">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Architect Pro">
-    <link id="apple-icon" rel="apple-touch-icon" href="">
-    <link id="app-manifest" rel="manifest" href="">
-    <title>Architect Pro</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-    <script src="https://unpkg.com/lucide@1.31.0/dist/umd/lucide.min.js"></script>
+    <meta name="apple-mobile-web-app-title" content="Valiu">
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" type="image/png" href="icons/icon-192.png">
+    <title>Valiu</title>
+    <script src="vendor/chart.umd.js"></script>
+    <script src="vendor/supabase.js"></script>
+    <script src="config.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
     <style>
         /* ---------- Tokens ---------- */
         :root {
             color-scheme: light;
-            --bg: #f6f3ec; --surface: #fffdf8; --surface-2: #f1ede3; --surface-3: #e9e4d7; --border: #e6e0d2;
-            --text: #23221d; --muted: #6c675b; --faint: #9d978a;
-            --accent: #2f7a55; --accent-strong: #256447; --accent-soft: #e3efe7; --accent-ink: #ffffff;
-            --warn: #b26f14; --warn-soft: #fbefd9; --danger: #c0413a; --danger-soft: #f9e2df; --info: #3d6db0; --info-soft: #e3ebf7;
-            --c-bills: #d4625c; --c-buffer: #e0a237; --c-surplus: #2f9e6a; --c-savings: #4b7fc2;
-            --grid: #ece7db; --ring-track: #ece7db;
-            --shadow: 0 1px 2px rgba(60, 50, 30, .04), 0 8px 24px -12px rgba(60, 50, 30, .12);
+            --bg: #f4f6fb; --surface: #ffffff; --surface-2: #eef1f8; --surface-3: #e2e7f2; --border: #e1e6f0;
+            --text: #0d1633; --muted: #5a6482; --faint: #959db5;
+            --accent: #0e9f76; --accent-strong: #0b8462; --accent-soft: #dff5ec; --accent-ink: #ffffff;
+            --brand-1: #2bd99a; --brand-2: #2ab9e6; --gold: #e8b23a; --navy: #0d1633;
+            --warn: #b97a0c; --warn-soft: #fbf0d8; --danger: #d14343; --danger-soft: #fbe4e4; --info: #1d86c2; --info-soft: #e0f0fa;
+            --c-bills: #e0625e; --c-buffer: #e8b23a; --c-surplus: #18c38a; --c-savings: #2ab9e6;
+            --grid: #e8ecf4; --ring-track: #e6eaf3;
+            --shadow: 0 1px 2px rgba(13, 22, 51, .05), 0 8px 24px -12px rgba(13, 22, 51, .16);
             --radius: 20px;
         }
         @media (prefers-color-scheme: dark) {
             :root:not([data-theme="light"]) {
                 color-scheme: dark;
-                --bg: #111311; --surface: #191c19; --surface-2: #212521; --surface-3: #2a2f2a; --border: #2a2f2a;
-                --text: #edece6; --muted: #a3a197; --faint: #6f6e67;
-                --accent: #5cc58f; --accent-strong: #79d4a4; --accent-soft: rgba(92, 197, 143, .13); --accent-ink: #0d1912;
-                --warn: #e9b04c; --warn-soft: rgba(233, 176, 76, .13); --danger: #f07b72; --danger-soft: rgba(240, 123, 114, .13); --info: #7fa8e6; --info-soft: rgba(127, 168, 230, .13);
-                --c-bills: #ec7c74; --c-buffer: #ebb34f; --c-surplus: #5cc58f; --c-savings: #7fa8e6;
-                --grid: #252925; --ring-track: #262a26;
-                --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 10px 30px -14px rgba(0, 0, 0, .6);
+                --bg: #0b1330; --surface: #121c40; --surface-2: #19254f; --surface-3: #22305f; --border: #233161;
+                --text: #eef2fb; --muted: #a4afcc; --faint: #6c7898;
+                --accent: #2bd99a; --accent-strong: #63e7b6; --accent-soft: rgba(43, 217, 154, .14); --accent-ink: #052118;
+                --brand-1: #2bd99a; --brand-2: #3ad7f0; --gold: #f0bd4a; --navy: #0b1330;
+                --warn: #f0bd4a; --warn-soft: rgba(240, 189, 74, .14); --danger: #ff7d7d; --danger-soft: rgba(255, 125, 125, .14); --info: #3ad7f0; --info-soft: rgba(58, 215, 240, .14);
+                --c-bills: #ff8a7a; --c-buffer: #f0bd4a; --c-surplus: #2bd99a; --c-savings: #3ad7f0;
+                --grid: #1c2852; --ring-track: #1e2a55;
+                --shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 10px 30px -14px rgba(0, 0, 0, .7);
             }
         }
         :root[data-theme="dark"] {
             color-scheme: dark;
-            --bg: #111311; --surface: #191c19; --surface-2: #212521; --surface-3: #2a2f2a; --border: #2a2f2a;
-            --text: #edece6; --muted: #a3a197; --faint: #6f6e67;
-            --accent: #5cc58f; --accent-strong: #79d4a4; --accent-soft: rgba(92, 197, 143, .13); --accent-ink: #0d1912;
-            --warn: #e9b04c; --warn-soft: rgba(233, 176, 76, .13); --danger: #f07b72; --danger-soft: rgba(240, 123, 114, .13); --info: #7fa8e6; --info-soft: rgba(127, 168, 230, .13);
-            --c-bills: #ec7c74; --c-buffer: #ebb34f; --c-surplus: #5cc58f; --c-savings: #7fa8e6;
-            --grid: #252925; --ring-track: #262a26;
-            --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 10px 30px -14px rgba(0, 0, 0, .6);
+            --bg: #0b1330; --surface: #121c40; --surface-2: #19254f; --surface-3: #22305f; --border: #233161;
+            --text: #eef2fb; --muted: #a4afcc; --faint: #6c7898;
+            --accent: #2bd99a; --accent-strong: #63e7b6; --accent-soft: rgba(43, 217, 154, .14); --accent-ink: #052118;
+            --brand-1: #2bd99a; --brand-2: #3ad7f0; --gold: #f0bd4a; --navy: #0b1330;
+            --warn: #f0bd4a; --warn-soft: rgba(240, 189, 74, .14); --danger: #ff7d7d; --danger-soft: rgba(255, 125, 125, .14); --info: #3ad7f0; --info-soft: rgba(58, 215, 240, .14);
+            --c-bills: #ff8a7a; --c-buffer: #f0bd4a; --c-surplus: #2bd99a; --c-savings: #3ad7f0;
+            --grid: #1c2852; --ring-track: #1e2a55;
+            --shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 10px 30px -14px rgba(0, 0, 0, .7);
         }
 
         /* ---------- Base ---------- */
@@ -65,7 +70,7 @@
         h1, h2, h3, h4, p { margin: 0; }
         button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; }
         input, select { font: inherit; color: inherit; }
-        .serif { font-family: 'DM Serif Display', Georgia, serif; font-weight: 400; letter-spacing: -.01em; }
+        .serif { font-family: 'Poppins', system-ui, sans-serif; font-weight: 600; letter-spacing: -.02em; }
         .num { font-variant-numeric: tabular-nums; }
         .muted { color: var(--muted); } .faint { color: var(--faint); }
         .small { font-size: 13px; } .tiny { font-size: 12px; }
@@ -86,7 +91,10 @@
         .header { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 50; background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); }
         .header-inner { max-width: 1120px; margin: 0 auto; padding: 14px 16px; display: flex; align-items: center; gap: 16px; }
         @media (min-width: 640px) { .header-inner { padding: 16px 24px; } }
-        .brand h1 { font-size: 24px; line-height: 1.1; }
+        .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+        .brand-mark { width: 40px; height: 40px; flex-shrink: 0; }
+        .wordmark { font-family: 'Poppins', system-ui, sans-serif; font-weight: 600; font-size: 23px; line-height: 1.05; letter-spacing: -.02em; }
+        .wordmark span { background: linear-gradient(135deg, var(--brand-1), var(--brand-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
         .brand p { font-size: 12.5px; color: var(--muted); }
         .top-tabs { display: none; margin: 0 auto; background: var(--surface-2); border-radius: 999px; padding: 4px; gap: 2px; }
         @media (min-width: 900px) { .top-tabs { display: flex; } }
@@ -132,7 +140,7 @@
 
         .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); min-width: 0; transition: background-color .3s, border-color .3s; }
         @media (min-width: 640px) { .card { padding: 24px; } }
-        .card-title { font-family: 'DM Serif Display', Georgia, serif; font-size: 21px; line-height: 1.2; display: flex; align-items: center; gap: 10px; }
+        .card-title { font-family: 'Poppins', system-ui, sans-serif; font-weight: 600; letter-spacing: -.01em; font-size: 19px; line-height: 1.2; display: flex; align-items: center; gap: 10px; }
         .card-title svg.lucide { color: var(--accent); width: 20px; height: 20px; }
         .card-sub { color: var(--muted); font-size: 14px; margin-top: 4px; }
         .eyebrow { font-size: 13px; font-weight: 600; color: var(--muted); }
@@ -187,12 +195,12 @@
         .ring-fg { transition: stroke-dashoffset 1s cubic-bezier(.2, .7, .2, 1), stroke .4s; stroke: var(--accent); }
         .ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 26px; }
         .ring-center .big { font-size: 34px; line-height: 1.05; margin: 4px 0 2px; }
-        .hero-msg { font-family: 'DM Serif Display', Georgia, serif; font-size: 21px; line-height: 1.3; }
+        .hero-msg { font-family: 'Poppins', system-ui, sans-serif; font-weight: 600; font-size: 19px; line-height: 1.3; }
         .stat-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
         .stat { background: var(--surface-2); border-radius: 14px; padding: 12px; min-width: 0; }
         .stat .v { font-size: 17px; font-weight: 700; margin-top: 2px; }
         .bar { height: 8px; background: var(--surface-2); border-radius: 999px; overflow: hidden; position: relative; }
-        .bar > span { display: block; height: 100%; border-radius: 999px; background: var(--accent); transition: width 1s cubic-bezier(.2, .7, .2, 1), background .4s; width: 0; }
+        .bar > span { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--brand-1), var(--brand-2)); transition: width 1s cubic-bezier(.2, .7, .2, 1), background .4s; width: 0; }
         .bar.thin { height: 6px; }
         .bar.thick { height: 12px; }
 
@@ -229,7 +237,7 @@
         .ob-name { font-weight: 700; font-size: 15px; }
         .ob-side { display: flex; align-items: center; gap: 6px; min-width: 0; }
         .ob-side .acts { display: flex; align-items: center; gap: 4px; }
-        .ob-amount { font-family: 'DM Serif Display', Georgia, serif; font-size: 19px; margin-right: 6px; }
+        .ob-amount { font-family: 'Poppins', system-ui, sans-serif; font-weight: 600; font-size: 17px; margin-right: 6px; }
 
         /* ---------- Calendar ---------- */
         .cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; }
@@ -265,7 +273,7 @@
         @media (min-width: 720px) { .debt-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
         .debt-card { background: var(--surface-2); border-radius: 18px; padding: 18px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
         .ms-bar { position: relative; height: 14px; border-radius: 999px; background: var(--surface-3); }
-        .ms-bar > span { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--accent-strong)); transition: width 1.1s cubic-bezier(.2, .7, .2, 1); width: 0; }
+        .ms-bar > span { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; background: linear-gradient(90deg, var(--brand-1), var(--brand-2)); transition: width 1.1s cubic-bezier(.2, .7, .2, 1); width: 0; }
         .ms { position: absolute; top: 50%; width: 14px; height: 14px; margin-left: -7px; margin-top: -7px; border-radius: 50%; background: var(--surface); border: 2.5px solid var(--surface-3); z-index: 1; transition: border-color .4s, background .4s; }
         .ms.hit { border-color: var(--accent); background: var(--accent); box-shadow: 0 0 0 2.5px var(--surface-2); }
         .ms-labels { position: relative; height: 16px; font-size: 11px; color: var(--faint); font-weight: 600; }
@@ -310,7 +318,7 @@
         @media (min-width: 640px) { .modal { align-items: center; padding: 16px; } }
         .sheet { background: var(--surface); width: 100%; max-width: 520px; border-radius: 24px 24px 0 0; padding: 22px 18px calc(22px + env(safe-area-inset-bottom)); box-shadow: 0 -10px 40px rgba(0,0,0,.2); animation: sheetUp .35s cubic-bezier(.2, .8, .2, 1); max-height: 94vh; overflow-y: auto; }
         @media (min-width: 640px) { .sheet { border-radius: 24px; padding: 28px; margin: auto; animation-name: pop; } }
-        .sheet h2 { font-family: 'DM Serif Display', Georgia, serif; font-size: 26px; font-weight: 400; margin-bottom: 18px; }
+        .sheet h2 { font-family: 'Poppins', system-ui, sans-serif; font-size: 23px; font-weight: 600; letter-spacing: -.01em; margin-bottom: 18px; }
         .sheet .grab { width: 40px; height: 4px; border-radius: 4px; background: var(--surface-3); margin: -8px auto 14px; }
         @media (min-width: 640px) { .sheet .grab { display: none; } }
         @keyframes sheetUp { from { transform: translateY(40px); opacity: .4; } to { transform: none; opacity: 1; } }
@@ -323,6 +331,44 @@
         .donut-box { position: relative; height: 220px; max-width: 260px; margin: 0 auto; }
         .donut-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; }
         .scroll-y { max-height: 190px; overflow-y: auto; padding-right: 2px; }
+
+        /* ---------- Statement card ---------- */
+        #card-modal .form-grid > div { display: flex; flex-direction: column; justify-content: flex-end; }
+        .mock { border: 1.5px dashed var(--border); border-radius: 16px; padding: 14px; background: var(--surface-2); }
+        .mock-grid { display: grid; gap: 6px 16px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); font-size: 13px; }
+        .mock-grid > div { display: flex; align-items: center; gap: 8px; min-width: 0; }
+        .mock-grid span { flex: 1; color: var(--muted); min-width: 0; }
+        .mock-grid b { font-variant-numeric: tabular-nums; }
+        i.n { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); font-style: normal; font-size: 11px; font-weight: 800; flex-shrink: 0; vertical-align: -4px; }
+        .label i.n { width: 18px; height: 18px; font-size: 10.5px; }
+        .cc-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+        .cc-scen { display: flex; flex-direction: column; gap: 6px; }
+        .cc-scen + .cc-scen { margin-top: 10px; }
+        .cc-scen p, .cc-list { color: var(--text); opacity: .9; margin: 0; }
+        .cc-list { padding-left: 18px; display: grid; gap: 4px; font-size: 14px; }
+        .cc-facts { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+        .cc-fact { background: var(--surface-2); border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; font-size: 13.5px; }
+        .cc-fact span { color: var(--muted); }
+        .tl { position: relative; margin-top: 18px; padding-bottom: 22px; }
+        .tl-bar { position: relative; height: 10px; border-radius: 999px; background: var(--surface-2); }
+        .tl-ok { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px 0 0 999px; background: var(--accent-soft); border: 1.5px solid var(--accent); }
+        .tl-late { position: absolute; top: 0; bottom: 0; border-radius: 0 999px 999px 0; background: var(--danger-soft); border: 1.5px solid var(--danger); }
+        .tl-today { position: absolute; top: -5px; width: 20px; height: 20px; margin-left: -10px; border-radius: 50%; background: var(--surface); border: 4px solid var(--accent); box-shadow: var(--shadow); }
+        .tl-today.late { border-color: var(--danger); }
+        .tl-labels { position: relative; height: 34px; margin-top: 8px; font-size: 11.5px; color: var(--muted); }
+        .tl-labels span { position: absolute; transform: translateX(-50%); white-space: nowrap; display: flex; flex-direction: column; }
+        .tl-labels b { color: var(--text); font-size: 12px; }
+        .tl-now { position: absolute; top: -26px; transform: translateX(-50%); font-size: 11px; font-weight: 700; color: var(--accent); white-space: nowrap; }
+        .gloss { border-bottom: 1px solid var(--border); padding: 10px 0; }
+        .gloss summary { cursor: pointer; font-weight: 600; font-size: 14px; list-style: none; display: flex; justify-content: space-between; }
+        .gloss summary::after { content: '+'; color: var(--muted); font-weight: 400; }
+        .gloss[open] summary::after { content: '−'; }
+        .gloss summary::-webkit-details-marker { display: none; }
+        .gloss p { font-size: 14px; color: var(--muted); margin-top: 6px; }
+        .pay-chips { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+        .pay-chips button { display: flex; flex-direction: column; gap: 2px; padding: 10px 6px; border-radius: 14px; background: var(--surface-2); border: 1.5px solid transparent; font-size: 12.5px; font-weight: 600; color: var(--muted); }
+        .pay-chips button b { font-size: 15px; color: var(--text); }
+        .pay-chips button.on { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
 
         /* ---------- Goals ---------- */
         .goal-grid { display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr); }
@@ -374,7 +420,7 @@
             body { background: #fff !important; color: #111 !important; padding: 0 !important; }
             body > *:not(#print-report) { display: none !important; }
             #print-report { display: block !important; font-size: 12px; color: #111; }
-            #print-report h1 { font-family: 'DM Serif Display', Georgia, serif; font-size: 26px; font-weight: 400; margin: 0 0 4px; }
+            #print-report h1 { font-family: 'Poppins', system-ui, sans-serif; font-size: 24px; font-weight: 600; margin: 0 0 4px; }
             #print-report h2 { font-size: 14px; margin: 18px 0 6px; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
             #print-report table { width: 100%; border-collapse: collapse; }
             #print-report td, #print-report th { text-align: left; padding: 4px 6px; border-bottom: 1px solid #eee; }
@@ -383,14 +429,31 @@
             #print-report .k { border: 1px solid #ddd; border-radius: 8px; padding: 8px; }
             #print-report .k b { display: block; font-size: 16px; }
         }
+        /* ---------- Login (web version) ---------- */
+        .auth { position: fixed; inset: 0; z-index: 420; background: var(--bg); display: none; overflow-y: auto; }
+        .auth.open { display: block; }
+        .auth-inner { min-height: 100%; display: flex; align-items: center; justify-content: center; padding: calc(32px + env(safe-area-inset-top, 0px)) 16px calc(32px + env(safe-area-inset-bottom, 0px)); }
+        .auth-card { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 14px; }
+        .auth-brand { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; margin-bottom: 10px; }
+        .auth-brand h1 { line-height: 1.1; }
+        .auth-h { font-family: 'Poppins', system-ui, sans-serif; font-weight: 600; letter-spacing: -.01em; font-size: 22px; text-wrap: balance; }
+        .auth-links { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 4px; text-align: center; }
+        .auth-pin { display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; }
+        .auth-pin .input { max-width: 320px; }
+        .auth-lang { display: flex; justify-content: center; gap: 8px; margin-top: 18px; font-size: 13px; color: var(--faint); }
+        .auth-lang button { color: var(--muted); font-weight: 600; }
+        .auth-lang button.on { color: var(--accent); }
     </style>
 </head>
 <body>
     <header class="header">
         <div class="header-inner">
             <div class="brand">
-                <h1 class="serif">Architect Pro</h1>
-                <p id="month-label"></p>
+                <img class="brand-mark" src="data:image/png;base64,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" alt="" width="40" height="40">
+                <div>
+                    <h1 class="wordmark"><span>V</span>aliu</h1>
+                    <p id="month-label"></p>
+                </div>
             </div>
             <nav class="top-tabs" aria-label="Secciones">
                 <button data-tab="today" onclick="setTab('today')"><i data-lucide="house"></i><span data-i18n="navToday"></span></button>
@@ -429,6 +492,7 @@
                         <div class="hero">
                             <div class="ring-wrap">
                                 <svg viewBox="0 0 120 120" aria-hidden="true">
+                                    <defs><linearGradient id="brandGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--brand-1)"/><stop offset="1" stop-color="var(--brand-2)"/></linearGradient></defs>
                                     <circle class="ring-track" cx="60" cy="60" r="52" fill="none" stroke-width="10"/>
                                     <circle id="hero-ring" class="ring-fg" cx="60" cy="60" r="52" fill="none" stroke-width="10" stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/>
                                 </svg>
@@ -546,7 +610,10 @@
                 <div class="card anim">
                     <div class="between">
                         <h2 class="card-title"><i data-lucide="trending-down"></i><span data-i18n="navDebts"></span></h2>
-                        <button class="btn btn-soft btn-sm" onclick="openEntryModal('debt')"><i data-lucide="plus"></i><span data-i18n="addDebt"></span></button>
+                        <div class="row wrap" style="gap:8px; justify-content:flex-end">
+                            <button class="btn btn-primary btn-sm" onclick="openCardModal()"><i data-lucide="credit-card"></i><span data-i18n="ccAdd"></span></button>
+                            <button class="btn btn-soft btn-sm" onclick="openEntryModal('debt')"><i data-lucide="plus"></i><span data-i18n="addDebt"></span></button>
+                        </div>
                     </div>
                     <div id="debt-cards" class="debt-cards mt-4"></div>
                 </div>
@@ -840,6 +907,7 @@
                     <div class="full"><label class="label" for="e-amount" data-i18n="amountLabel"></label><input type="number" id="e-amount" min="0" step="0.01" inputmode="decimal" class="input amount-in"></div>
                 </div>
                 <div id="debt-inputs" class="hidden stack" style="gap:14px">
+                    <button id="cc-callout" class="btn btn-soft btn-block" onclick="openCardModal()" data-i18n="ccAddFromStmt"></button>
                     <div class="form-grid">
                         <div>
                             <label class="label" for="e-debt-subtype" data-i18n="subtypeLabel"></label>
@@ -868,6 +936,15 @@
             <p id="pay-target-name" style="font-weight:700"></p>
             <p id="pay-target-amount" class="muted small mb-4"></p>
             <div class="stack" style="gap:14px">
+                <div id="pay-stmt" class="hidden stack" style="gap:12px">
+                    <div class="pay-chips">
+                        <button id="pay-cc-full" onclick="pickPayChoice('full')"></button>
+                        <button id="pay-cc-min" onclick="pickPayChoice('min')"></button>
+                        <button id="pay-cc-other" onclick="pickPayChoice('other')"></button>
+                    </div>
+                    <div id="pay-cc-amount-wrap" class="hidden"><label class="label" for="pay-cc-amount" data-i18n="ccPayAmount"></label><input type="number" id="pay-cc-amount" min="0" step="0.01" inputmode="decimal" class="input amount-in" oninput="stmtPayPreview()"></div>
+                    <div id="pay-cc-msg" class="note small"></div>
+                </div>
                 <div id="pay-extra-wrap">
                     <label class="label" for="pay-extra-amount" data-i18n="extraLabel"></label>
                     <input type="number" id="pay-extra-amount" min="0" step="0.01" inputmode="decimal" class="input amount-in" placeholder="0">
@@ -952,12 +1029,76 @@
 
     <!-- LOCK -->
     <div id="lock" class="lock" aria-modal="true" role="dialog">
-        <h1 class="serif" style="font-size:30px">Architect Pro</h1>
+        <img src="data:image/png;base64,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" alt="" width="72" height="72"><h1 class="wordmark" style="font-size:30px"><span>V</span>aliu</h1>
         <p class="muted" data-i18n="lockTitle"></p>
         <div id="pin-dots-lock" class="pin-dots"></div>
         <div class="keypad" id="pin-pad-lock"></div>
         <p id="lock-err" class="small danger" style="min-height:20px"></p>
         <button class="btn-link small" onclick="forgotPin()" data-i18n="lockForgot"></button>
+    </div>
+
+    <!-- CARD FROM STATEMENT -->
+    <div id="card-modal" class="modal" onclick="if(event.target===this)closeModal('card-modal')">
+        <div class="sheet" style="max-width:620px">
+            <div class="grab"></div>
+            <h2 id="cc-title" style="margin-bottom:6px"></h2>
+            <p class="small muted mb-4" data-i18n="ccGuide"></p>
+            <div class="mock" aria-hidden="true">
+                <p class="tiny faint mb-2" data-i18n="ccMockTitle"></p>
+                <div class="mock-grid">
+                    <div><i class="n">1</i><span data-i18n="ccCut"></span><b>15/10/2026</b></div>
+                    <div><i class="n">2</i><span data-i18n="ccDue"></span><b>09/11/2026</b></div>
+                    <div><i class="n">3</i><span data-i18n="ccApr"></span><b>60.00%</b></div>
+                    <div><i class="n">4</i><span data-i18n="ccLimit"></span><b>Q 10,000.00</b></div>
+                    <div><i class="n">5</i><span data-i18n="ccFull"></span><b>Q 4,250.00</b></div>
+                    <div><i class="n">6</i><span data-i18n="ccMin"></span><b>Q 520.00</b></div>
+                    <div><i class="n">7</i><span data-i18n="ccFees"></span><b>Q 180.00</b></div>
+                </div>
+            </div>
+            <div class="stack mt-4" style="gap:14px">
+                <div><label class="label" for="cc-name" data-i18n="ccName"></label><input type="text" id="cc-name" maxlength="40" class="input" data-i18n-ph="ccNamePh"></div>
+                <div class="form-grid">
+                    <div><label class="label" for="cc-cut"><i class="n">1</i> <span data-i18n="ccCut"></span> <span class="faint" data-i18n="ccOptional"></span></label><input type="date" id="cc-cut" class="input" oninput="ccPreview()"></div>
+                    <div><label class="label" for="cc-due"><i class="n">2</i> <span data-i18n="ccDue"></span></label><input type="date" id="cc-due" class="input" oninput="ccPreview()"></div>
+                    <div><label class="label" for="cc-apr"><i class="n">3</i> <span data-i18n="ccApr"></span></label><input type="number" id="cc-apr" min="0" step="0.01" inputmode="decimal" class="input" placeholder="%" oninput="ccPreview()"></div>
+                    <div><label class="label" for="cc-limit"><i class="n">4</i> <span data-i18n="ccLimit"></span> <span class="faint" data-i18n="ccOptional"></span></label><input type="number" id="cc-limit" min="0" step="0.01" inputmode="decimal" class="input" oninput="ccPreview()"></div>
+                    <div><label class="label" for="cc-full"><i class="n">5</i> <span data-i18n="ccFull"></span></label><input type="number" id="cc-full" min="0" step="0.01" inputmode="decimal" class="input amount-in" oninput="ccPreview()"></div>
+                    <div><label class="label" for="cc-min"><i class="n">6</i> <span data-i18n="ccMin"></span> <span class="faint" data-i18n="ccOptional"></span></label><input type="number" id="cc-min" min="0" step="0.01" inputmode="decimal" class="input amount-in" oninput="ccPreview()"></div>
+                    <div class="full"><label class="label" for="cc-fees"><i class="n">7</i> <span data-i18n="ccFees"></span> <span class="faint" data-i18n="ccOptional"></span></label><input type="number" id="cc-fees" min="0" step="0.01" inputmode="decimal" class="input" oninput="ccPreview()"></div>
+                </div>
+                <div>
+                    <p class="label" data-i18n="ccPlan"></p>
+                    <div class="seg-wide" style="grid-template-columns: repeat(3, 1fr)">
+                        <button data-ccplan="full" onclick="pickCcPlan('full')" data-i18n="ccPlanFull"></button>
+                        <button data-ccplan="min" onclick="pickCcPlan('min')" data-i18n="ccPlanMin"></button>
+                        <button data-ccplan="custom" onclick="pickCcPlan('custom')" data-i18n="ccPlanCustom"></button>
+                    </div>
+                    <div id="cc-custom-wrap" class="hidden mt-3"><input type="number" id="cc-custom" min="0" step="0.01" inputmode="decimal" class="input amount-in" oninput="ccPreview()"></div>
+                </div>
+                <div id="cc-preview-wrap" class="hidden">
+                    <div class="divider" style="margin:4px 0 14px"></div>
+                    <p class="eyebrow accent mb-3">✨ <span data-i18n="ccPreview"></span></p>
+                    <div id="cc-preview"></div>
+                </div>
+                <p id="cc-error" class="hidden small danger"></p>
+                <button class="btn btn-primary btn-block" onclick="saveCard()" data-i18n="ccSave"></button>
+                <button class="btn btn-block muted" onclick="closeModal('card-modal')" data-i18n="cancel"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CARD INSIGHT -->
+    <div id="card-insight" class="modal" onclick="if(event.target===this)closeModal('card-insight')">
+        <div class="sheet" style="max-width:620px">
+            <div class="grab"></div>
+            <h2 id="ci-title"></h2>
+            <div id="ci-body"></div>
+            <div class="form-grid mt-5">
+                <button id="ci-pay" class="btn btn-primary" data-i18n="recPay"></button>
+                <button id="ci-edit" class="btn btn-ghost" data-i18n="ccUpdate"></button>
+            </div>
+            <button class="btn btn-block muted mt-2" onclick="closeModal('card-insight')" data-i18n="close"></button>
+        </div>
     </div>
 
     <!-- CONFIRM -->
@@ -984,16 +1125,33 @@
     </div>
 
     <div id="print-report"></div>
+    <div id="auth" class="auth" role="dialog" aria-modal="true"></div>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
     <canvas id="confetti"></canvas>
 
     <script>
+    // ================= Icons (inlined from Lucide, ISC license) — no external download needed =================
+    const ICONS = {"building-2":"<path d=\"M10 12h4\"/><path d=\"M10 8h4\"/><path d=\"M14 21v-3a2 2 0 0 0-4 0v3\"/><path d=\"M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2\"/><path d=\"M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16\"/>","calendar-arrow-down":"<path d=\"m14 17 4 4 4-4\"/><path d=\"M16 2v3\"/><path d=\"M18 13v8\"/><path d=\"M21 10.354V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h7.343\"/><path d=\"M3 9h18\"/><path d=\"M8 2v3\"/>","calendar-days":"<path d=\"M8 2v3\"/><path d=\"M16 2v3\"/><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\"/><path d=\"M3 9h18\"/><path d=\"M8 13h.01\"/><path d=\"M12 13h.01\"/><path d=\"M16 13h.01\"/><path d=\"M8 17h.01\"/><path d=\"M12 17h.01\"/><path d=\"M16 17h.01\"/>","chart-pie":"<path d=\"M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z\"/><path d=\"M21.21 15.89A10 10 0 1 1 8 2.83\"/>","chevron-right":"<path d=\"m9 18 6-6-6-6\"/>","combine":"<path d=\"M14 3a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1\"/><path d=\"M19 3a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1\"/><path d=\"m7 15 3 3\"/><path d=\"m7 21 3-3H5a2 2 0 0 1-2-2v-2\"/><rect x=\"14\" y=\"14\" width=\"7\" height=\"7\" rx=\"1\"/><rect x=\"3\" y=\"3\" width=\"7\" height=\"7\" rx=\"1\"/>","credit-card":"<rect width=\"20\" height=\"14\" x=\"2\" y=\"5\" rx=\"2\"/><line x1=\"2\" x2=\"22\" y1=\"10\" y2=\"10\"/>","download":"<path d=\"M12 15V3\"/><path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"/><path d=\"m7 10 5 5 5-5\"/>","file-text":"<path d=\"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z\"/><path d=\"M14 2v5a1 1 0 0 0 1 1h5\"/><path d=\"M10 9H8\"/><path d=\"M16 13H8\"/><path d=\"M16 17H8\"/>","gift":"<path d=\"M12 7v14\"/><path d=\"M20 11v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8\"/><path d=\"M7.5 7a1 1 0 0 1 0-5A4.8 8 0 0 1 12 7a4.8 8 0 0 1 4.5-5 1 1 0 0 1 0 5\"/><rect x=\"3\" y=\"7\" width=\"18\" height=\"4\" rx=\"1\"/>","hand-coins":"<path d=\"M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17\"/><path d=\"m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9\"/><path d=\"m2 16 6 6\"/><circle cx=\"16\" cy=\"9\" r=\"2.9\"/><circle cx=\"6\" cy=\"5\" r=\"3\"/>","heart-pulse":"<path d=\"M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5\"/><path d=\"M3.22 13H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27\"/>","history":"<path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"/><path d=\"M3 3v5h5\"/><path d=\"M12 7v5l4 2\"/>","house":"<path d=\"M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8\"/><path d=\"M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/>","landmark":"<path d=\"M10 18v-7\"/><path d=\"M11.119 2.205a2 2 0 0 1 1.762 0l7.84 3.846A.5.5 0 0 1 20.5 7h-17a.5.5 0 0 1-.22-.949z\"/><path d=\"M14 18v-7\"/><path d=\"M18 18v-7\"/><path d=\"M3 22h18\"/><path d=\"M6 18v-7\"/>","lightbulb":"<path d=\"M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5\"/><path d=\"M9 18h6\"/><path d=\"M10 22h4\"/>","list-checks":"<path d=\"M13 5h8\"/><path d=\"M13 12h8\"/><path d=\"M13 19h8\"/><path d=\"m3 17 2 2 4-4\"/><path d=\"m3 7 2 2 4-4\"/>","lock":"<rect width=\"18\" height=\"11\" x=\"3\" y=\"11\" rx=\"2\" ry=\"2\"/><path d=\"M7 11V7a5 5 0 0 1 10 0v4\"/>","piggy-bank":"<path d=\"M11 17h3v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a3.16 3.16 0 0 0 2-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1a5 5 0 0 0-2-4V3a4 4 0 0 0-3.2 1.6l-.3.4H11a6 6 0 0 0-6 6v1a5 5 0 0 0 2 4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z\"/><path d=\"M16 10h.01\"/><path d=\"M2 8v1a2 2 0 0 0 2 2h1\"/>","plus":"<path d=\"M5 12h14\"/><path d=\"M12 5v14\"/>","receipt":"<path d=\"M12 17V7\"/><path d=\"M16 8h-6a2 2 0 0 0 0 4h4a2 2 0 0 1 0 4H8\"/><path d=\"M4 3a1 1 0 0 1 1-1 1.3 1.3 0 0 1 .7.2l.933.6a1.3 1.3 0 0 0 1.4 0l.934-.6a1.3 1.3 0 0 1 1.4 0l.933.6a1.3 1.3 0 0 0 1.4 0l.933-.6a1.3 1.3 0 0 1 1.4 0l.934.6a1.3 1.3 0 0 0 1.4 0l.933-.6A1.3 1.3 0 0 1 19 2a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1 1.3 1.3 0 0 1-.7-.2l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.934.6a1.3 1.3 0 0 1-1.4 0l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-1.4 0l-.934-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-.7.2 1 1 0 0 1-1-1z\"/>","shield-check":"<path d=\"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z\"/><path d=\"m9 12 2 2 4-4\"/>","smartphone":"<rect width=\"14\" height=\"20\" x=\"5\" y=\"2\" rx=\"2\" ry=\"2\"/><path d=\"M12 18h.01\"/>","sparkles":"<path d=\"M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z\"/><path d=\"M20 2v4\"/><path d=\"M22 4h-4\"/><circle cx=\"4\" cy=\"20\" r=\"2\"/>","target":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><circle cx=\"12\" cy=\"12\" r=\"6\"/><circle cx=\"12\" cy=\"12\" r=\"2\"/>","trending-down":"<path d=\"M16 17h6v-6\"/><path d=\"m22 17-8.5-8.5-5 5L2 7\"/>","trophy":"<path d=\"M10 14.66V17a1 1 0 0 1-1 1 2 2 0 0 0-2 2v2\"/><path d=\"M14 14.66V17a1 1 0 0 0 1 1 2 2 0 0 1 2 2v2\"/><path d=\"M17.916 10H19.5A2.5 2.5 0 0 0 22 7.5V5a1 1 0 0 0-1-1h-3\"/><path d=\"M4 22h16\"/><path d=\"M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z\"/><path d=\"M6.084 10H4.5A2.5 2.5 0 0 1 2 7.5V5a1 1 0 0 1 1-1h3\"/>","upload":"<path d=\"M12 3v12\"/><path d=\"m17 8-5-5-5 5\"/><path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"/>","user-cog":"<path d=\"M10 15H6a4 4 0 0 0-4 4v2\"/><path d=\"m14.305 16.53.923-.382\"/><path d=\"m15.228 13.852-.923-.383\"/><path d=\"m16.852 12.228-.383-.923\"/><path d=\"m16.852 17.772-.383.924\"/><path d=\"m19.148 12.228.383-.923\"/><path d=\"m19.53 18.696-.382-.924\"/><path d=\"m20.772 13.852.924-.383\"/><path d=\"m20.772 16.148.924.383\"/><circle cx=\"18\" cy=\"15\" r=\"3\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/>","wallet":"<path d=\"M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1\"/><path d=\"M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4\"/>","sun":"<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2\"/><path d=\"M12 20v2\"/><path d=\"m4.93 4.93 1.41 1.41\"/><path d=\"m17.66 17.66 1.41 1.41\"/><path d=\"M2 12h2\"/><path d=\"M20 12h2\"/><path d=\"m6.34 17.66-1.41 1.41\"/><path d=\"m19.07 4.93-1.41 1.41\"/>","moon":"<path d=\"M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401\"/>","sun-moon":"<path d=\"M12 2v2\"/><path d=\"M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715\"/><path d=\"M16 12a4 4 0 0 0-4-4\"/><path d=\"m19 5-1.256 1.256\"/><path d=\"M20 12h2\"/>"};
+    window.lucide = { createIcons() {
+        document.querySelectorAll("i[data-lucide]").forEach(el => {
+            const name = el.getAttribute("data-lucide"), body = ICONS[name];
+            if (!body) return;
+            const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            svg.setAttribute("viewBox", "0 0 24 24"); svg.setAttribute("fill", "none"); svg.setAttribute("stroke", "currentColor");
+            svg.setAttribute("stroke-width", "2"); svg.setAttribute("stroke-linecap", "round"); svg.setAttribute("stroke-linejoin", "round");
+            svg.setAttribute("aria-hidden", "true");
+            svg.setAttribute("class", ("lucide lucide-" + name + " " + (el.getAttribute("class") || "")).trim());
+            svg.innerHTML = body;
+            el.replaceWith(svg);
+        });
+    } };
+
     // ================= i18n =================
     const I18N = {
         es: {
             navToday: 'Hoy', navPayments: 'Pagos', navDebts: 'Deudas', navSummary: 'Resumen',
             profile: 'Perfil', themeLabel: 'Tema', themeSystem: 'Sistema', themeLight: 'Claro', themeDark: 'Oscuro',
-            setupTitle: '¡Bienvenido a Architect Pro!', setupHint: 'Configura tu ingreso mensual para calcular cuánto puedes gastar cada día.', setupBtn: 'Configurar ingreso',
+            setupTitle: '¡Bienvenido a Valiu!', setupHint: 'Configura tu ingreso mensual para calcular cuánto puedes gastar cada día.', setupBtn: 'Configurar ingreso',
 
             heroLabel: 'Te quedan hoy', heroOf: 'de {x} para hoy',
             heroOk: 'Vas muy bien. Sigue así.', heroWarn: 'Ya usaste el {pct}% de lo de hoy. Con calma.',
@@ -1101,7 +1259,7 @@
         en: {
             navToday: 'Today', navPayments: 'Payments', navDebts: 'Debts', navSummary: 'Summary',
             profile: 'Profile', themeLabel: 'Theme', themeSystem: 'System', themeLight: 'Light', themeDark: 'Dark',
-            setupTitle: 'Welcome to Architect Pro!', setupHint: 'Set your monthly income to work out how much you can spend each day.', setupBtn: 'Set income',
+            setupTitle: 'Welcome to Valiu!', setupHint: 'Set your monthly income to work out how much you can spend each day.', setupBtn: 'Set income',
 
             heroLabel: 'Left for today', heroOf: 'of {x} for today',
             heroOk: "You're doing great. Keep it up.", heroWarn: "You've used {pct}% of today's budget. Take it easy.",
@@ -1309,6 +1467,7 @@
         transferCopied: 'Código copiado. Pégalo en la otra versión en Perfil → Pegar datos.', transferSelect: 'Copia el código seleccionado.',
         transferBad: 'Ese código no es válido. Copia el código completo, empieza con AP1:', transferConfirm: 'Esto reemplazará todos los datos de esta versión con los del código. ¿Continuar?',
         transferDone: 'Datos pasados correctamente. ✓',
+        syncWebOff: 'Sin conexión con el servidor: tus cambios se guardan en este dispositivo y se sincronizan al volver.',
         reportPrint: 'Imprimir o guardar como PDF', reportHint: 'Abre el archivo y elige Imprimir → Guardar como PDF.',
         downloadUnavailable: 'La descarga no está disponible aquí.', calLinksTitle: 'Recordatorios en tu calendario', calLinksDesc: 'Toca cada pago para agregarlo a Google Calendar como recordatorio mensual.'
     });
@@ -1398,12 +1557,13 @@
         transferCopied: 'Code copied. Paste it in the other version under Profile → Paste data.', transferSelect: 'Copy the selected code.',
         transferBad: 'That code is not valid. Copy the whole code; it starts with AP1:', transferConfirm: 'This will replace all data in this version with the data in the code. Continue?',
         transferDone: 'Data moved successfully. ✓',
+        syncWebOff: 'Not connected to the server: changes are saved on this device and sync when you are back online.',
         reportPrint: 'Print or save as PDF', reportHint: 'Open the file and choose Print → Save as PDF.',
         downloadUnavailable: 'Downloads are not available here.', calLinksTitle: 'Reminders in your calendar', calLinksDesc: 'Tap each payment to add it to Google Calendar as a monthly reminder.'
     });
 
     // ================= State =================
-    const STORAGE_KEY = 'arch_pro_v9';
+    let STORAGE_KEY = 'arch_pro_v9'; // per-user in the web version
     const SYMBOL_TO_CODE = { 'Q': 'GTQ', '$': 'USD', '€': 'EUR', 'L': 'HNL', '₡': 'CRC', '£': 'GBP' };
     const CATS = [
         { id: 'food', emoji: '🛒' }, { id: 'eat', emoji: '🍔' }, { id: 'transport', emoji: '🚌' },
@@ -1451,7 +1611,8 @@
             balance: +i.balance || 0, startBalance: +(i.startBalance ?? i.balance) || 0, apr: +i.apr || 0,
             totalMonths: +i.totalMonths || 0, monthsPaid: +i.monthsPaid || 0,
             paid: !!i.paid, completed: !!i.completed, extraPaid: +i.extraPaid || 0, lastPay: i.lastPay || null,
-            history: Array.isArray(i.history) ? i.history.filter(h => h && +h.ts) : []
+            history: Array.isArray(i.history) ? i.history.filter(h => h && +h.ts) : [],
+            stmt: sanitizeStmt(i.stmt)
         }));
         out.expenses = (Array.isArray(s.expenses) ? s.expenses : []).filter(e => e && +e.amount > 0).map(e => ({
             id: String(e.id || uid()), amount: +e.amount, note: String(e.note || ''), ts: +e.ts || Date.now(),
@@ -1502,6 +1663,8 @@
         state.items.filter(i => i.completed && i.type === 'debt').forEach(i => state.archive.push(archiveEntry(i, state.period)));
         state.items = state.items.filter(i => !i.completed);
         state.items.forEach(i => {
+            // Statement cards follow their own cut/due cycle (rollStatements), not the calendar month.
+            if (i.stmt) { i.extraPaid = 0; return; }
             if (i.subtype === 'cc' && i.balance > 0 && i.apr > 0) {
                 for (let k = 0; k < elapsed; k++) i.balance = round2(i.balance * (1 + i.apr / 1200));
             }
@@ -1649,7 +1812,7 @@
         return true;
     }
 
-    function exportBackup() { download(JSON.stringify(state, null, 2), `architect-pro-${state.period}.json`, 'application/json'); }
+    function exportBackup() { download(JSON.stringify(state, null, 2), `valiu-${state.period}.json`, 'application/json'); }
 
     function importBackup(ev) {
         const file = ev.target.files[0];
@@ -1677,7 +1840,7 @@
         if (!active.length) { toast(t('icsEmpty')); return; }
         const now = new Date();
         const stamp = now.toISOString().replace(/[-:]/g, '').replace(/\.\d+/, '');
-        const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Architect Pro//Budget//' + state.lang.toUpperCase(), 'CALSCALE:GREGORIAN'];
+        const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Valiu//Budget//' + state.lang.toUpperCase(), 'CALSCALE:GREGORIAN'];
         active.forEach(i => {
             let first = new Date(now.getFullYear(), now.getMonth(), 1);
             if (i.paid || dueDay(i, first) < now.getDate()) first = new Date(now.getFullYear(), now.getMonth() + 1, 1);
@@ -1691,7 +1854,7 @@
                 if (remaining <= 0) return;
                 rrule += `;COUNT=${remaining}`;
             }
-            lines.push('BEGIN:VEVENT', `UID:${i.id}@architect-pro`, `DTSTAMP:${stamp}`,
+            lines.push('BEGIN:VEVENT', `UID:${i.id}@valiu`, `DTSTAMP:${stamp}`,
                 `DTSTART;VALUE=DATE:${icsDate(first)}`, `DTEND;VALUE=DATE:${icsDate(end)}`, rrule,
                 `SUMMARY:${icsEscape(t('icsPay', { name: i.name }) + ' (' + fmt(i.amount) + ')')}`,
                 `DESCRIPTION:${icsEscape(t('icsDesc', { amount: fmt(i.amount) }))}`,
@@ -1942,7 +2105,7 @@
             const s = typeof v === 'number' ? v.toFixed(2) : String(v ?? '');
             return /[",\n;]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
         }).join(',')).join('\r\n');
-        download('﻿' + csv, `architect-pro-${state.period}.csv`, 'text/csv;charset=utf-8');
+        download('﻿' + csv, `valiu-${state.period}.csv`, 'text/csv;charset=utf-8');
     }
 
     function destLabel(dest) {
@@ -1992,7 +2155,7 @@
         if (sync.writing) { sync.pending = true; return; }
         const payload = { json: JSON.stringify({ ...state, tab: undefined }), updatedAt: state.updatedAt || Date.now(), v: 1 };
         if (payload.json.length > 240000) { trimForSync(); payload.json = JSON.stringify({ ...state, tab: undefined }); }
-        sync.writing = sync.ref.set(payload).catch(e => {
+        sync.writing = (sync.writer ? sync.writer(payload) : sync.ref.set(payload)).catch(e => {
             if (e && (e.code === 'revoked' || e.code === 'invalid_argument' || e.code === 'not_granted')) { sync.on = false; renderSyncStatus(); }
         }).finally(() => { sync.writing = null; if (sync.pending) { sync.pending = false; pushRemote(); } });
     }
@@ -2162,6 +2325,7 @@
 
     function render() {
         checkRollover();
+        rollStatements();
         applyTheme();
         applyStaticTranslations();
         document.querySelectorAll('.tab').forEach(s => s.classList.toggle('active', s.id === 'tab-' + state.tab));
@@ -2187,7 +2351,7 @@
     // ---------- shared bits ----------
     function itemStatus(i) {
         if (i.paid) return { k: 'paid', diff: 0 };
-        const diff = dueDay(i) - new Date().getDate();
+        const diff = dueDiff(i);
         if (diff < 0) return { k: 'overdue', diff };
         if (diff === 0) return { k: 'today', diff };
         if (diff <= 3) return { k: 'soon', diff };
@@ -2205,8 +2369,8 @@
         return `<span class="pill">${esc(whenText(s.diff))}</span>`;
     }
     function dateBadge(i) {
-        const d = new Date(); d.setDate(dueDay(i));
-        return `<div class="date-badge"><div class="d num">${dueDay(i)}</div><div class="m">${esc(d.toLocaleDateString(LOCALES[state.lang], { month: 'short' }).replace('.', ''))}</div></div>`;
+        const d = i.stmt ? parseISO(i.stmt.due) : new Date(); if (!i.stmt) d.setDate(dueDay(i));
+        return `<div class="date-badge"><div class="d num">${d.getDate()}</div><div class="m">${esc(d.toLocaleDateString(LOCALES[state.lang], { month: 'short' }).replace('.', ''))}</div></div>`;
     }
     const EDIT_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>';
     const TRASH_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>';
@@ -2214,6 +2378,10 @@
 
     function debtLine(i) {
         if (i.type !== 'debt') return '';
+        if (i.stmt) {
+            const pct = itemProgress(i);
+            return stmtLine(i) + (pct !== null && i.startBalance > 0 ? `<div class="bar thin mt-2" style="max-width:220px"><span data-key="ob-${i.id}" data-w="${pct}"></span></div>` : '');
+        }
         const parts = [];
         if (i.subtype === 'loan' && i.totalMonths) parts.push(t('monthOf', { n: Math.min(i.monthsPaid + (i.paid ? 0 : 1), i.totalMonths), total: i.totalMonths }));
         if (i.startBalance > 0) parts.push(t('progressPaid', { paid: fmt(Math.max(0, i.startBalance - i.balance), 0), total: fmt(i.startBalance, 0) }));
@@ -2274,7 +2442,7 @@
         const over = c.todayLeft < -0.005;
         const tone = over || c.dailyBudget <= 0 ? 'danger' : ratio < 0.3 ? 'warn' : 'accent';
         const toneColor = cssVar('--' + tone);
-        setRing($('hero-ring'), ratio * 100, toneColor);
+        setRing($('hero-ring'), ratio * 100, tone === 'accent' ? 'url(#brandGrad)' : toneColor);
         const left = $('hero-left');
         left.style.color = tone === 'accent' ? 'var(--text)' : toneColor;
         countTo(left, c.todayLeft, v => fmt(v));
@@ -2292,7 +2460,7 @@
             ? (c.periodLeft < 0 ? t('heroQuincenaOver', { over: fmt(-c.periodLeft) }) : t('heroQuincena', { left: fmt(c.periodLeft), days: c.periodDaysLeft }))
             : (c.bufferLeft < 0 ? t('heroMonthOver', { over: fmt(-c.bufferLeft) }) : t('heroMonth', { left: fmt(c.bufferLeft), days: c.daysRemaining }));
         $('hero-month-pct').textContent = Math.round(usedPct) + '%';
-        setBar($('hero-month-bar'), usedPct, cssVar(usedPct > 100 ? '--danger' : usedPct > 80 ? '--warn' : '--accent'));
+        setBar($('hero-month-bar'), usedPct, usedPct > 100 ? 'var(--danger)' : usedPct > 80 ? 'var(--warn)' : 'linear-gradient(90deg, var(--brand-1), var(--brand-2))');
         countTo($('st-today'), c.spentToday, v => fmt(v, 0));
         countTo($('st-month'), c.spent, v => fmt(v, 0));
         $('st-days').textContent = c.biw ? c.periodDaysLeft : c.daysRemaining;
@@ -2312,9 +2480,9 @@
             </div>`;
         }).join('') : `<p class="muted small">${esc(t('spendEmpty'))}</p>`;
 
-        const upcoming = state.items.filter(i => !i.paid && !i.completed).sort((a, b) => dueDay(a) - dueDay(b)).slice(0, 4);
+        const upcoming = state.items.filter(i => !i.paid && !i.completed).sort((a, b) => dueDiff(a) - dueDiff(b)).slice(0, 4);
         $('upcoming-list').innerHTML = upcoming.length ? upcoming.map(i => obRow(i, 'compact')).join('') : `<p class="muted">${esc(t('upcomingEmpty'))}</p>`;
-        $('tip-today').innerHTML = agentHTML(c);
+        $('tip-today').innerHTML = ccTip() + agentHTML(c);
     }
 
     // ================= PAYMENTS =================
@@ -2330,7 +2498,7 @@
         let html = wds.map(w => `<div class="wd">${esc(w)}</div>`).join('');
         for (let k = 0; k < offset; k++) html += '<div class="day empty"></div>';
         for (let d = 1; d <= dim; d++) {
-            const due = state.items.filter(i => dueDay(i) === d);
+            const due = state.items.filter(i => dueDay(i) === d && dueInMonth(i, y, m));
             const dots = due.slice(0, 4).map(i => {
                 const s = itemStatus(i).k;
                 return `<i class="dot ${s === 'paid' ? 'paid' : s === 'overdue' ? 'overdue' : (s === 'today' || s === 'soon') ? 'soon' : 'up'}"></i>`;
@@ -2341,7 +2509,7 @@
         $('cal-grid').innerHTML = html;
 
         const sel = new Date(y, m, selectedDay);
-        const dueSel = state.items.filter(i => dueDay(i) === selectedDay);
+        const dueSel = state.items.filter(i => dueDay(i) === selectedDay && dueInMonth(i, y, m));
         const expSel = c.monthExp.filter(e => new Date(e.ts).getDate() === selectedDay).sort((a, b) => b.ts - a.ts);
         let day = `<p class="serif" style="font-size:19px">${esc(cap(sel.toLocaleDateString(LOCALES[state.lang], { weekday: 'long', day: 'numeric', month: 'long' })))}</p>`;
         if (!dueSel.length && !expSel.length) day += `<p class="muted small mt-2">${esc(t('dayEmpty'))}</p>`;
@@ -2352,7 +2520,7 @@
         }).join('');
         $('cal-day').innerHTML = day;
 
-        const unpaid = state.items.filter(i => !i.paid).sort((a, b) => dueDay(a) - dueDay(b));
+        const unpaid = state.items.filter(i => !i.paid).sort((a, b) => dueDiff(a) - dueDiff(b));
         const paid = state.items.filter(i => i.paid).sort((a, b) => dueDay(a) - dueDay(b));
         $('ledger-list').innerHTML = state.items.length
             ? (unpaid.map(i => obRow(i)).join('') || `<p class="muted">${esc(t('upcomingEmpty'))}</p>`)
@@ -2416,6 +2584,7 @@
                 </div>
                 <p class="tiny muted">${esc(amountLine)}</p>
                 <p class="small">${hint}</p>
+                ${i.stmt ? `<button class="btn btn-ghost btn-sm" onclick="openCardInsight('${i.id}')">💡 ${esc(t('ccUnderstand'))}</button>` : ''}
                 <div class="between mt-1">
                     <span class="tiny muted">${i.completed ? '' : esc(i.paid ? t('paidThisMonth') : t('nextPayment', { d: dueDay(i), x: fmt(i.amount, 0) }))}</span>
                     ${!i.paid && !i.completed ? `<button class="btn btn-primary btn-sm" onclick="openPaymentModal('${i.id}')">${esc(t('payBtn'))}</button>` : ''}
@@ -2566,7 +2735,7 @@
             if (c.bufferLeft < 0) score -= 10;
             const final = Math.max(0, Math.min(100, Math.round(score)));
             const tone = final >= 70 ? 'accent' : final >= 40 ? 'warn' : 'danger';
-            setRing(ring, final, cssVar('--' + tone));
+            setRing(ring, final, tone === 'accent' ? 'url(#brandGrad)' : cssVar('--' + tone));
             countTo(scoreEl, final, v => String(Math.round(v)));
             $('health-label').textContent = t(final >= 70 ? 'healthGood' : final >= 40 ? 'healthOk' : 'healthBad');
             $('health-label').style.color = `var(--${tone})`;
@@ -2695,6 +2864,7 @@
     function openEditModal(id) {
         const i = state.items.find(x => x.id === id);
         if (!i) return;
+        if (i.stmt) { openCardModal(id); return; }
         editingId = id; resetEntryForm();
         const set = (k, v) => $(k).value = (v === 0 || v === null || v === undefined) ? '' : v;
         $('e-type').value = i.type; $('e-debt-subtype').value = i.subtype || 'cc';
@@ -2770,13 +2940,23 @@
         $('pay-extra-amount').value = '';
         $('pay-extra-wrap').classList.toggle('hidden', item.type !== 'debt');
         $('pay-extra-hint').textContent = t('extraHint', { left: fmt(compute().surplusLeft) });
+        const isStmt = setupStmtPayment(item);
         openModal('payment-modal');
-        if (item.type === 'debt') setTimeout(() => $('pay-extra-amount').focus(), 60);
+        if (item.type === 'debt' && !isStmt) setTimeout(() => $('pay-extra-amount').focus(), 60);
     }
 
     function confirmTransaction() {
         const item = state.items.find(i => i.id === activePaymentId);
         let celebrate = null;
+        if (item && !item.paid && item.stmt) {
+            const r = confirmStmtPayment(item);
+            if (r && r.abort) { $('pay-cc-amount').classList.add('invalid'); return; }
+            activePaymentId = null;
+            closeModal('payment-modal'); render();
+            if (r && r.short) toast('⚠️ ' + t('ccShortToast', { x: fmt(r.short) }));
+            else if (r) { confetti(true); toast(r.msg); }
+            return;
+        }
         if (item && !item.paid) {
             const extra = item.type === 'debt' ? Math.max(0, parseFloat($('pay-extra-amount').value) || 0) : 0;
             const before = itemProgress(item) ?? 0;
@@ -2811,6 +2991,7 @@
             item.balance = item.lastPay.balance;
             item.monthsPaid = item.lastPay.monthsPaid;
             item.extraPaid = Math.max(0, (item.extraPaid || 0) - (item.lastPay.extra || 0));
+            if (item.lastPay.stmt) item.stmt = item.lastPay.stmt;
         }
         if (item.history && item.history.length) item.history.pop();
         item.paid = false; item.completed = false; item.lastPay = null;
@@ -2872,6 +3053,7 @@
     // ================= Boot =================
     window.addEventListener('load', () => {
         if (window.Chart && Chart.defaults) Chart.defaults.font.family = "'DM Sans', system-ui, sans-serif";
+        if (window.APP_CONFIG && typeof webBoot === 'function') { webBoot(); return; } // web version: login first
         loadState(); render();
         setupInstall(); maybeLock(); initSync();
     });
@@ -2922,7 +3104,7 @@
                 </div>
             </div>`;
             barMem['ef'] = pct;
-            raf(() => raf(() => efBody.querySelectorAll('[data-ring]').forEach(r => { r.setAttribute('stroke-dashoffset', 100 - r.dataset.ring); r.style.stroke = cssVar('--accent'); })));
+            raf(() => raf(() => efBody.querySelectorAll('[data-ring]').forEach(r => { r.setAttribute('stroke-dashoffset', 100 - r.dataset.ring); r.style.stroke = 'url(#brandGrad)'; })));
         }
 
         // Savings line + goal cards
@@ -3342,7 +3524,7 @@
     function renderProfileExtras() {
         document.querySelectorAll('[data-freq]').forEach(b => b.classList.toggle('active', b.dataset.freq === state.payFreq));
         renderSyncStatus();
-        $('pin-actions').innerHTML = state.pinHash
+        $('pin-actions').innerHTML = window.APP_CONFIG && typeof webAccountHTML === 'function' ? webAccountHTML() : state.pinHash
             ? `<button class="btn btn-ghost" onclick="startPinSetup()"><i data-lucide="lock"></i>${esc(t('pinChange'))}</button><button class="btn btn-ghost danger" onclick="removePin()">${esc(t('pinRemove'))}</button>`
             : `<button class="btn btn-ghost full" onclick="startPinSetup()"><i data-lucide="lock"></i>${esc(t('pinSet'))}</button>`;
         $('install-btn').classList.toggle('hidden', !installPrompt);
@@ -3352,9 +3534,10 @@
         const el = $('sync-status');
         if (!el) return;
         el.className = 'note small ' + (sync.on ? 'ok' : 'plain');
-        el.textContent = sync.on ? t('syncOn') : inViewer() ? t('syncOff') : t('syncFile');
+        const web = !!window.APP_CONFIG;
+        el.textContent = sync.on ? t('syncOn') : web ? t('syncWebOff') : inViewer() ? t('syncOff') : t('syncFile');
         const open = $('open-synced');
-        if (open) open.classList.toggle('hidden', inViewer());
+        if (open) open.classList.toggle('hidden', inViewer() || web);
     }
 
     // ================= Transfer code (move data between the file and the synced app) =================
@@ -3440,6 +3623,7 @@
     function shake(id) { const el = $(id); el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); }
     function removePin() { state.pinHash = null; state.pinSalt = null; state.pinLen = 0; render(); renderProfileExtras(); toast(t('pinRemoved')); }
     function maybeLock(force) {
+        if (window.APP_CONFIG) { $('lock').classList.remove('open'); return; } // web version uses the account PIN instead
         if (!state.pinHash) { $('lock').classList.remove('open'); return; }
         if (pin.unlocked && !force) return;
         pin.unlocked = false; pin.buf = '';
@@ -3471,36 +3655,955 @@
     let installPrompt = null;
     window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installPrompt = e; if ($('config-modal').classList.contains('open')) renderProfileExtras(); });
     async function installApp() { if (!installPrompt) return; installPrompt.prompt(); try { await installPrompt.userChoice; } catch (e) { } installPrompt = null; renderProfileExtras(); }
-    function makeIcon(size) {
-        const cv = document.createElement('canvas'); cv.width = cv.height = size;
-        const x = cv.getContext && cv.getContext('2d');
-        if (!x) return '';
-        const g = x.createLinearGradient(0, 0, size, size); g.addColorStop(0, '#2f7a55'); g.addColorStop(1, '#1f5a3e');
-        x.fillStyle = g; x.fillRect(0, 0, size, size);
-        x.strokeStyle = 'rgba(255,255,255,.25)'; x.lineWidth = size * .07; x.lineCap = 'round';
-        x.beginPath(); x.arc(size / 2, size / 2, size * .3, 0, Math.PI * 2); x.stroke();
-        x.strokeStyle = '#ffffff';
-        x.beginPath(); x.arc(size / 2, size / 2, size * .3, -Math.PI / 2, Math.PI * 1.1); x.stroke();
-        x.fillStyle = '#ffffff'; x.font = `${size * .3}px Georgia, serif`; x.textAlign = 'center'; x.textBaseline = 'middle';
-        x.fillText('A', size / 2, size / 2 + size * .02);
-        try { return cv.toDataURL('image/png'); } catch (e) { return ''; }
-    }
+    const APP_ICON = 'icons/apple-touch-icon.png'; // Valiu mark on navy, generated at build time
+    function makeIcon() { return APP_ICON; }
     function headEl(tag, id, attrs) {
         let el = document.getElementById(id);
         if (!el) { el = document.createElement(tag); el.id = id; Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v)); document.head.appendChild(el); }
         return el;
     }
     function setupInstall() {
+        if (window.APP_CONFIG) return; // the web version ships a real manifest and icons
         try {
             headEl('meta', 'm-capable', { name: 'apple-mobile-web-app-capable', content: 'yes' });
-            headEl('meta', 'm-title', { name: 'apple-mobile-web-app-title', content: 'Architect Pro' });
+            headEl('meta', 'm-title', { name: 'apple-mobile-web-app-title', content: 'Valiu' });
             headEl('meta', 'm-theme', { name: 'theme-color', content: '#2f7a55' });
             const i180 = makeIcon(180), i512 = makeIcon(512);
             if (i180) headEl('link', 'apple-icon', { rel: 'apple-touch-icon' }).href = i180;
-            const manifest = { name: 'Architect Pro', short_name: 'Architect', start_url: location.href, display: 'standalone',
+            const manifest = { name: 'Valiu', short_name: 'Valiu', start_url: location.href, display: 'standalone',
                 background_color: '#f6f3ec', theme_color: '#2f7a55', icons: i512 ? [{ src: i512, sizes: '512x512', type: 'image/png' }, { src: i180, sizes: '180x180', type: 'image/png' }] : [] };
             headEl('link', 'app-manifest', { rel: 'manifest' }).href = URL.createObjectURL(new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' }));
         } catch (e) { /* not supported here */ }
+    }
+
+    // ================= Credit card from a statement (estado de cuenta) =================
+    Object.assign(I18N.es, {
+        ccAdd: 'Agregar tarjeta', ccAddFromStmt: '📄 Agregar con mi estado de cuenta (recomendado)',
+        ccTitle: 'Tarjeta de crédito', ccTitleEdit: 'Actualizar tarjeta', ccGuide: 'Busca estos datos en tu estado de cuenta. Los números te dicen dónde está cada uno.',
+        ccMockTitle: 'Así se ve un estado de cuenta (ejemplo)',
+        ccName: 'Nombre de la tarjeta', ccNamePh: 'ej. Visa ···1234',
+        ccCut: 'Fecha de corte', ccDue: 'Fecha límite de pago', ccApr: 'Tasa de interés anual %', ccLimit: 'Límite de crédito',
+        ccFull: 'Saldo al corte (pago de contado)', ccMin: 'Pago mínimo', ccFees: 'Comisiones y otros cargos',
+        ccOptional: 'opcional', ccMinHint: 'Si no lo tienes, lo estimamos.',
+        ccPlan: '¿Cuánto planeas pagar?', ccPlanFull: 'Todo (contado)', ccPlanMin: 'El mínimo', ccPlanCustom: 'Otro monto',
+        ccSave: 'Guardar tarjeta', ccErrFull: 'Escribe el saldo al corte.', ccErrDue: 'Elige la fecha límite de pago.', ccErrApr: 'Escribe la tasa de interés anual.',
+        ccErrCustom: 'Escribe cuánto planeas pagar.',
+        ccPreview: 'Vista previa: así te explicaremos tu tarjeta',
+        ccInsightTitle: 'Entiende tu tarjeta',
+        ccDueIn: 'Faltan {n} días', ccDueToday: 'Vence hoy', ccDueTomorrow: 'Vence mañana', ccDueLate: 'Venció hace {n} días',
+        ccDueOn: 'Fecha límite: {date}', ccOwe: 'Saldo al corte',
+        tlCut: 'Corte', tlToday: 'Hoy', tlDue: 'Fecha límite', tlLate: 'Mora',
+        ccWhatIf: '¿Qué pasa si…?',
+        scFullT: 'Pagas todo ({x}) antes del {date}',
+        scFullB: 'No pagas intereses por tus compras del período y tu tarjeta queda en cero. Es la mejor opción si te alcanza.',
+        scFullNote: 'Ojo: las transferencias o retiros de efectivo con la tarjeta suelen cobrar comisión y pueden generar intereses desde el primer día.',
+        scMinT: 'Pagas solo el mínimo ({x})',
+        scMinB1: 'Quedan {rest} pendientes, que generan cerca de {int} de intereses el próximo mes.',
+        scMinB2: 'Si cada mes pagas solo el mínimo que te pida el banco, tardarías {time} en terminar y pagarías unos {total} de intereses (sin nuevas compras).',
+        scMinB2Never: 'Si cada mes pagas solo el mínimo, la deuda casi no baja: con esta tasa tardarías décadas.',
+        scMinB3: 'Si pagas {x} fijos cada mes, terminarías en {time} y pagarías {total} de intereses.',
+        scMinWhy: 'El pago mínimo cubre primero intereses, comisiones y cargos; solo una parte pequeña baja tu deuda real.',
+        scLateT: 'Pagas tarde o no pagas',
+        scLate1: 'Pagas intereses sobre todo el saldo: cerca de {int} en un mes.',
+        scLate2: 'El banco agrega un cargo por mora e intereses por mora (en tu estado de cuenta: "Cargos moratorios" e "Intereses por mora").',
+        scLate3: 'Aparecen "Cuotas vencidas" y "Saldo en mora", y el atraso se reporta en tu historial crediticio. Eso puede hacer que te nieguen préstamos o te den tasas más altas.',
+        scLate4: 'Con varios meses de atraso, el banco puede bloquear la tarjeta y pasar la deuda a cobro.',
+        scLateTip: 'Si no te alcanza para todo, paga al menos el mínimo antes de la fecha límite y llama al banco para pedir un arreglo.',
+        scPastT: 'La fecha límite ya pasó',
+        scPastB: 'Paga al menos el mínimo lo antes posible: cada día cuenta para el reporte de mora. Llama al banco y pregunta por un plan de pago.',
+        ccFacts: 'Datos de tu tarjeta',
+        ccMonthly: 'Tasa mensual: {m}%', ccMonthlyB: 'Por cada Q1,000 que debas, pagas unos {x} de intereses al mes.',
+        ccUse: 'Uso de tu límite: {p}%', ccUseOk: 'Bien: estás debajo del 30% recomendado.', ccUseHigh: 'Lo ideal es usar menos del 30% de tu límite para cuidar tu historial.',
+        ccFeesT: 'Comisiones del mes: {x}', ccFeesB: 'Son el {p}% de tu pago mínimo. Revisa cuáles puedes evitar: transferencias o retiros con la tarjeta, cuota anual, seguros.',
+        ccGrace: 'Período de gracia: {n} días', ccGraceB: 'Es el tiempo entre la fecha de corte y la fecha límite para pagar sin intereses.',
+        glossTitle: 'Glosario de tu estado de cuenta',
+        gCut: 'Fecha de corte', gCutB: 'El día en que el banco cierra el mes y suma todo lo que compraste. Lo que compres después entra en el siguiente estado de cuenta.',
+        gDue: 'Fecha límite de pago', gDueB: 'El último día para pagar sin cargos por mora. Si pagas el total antes de esta fecha, normalmente no pagas intereses.',
+        gFull: 'Pago de contado', gFullB: 'Todo lo que debías al día del corte. Pagarlo completo te evita intereses.',
+        gMin: 'Pago mínimo', gMinB: 'Lo menos que puedes pagar para no caer en mora. No te libra de intereses sobre lo que queda.',
+        gApr: 'Tasa de interés anual', gAprB: 'Lo que cuesta deber dinero por un año. Divídela entre 12 para saber cuánto cuesta cada mes.',
+        gLimit: 'Límite y crédito disponible', gLimitB: 'El límite es el máximo que el banco te presta. El disponible es lo que te queda por usar.',
+        gMora: 'Mora', gMoraB: 'Cuando no pagas al menos el mínimo a tiempo. Genera cargos extra y se reporta en tu historial crediticio.',
+        ccPayFull: 'Contado', ccPayMin: 'Mínimo', ccPayOther: 'Otro', ccPayAmount: 'Monto a pagar',
+        ccPayOkFull: 'Pagas todo: no pagarás intereses este período. ✓',
+        ccPayRest: 'Quedan {rest}: generarán cerca de {int} de intereses el próximo mes.',
+        ccPayLow: 'Es menos que el mínimo ({min}): tu tarjeta quedará en mora.',
+        ccPaidFullToast: '¡Pagaste de contado! Cero intereses este período 🎉', ccShortToast: 'Pago registrado, pero aún falta {x} para cubrir el mínimo.',
+        ccEstimated: 'Estimado: actualiza con tu nuevo estado de cuenta', ccUpdate: 'Actualizar', ccUnderstand: 'Entender mi tarjeta',
+        ccTipSoon: '💳 Tu tarjeta {name} vence en {n} días. Si pagas solo el mínimo, pagarás cerca de {int} de intereses el próximo mes.',
+        ccTipLate: '🚨 Tu tarjeta {name} pasó su fecha límite. Paga al menos el mínimo ({min}) hoy para limitar los cargos por mora.',
+        yearsMonths: '{y} años y {m} meses', years: '{y} años', monthsN: '{m} meses', year1: '1 año', year1Months: '1 año y {m} meses', month1: '1 mes', recPay: 'Registrar pago'
+    });
+    Object.assign(I18N.en, {
+        ccAdd: 'Add card', ccAddFromStmt: '📄 Add from my statement (recommended)',
+        ccTitle: 'Credit card', ccTitleEdit: 'Update card', ccGuide: 'Find these on your statement. The numbers show where each one is.',
+        ccMockTitle: 'What a statement looks like (example)',
+        ccName: 'Card name', ccNamePh: 'e.g. Visa ···1234',
+        ccCut: 'Statement closing date', ccDue: 'Payment due date', ccApr: 'Annual interest rate %', ccLimit: 'Credit limit',
+        ccFull: 'Statement balance (pay in full)', ccMin: 'Minimum payment', ccFees: 'Fees and other charges',
+        ccOptional: 'optional', ccMinHint: "If you don't have it, we estimate it.",
+        ccPlan: 'How much do you plan to pay?', ccPlanFull: 'All of it', ccPlanMin: 'The minimum', ccPlanCustom: 'Another amount',
+        ccSave: 'Save card', ccErrFull: 'Enter the statement balance.', ccErrDue: 'Pick the payment due date.', ccErrApr: 'Enter the annual interest rate.',
+        ccErrCustom: 'Enter how much you plan to pay.',
+        ccPreview: 'Preview: this is how we will explain your card',
+        ccInsightTitle: 'Understand your card',
+        ccDueIn: '{n} days left', ccDueToday: 'Due today', ccDueTomorrow: 'Due tomorrow', ccDueLate: 'Overdue by {n} days',
+        ccDueOn: 'Due date: {date}', ccOwe: 'Statement balance',
+        tlCut: 'Closing', tlToday: 'Today', tlDue: 'Due date', tlLate: 'Late',
+        ccWhatIf: 'What happens if…?',
+        scFullT: 'You pay it all ({x}) before {date}',
+        scFullB: "You don't pay interest on this period's purchases and your card goes back to zero. The best option if you can afford it.",
+        scFullNote: 'Note: transfers or cash withdrawals with the card usually carry a fee and can charge interest from day one.',
+        scMinT: 'You pay only the minimum ({x})',
+        scMinB1: '{rest} stays unpaid and generates about {int} in interest next month.',
+        scMinB2: 'If you pay only the minimum the bank asks for each month, it would take {time} to finish and you would pay about {total} in interest (with no new purchases).',
+        scMinB2Never: 'If you pay only the minimum each month, the debt barely moves: at this rate it would take decades.',
+        scMinB3: 'If you pay a fixed {x} every month, you finish in {time} and pay {total} in interest.',
+        scMinWhy: 'The minimum covers interest, fees and charges first; only a small part lowers your real debt.',
+        scLateT: 'You pay late or not at all',
+        scLate1: 'You pay interest on the whole balance: about {int} in one month.',
+        scLate2: 'The bank adds a late fee and late interest (on your statement: "Cargos moratorios" and "Intereses por mora").',
+        scLate3: '"Cuotas vencidas" and "Saldo en mora" appear, and the delay is reported to your credit history. That can get loans denied or make rates higher.',
+        scLate4: 'After several months late, the bank can block the card and send the debt to collections.',
+        scLateTip: "If you can't pay it all, pay at least the minimum before the due date and call the bank to ask for an arrangement.",
+        scPastT: 'The due date has passed',
+        scPastB: 'Pay at least the minimum as soon as possible: every day counts for the late report. Call the bank and ask about a payment plan.',
+        ccFacts: 'Your card facts',
+        ccMonthly: 'Monthly rate: {m}%', ccMonthlyB: 'For every Q1,000 you owe, you pay about {x} in interest per month.',
+        ccUse: 'Limit used: {p}%', ccUseOk: "Good: you're under the recommended 30%.", ccUseHigh: 'Ideally use less than 30% of your limit to protect your credit history.',
+        ccFeesT: 'Fees this month: {x}', ccFeesB: "They're {p}% of your minimum payment. Check which ones you can avoid: card transfers or cash withdrawals, annual fee, insurance.",
+        ccGrace: 'Grace period: {n} days', ccGraceB: 'The time between the closing date and the due date to pay without interest.',
+        glossTitle: 'Statement glossary',
+        gCut: 'Closing date', gCutB: 'The day the bank closes the month and adds up everything you bought. Purchases after it go on the next statement.',
+        gDue: 'Payment due date', gDueB: 'The last day to pay without late fees. If you pay the full balance before it, you usually pay no interest.',
+        gFull: 'Pay in full', gFullB: 'Everything you owed on the closing date. Paying it all avoids interest.',
+        gMin: 'Minimum payment', gMinB: 'The least you can pay to avoid being late. It does not stop interest on what remains.',
+        gApr: 'Annual interest rate', gAprB: 'What owing money costs over a year. Divide by 12 to see the cost per month.',
+        gLimit: 'Limit and available credit', gLimitB: 'The limit is the most the bank lends you. Available credit is what you have left to use.',
+        gMora: 'Delinquency (mora)', gMoraB: 'When you don’t pay at least the minimum on time. It adds charges and is reported to your credit history.',
+        ccPayFull: 'In full', ccPayMin: 'Minimum', ccPayOther: 'Other', ccPayAmount: 'Amount to pay',
+        ccPayOkFull: "You pay it all: no interest this period. ✓",
+        ccPayRest: '{rest} remains: about {int} in interest next month.',
+        ccPayLow: "That's less than the minimum ({min}): your card will be late.",
+        ccPaidFullToast: 'Paid in full! Zero interest this period 🎉', ccShortToast: 'Payment recorded, but {x} is still missing to cover the minimum.',
+        ccEstimated: 'Estimated: update with your new statement', ccUpdate: 'Update', ccUnderstand: 'Understand my card',
+        ccTipSoon: '💳 Your {name} card is due in {n} days. If you pay only the minimum, you will pay about {int} in interest next month.',
+        ccTipLate: '🚨 Your {name} card is past its due date. Pay at least the minimum ({min}) today to limit late charges.',
+        yearsMonths: '{y} years and {m} months', years: '{y} years', monthsN: '{m} months', year1: '1 year', year1Months: '1 year and {m} months', month1: '1 month', recPay: 'Record payment'
+    });
+
+    // ---------- date helpers ----------
+    const DAY_MS = 86400000;
+    const pad2 = n => String(n).padStart(2, '0');
+    function isoDate(d) { return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`; }
+    function parseISO(s) { const [y, m, d] = String(s).split('-').map(Number); return new Date(y, m - 1, d); }
+    function todayStart() { const n = new Date(); return new Date(n.getFullYear(), n.getMonth(), n.getDate()); }
+    function daysUntil(iso) { return Math.round((parseISO(iso) - todayStart()) / DAY_MS); }
+    function addMonthISO(iso) {
+        const d = parseISO(iso), day = d.getDate();
+        const n = new Date(d.getFullYear(), d.getMonth() + 1, 1);
+        n.setDate(Math.min(day, daysInMonth(n)));
+        return isoDate(n);
+    }
+    function fmtDate(iso, opts = { day: 'numeric', month: 'short' }) { return parseISO(iso).toLocaleDateString(LOCALES[state.lang], opts).replace('.', ''); }
+    function fmtDuration(m) {
+        const y = Math.floor(m / 12), r = m % 12;
+        const mm = r === 1 ? t('month1') : t('monthsN', { m: r });
+        if (y === 0) return mm;
+        if (y === 1) return r ? t('year1Months', { m: r }) : t('year1');
+        return r ? t('yearsMonths', { y, m: r }) : t('years', { y });
+    }
+
+    function sanitizeStmt(s) {
+        if (!s || typeof s !== 'object' || !/^\d{4}-\d{2}-\d{2}$/.test(s.due || '')) return null;
+        return {
+            cut: /^\d{4}-\d{2}-\d{2}$/.test(s.cut || '') ? s.cut : null, due: s.due,
+            full: Math.max(0, +s.full || 0), min: Math.max(0, +s.min || 0), minEst: !!s.minEst,
+            limit: Math.max(0, +s.limit || 0), fees: Math.max(0, +s.fees || 0),
+            plan: ['full', 'min', 'custom'].includes(s.plan) ? s.plan : 'full', estimated: !!s.estimated
+        };
+    }
+    function estimateMin(bal, apr) {
+        if (!(bal > 0)) return 0;
+        return round2(Math.min(bal, Math.max(Math.min(100, bal), bal * (apr / 1200 + 0.03))));
+    }
+    function dueDiff(i) { return i.stmt ? daysUntil(i.stmt.due) : dueDay(i) - new Date().getDate(); }
+    function dueInMonth(i, y, m) { if (!i.stmt) return true; const d = parseISO(i.stmt.due); return d.getFullYear() === y && d.getMonth() === m; }
+
+    // ---------- scenario math ----------
+    function cardScenarios(d) {
+        const r = d.apr / 1200, bal = d.full, min = Math.min(bal, d.min || estimateMin(bal, d.apr));
+        const rest = Math.max(0, bal - min);
+        // Bank-style minimum: interest + a small slice of capital, recalculated each month.
+        const capPct = d.min > 0 && bal > 0 ? Math.min(0.15, Math.max(0.01, (d.min - (d.fees || 0)) / bal)) : 0.03;
+        let b = bal, months = 0, interest = 0;
+        while (b > 0.5 && months < 600) {
+            const it = b * r; interest += it;
+            const pay = Math.min(b + it, Math.max(Math.min(50, b + it), b * capPct + it));
+            b = b + it - pay; months++;
+        }
+        const declining = { months, interest, never: months >= 600 };
+        // Fixed payment equal to today's minimum
+        let f = bal, fm = 0, fi = 0;
+        const fixedNever = min <= bal * r + 0.005;
+        if (!fixedNever) while (f > 0.005 && fm < 600) { const it = f * r; fi += it; f = f + it - Math.min(f + it, min); fm++; }
+        return { min, rest, nextInt: rest * r, lateInt: bal * r, declining, fixed: { months: fm, interest: fi, never: fixedNever || fm >= 600 } };
+    }
+
+    function dueBadgeText(iso) {
+        const n = daysUntil(iso);
+        if (n < 0) return { txt: t('ccDueLate', { n: -n }), tone: 'danger' };
+        if (n === 0) return { txt: t('ccDueToday'), tone: 'warn' };
+        if (n === 1) return { txt: t('ccDueTomorrow'), tone: 'warn' };
+        return { txt: t('ccDueIn', { n }), tone: n <= 5 ? 'warn' : 'ok' };
+    }
+
+    function timelineHTML(d) {
+        const due = parseISO(d.due), today = todayStart();
+        const start = d.cut ? parseISO(d.cut) : new Date(due.getTime() - 25 * DAY_MS);
+        const end = new Date(due.getTime() + Math.max(8, (due - start) / DAY_MS * 0.3) * DAY_MS);
+        const pos = x => Math.max(0, Math.min(100, (x - start) / (end - start) * 100));
+        const pDue = pos(due), pToday = pos(today);
+        const late = today > due;
+        return `<div class="tl">
+            <div class="tl-bar"><span class="tl-ok" style="width:${pDue}%"></span><span class="tl-late" style="left:${pDue}%; width:${100 - pDue}%"></span>
+                <i class="tl-today ${late ? 'late' : ''}" style="left:${pToday}%"></i></div>
+            <div class="tl-labels">
+                <span style="left:0; transform:none">${esc(t('tlCut'))}${d.cut ? `<b>${esc(fmtDate(d.cut))}</b>` : ''}</span>
+                <span style="left:${pDue}%">${esc(t('tlDue'))}<b>${esc(fmtDate(d.due))}</b></span>
+                <span style="left:100%; transform:translateX(-100%); text-align:right" class="danger">${esc(t('tlLate'))}</span>
+            </div>
+            <div class="tl-now" style="left:${pToday}%">${esc(t('tlToday'))}</div>
+        </div>`;
+    }
+
+    function cardInsightHTML(d) {
+        if (!(d.full >= 0) || !d.due || !(d.apr >= 0)) return '';
+        const s = cardScenarios(d), r = d.apr / 1200, past = daysUntil(d.due) < 0;
+        const badge = dueBadgeText(d.due);
+        const li = arr => `<ul class="cc-list">${arr.map(x => `<li>${x}</li>`).join('')}</ul>`;
+        let html = `<div class="cc-head">
+                <div><p class="eyebrow">${esc(t('ccOwe'))}</p><p class="serif num" style="font-size:32px; line-height:1.1">${fmt(d.full)}</p>
+                <p class="tiny muted">${esc(t('ccDueOn', { date: fmtDate(d.due, { weekday: 'long', day: 'numeric', month: 'long' }) }))}</p></div>
+                <span class="pill ${badge.tone}" style="font-size:13px; padding:5px 12px">${esc(badge.txt)}</span>
+            </div>
+            ${timelineHTML(d)}
+            <p class="eyebrow mt-5 mb-2">${esc(t('ccWhatIf'))}</p>`;
+        if (past) html += `<div class="note danger cc-scen"><b>⏰ ${esc(t('scPastT'))}</b><p>${esc(t('scPastB'))}</p></div>`;
+        html += `<div class="note ok cc-scen"><b>✅ ${esc(t('scFullT', { x: fmt(d.full), date: fmtDate(d.due) }))}</b>
+                <p>${esc(t('scFullB'))}</p><p class="tiny" style="opacity:.8">${esc(t('scFullNote'))}</p></div>`;
+        const minLines = [esc(t('scMinB1', { rest: fmt(s.rest), int: fmt(s.nextInt) })),
+            s.declining.never ? esc(t('scMinB2Never')) : esc(t('scMinB2', { time: fmtDuration(s.declining.months), total: fmt(s.declining.interest, 0) }))];
+        if (!s.fixed.never) minLines.push(esc(t('scMinB3', { x: fmt(s.min), time: fmtDuration(s.fixed.months), total: fmt(s.fixed.interest, 0) })));
+        html += `<div class="note warn cc-scen"><b>⚠️ ${esc(t('scMinT', { x: fmt(s.min) }))}${d.minEst ? ' *' : ''}</b>${li(minLines)}<p class="tiny" style="opacity:.85">${esc(t('scMinWhy'))}</p></div>`;
+        html += `<div class="note danger cc-scen"><b>🚨 ${esc(t('scLateT'))}</b>${li([esc(t('scLate1', { int: fmt(s.lateInt) })), esc(t('scLate2')), esc(t('scLate3')), esc(t('scLate4'))])}
+                <p style="font-weight:600">${esc(t('scLateTip'))}</p></div>`;
+        // facts
+        const facts = [];
+        facts.push(`<div class="cc-fact"><b>${esc(t('ccMonthly', { m: (d.apr / 12).toFixed(1) }))}</b><span>${esc(t('ccMonthlyB', { x: fmt(1000 * r, 0) }))}</span></div>`);
+        if (d.limit > 0) {
+            const p = Math.round(d.full / d.limit * 100);
+            facts.push(`<div class="cc-fact"><b>${esc(t('ccUse', { p }))}</b><div class="bar thin mt-1"><span style="width:${Math.min(100, p)}%; background:var(--${p > 30 ? 'warn' : 'accent'})"></span></div><span>${esc(t(p > 30 ? 'ccUseHigh' : 'ccUseOk'))}</span></div>`);
+        }
+        if (d.fees > 0 && s.min > 0) facts.push(`<div class="cc-fact"><b>${esc(t('ccFeesT', { x: fmt(d.fees) }))}</b><span>${esc(t('ccFeesB', { p: Math.round(d.fees / s.min * 100) }))}</span></div>`);
+        if (d.cut) facts.push(`<div class="cc-fact"><b>${esc(t('ccGrace', { n: Math.round((parseISO(d.due) - parseISO(d.cut)) / DAY_MS) }))}</b><span>${esc(t('ccGraceB'))}</span></div>`);
+        html += `<p class="eyebrow mt-5 mb-2">${esc(t('ccFacts'))}</p><div class="cc-facts">${facts.join('')}</div>`;
+        if (d.minEst) html += `<p class="tiny faint mt-2">* ${esc(t('ccMinHint'))}</p>`;
+        return html;
+    }
+
+    function glossaryHTML() {
+        return `<p class="eyebrow mt-5 mb-2">📖 ${esc(t('glossTitle'))}</p>` + [['gCut', 'gCutB'], ['gDue', 'gDueB'], ['gFull', 'gFullB'], ['gMin', 'gMinB'], ['gApr', 'gAprB'], ['gLimit', 'gLimitB'], ['gMora', 'gMoraB']]
+            .map(([a, b]) => `<details class="gloss"><summary>${esc(t(a))}</summary><p>${esc(t(b))}</p></details>`).join('');
+    }
+
+    function stmtData(i) { return { ...i.stmt, apr: i.apr, name: i.name }; }
+
+    // ---------- statement roll-over: after a paid statement's due date passes, start the next cycle (estimated) ----------
+    function rollStatements() {
+        state.items.forEach(i => {
+            if (!i.stmt) return;
+            let guard = 0;
+            while (i.paid && daysUntil(i.stmt.due) < 0 && guard++ < 24) {
+                const s = i.stmt;
+                s.cut = s.cut ? addMonthISO(s.cut) : null; s.due = addMonthISO(s.due);
+                if (i.balance > 0 && i.apr > 0) i.balance = round2(i.balance * (1 + i.apr / 1200));
+                s.full = i.balance; s.min = estimateMin(i.balance, i.apr); s.minEst = true; s.fees = 0; s.estimated = true;
+                i.amount = s.plan === 'min' ? s.min : s.plan === 'full' ? s.full : Math.min(i.amount, s.full);
+                i.date = parseISO(s.due).getDate();
+                i.paid = false; i.lastPay = null;
+            }
+        });
+    }
+
+    function stmtLine(i) {
+        const s = i.stmt, b = dueBadgeText(s.due);
+        return `<p class="tiny muted mt-1">${esc(t('ccDueOn', { date: fmtDate(s.due) }))} · <span class="${b.tone === 'ok' ? '' : b.tone}">${esc(b.txt)}</span> · ${esc(t('ccPayMin'))} ${fmt(s.min, 0)} · ${esc(t('ccPayFull'))} ${fmt(s.full, 0)}</p>
+            <div class="row wrap mt-1" style="gap:10px">${s.estimated ? `<span class="pill warn">${esc(t('ccEstimated'))}</span>` : ''}
+            <button class="btn-link tiny" onclick="openCardInsight('${i.id}')">💡 ${esc(t('ccWhatIf'))}</button></div>`;
+    }
+
+    function ccTip() {
+        const cards = state.items.filter(i => i.stmt && !i.paid && i.stmt.full > 0).sort((a, b) => daysUntil(a.stmt.due) - daysUntil(b.stmt.due));
+        const c = cards[0];
+        if (!c) return '';
+        const n = daysUntil(c.stmt.due);
+        if (n < 0) return `<p class="danger" style="font-weight:600">${esc(t('ccTipLate', { name: c.name, min: fmt(c.stmt.min) }))}</p><div class="divider" style="margin:12px 0"></div>`;
+        if (n <= 7) {
+            const s = cardScenarios(stmtData(c));
+            return `<p class="warn" style="font-weight:600">${esc(t('ccTipSoon', { name: c.name, n, int: fmt(s.nextInt, 0) }))} <button class="btn-link small" onclick="openCardInsight('${c.id}')">${esc(t('ccWhatIf'))}</button></p><div class="divider" style="margin:12px 0"></div>`;
+        }
+        return '';
+    }
+
+    // ---------- card modal ----------
+    let ccEditId = null, ccPlan = 'full';
+    function openCardModal(id) {
+        const i = id ? state.items.find(x => x.id === id) : null;
+        ccEditId = i ? i.id : null;
+        closeModal('entry-modal');
+        const s = i && i.stmt;
+        const v = (k, val) => $(k).value = (val === 0 || val == null) ? '' : val;
+        v('cc-name', i ? i.name : ''); v('cc-full', s ? s.full : ''); v('cc-min', s && !s.minEst ? s.min : '');
+        v('cc-cut', s ? s.cut : ''); v('cc-due', s ? s.due : ''); v('cc-apr', i ? i.apr : '');
+        v('cc-limit', s ? s.limit : ''); v('cc-fees', s ? s.fees : ''); v('cc-custom', i && s && s.plan === 'custom' ? i.amount : '');
+        ccPlan = s ? s.plan : 'full';
+        $('cc-title').textContent = t(i ? 'ccTitleEdit' : 'ccTitle');
+        $('cc-error').classList.add('hidden');
+        document.querySelectorAll('#card-modal .input').forEach(el => el.classList.remove('invalid'));
+        openModal('card-modal');
+        ccPreview();
+    }
+    function pickCcPlan(p) { ccPlan = p; ccPreview(); }
+    function readCcForm() {
+        const n = id => parseFloat($(id).value);
+        const full = n('cc-full'), minRaw = n('cc-min'), apr = n('cc-apr');
+        const d = { name: $('cc-name').value.trim(), full: full >= 0 ? full : NaN, apr: apr >= 0 ? apr : NaN, due: $('cc-due').value || '',
+                    cut: $('cc-cut').value || null, limit: n('cc-limit') > 0 ? n('cc-limit') : 0, fees: n('cc-fees') > 0 ? n('cc-fees') : 0 };
+        d.minEst = !(minRaw > 0);
+        d.min = d.minEst ? estimateMin(d.full || 0, d.apr || 0) : minRaw;
+        d.custom = n('cc-custom');
+        return d;
+    }
+    function ccPreview() {
+        document.querySelectorAll('[data-ccplan]').forEach(b => b.classList.toggle('active', b.dataset.ccplan === ccPlan));
+        $('cc-custom-wrap').classList.toggle('hidden', ccPlan !== 'custom');
+        const d = readCcForm();
+        $('cc-min').placeholder = d.full > 0 && d.apr >= 0 ? `≈ ${fmt(estimateMin(d.full, d.apr || 0))}` : '';
+        const ready = d.full >= 0 && d.due && d.apr >= 0;
+        $('cc-preview-wrap').classList.toggle('hidden', !ready);
+        if (ready) $('cc-preview').innerHTML = cardInsightHTML(d);
+    }
+    function saveCard() {
+        const d = readCcForm(), errs = [];
+        const mark = (id, bad, k) => { $(id).classList.toggle('invalid', bad); if (bad) errs.push(t(k)); };
+        mark('cc-full', !(d.full >= 0), 'ccErrFull');
+        mark('cc-due', !d.due, 'ccErrDue');
+        mark('cc-apr', !(d.apr >= 0), 'ccErrApr');
+        mark('cc-custom', ccPlan === 'custom' && !(d.custom > 0), 'ccErrCustom');
+        if (errs.length) { $('cc-error').textContent = errs.join(' '); $('cc-error').classList.remove('hidden'); return; }
+        const amount = round2(ccPlan === 'full' ? d.full : ccPlan === 'min' ? Math.min(d.full, d.min) : d.custom);
+        const stmt = sanitizeStmt({ ...d, plan: ccPlan, estimated: false });
+        const name = d.name || t('subCC');
+        let item = ccEditId && state.items.find(x => x.id === ccEditId);
+        if (item) {
+            Object.assign(item, { name, apr: d.apr, amount, balance: round2(d.full), date: parseISO(d.due).getDate(), stmt,
+                                  startBalance: Math.max(item.startBalance || 0, round2(d.full)), subtype: 'cc', type: 'debt', completed: false });
+            if (item.paid && daysUntil(d.due) >= 0 && !(item.history || []).some(h => h.ts > parseISO(d.cut || d.due).getTime())) { item.paid = false; item.lastPay = null; }
+        } else {
+            item = { id: uid(), type: 'debt', subtype: 'cc', name, amount, date: parseISO(d.due).getDate(), balance: round2(d.full), startBalance: round2(d.full),
+                     apr: d.apr, totalMonths: 0, monthsPaid: 0, paid: false, completed: false, extraPaid: 0, lastPay: null, history: [], stmt };
+            state.items.push(item);
+        }
+        closeModal('card-modal'); render();
+        openCardInsight(item.id);
+    }
+
+    function openCardInsight(id) {
+        const i = state.items.find(x => x.id === id);
+        if (!i || !i.stmt) return;
+        $('ci-title').textContent = `${t('ccInsightTitle')} · ${i.name}`;
+        $('ci-body').innerHTML = cardInsightHTML(stmtData(i)) + glossaryHTML();
+        $('ci-pay').classList.toggle('hidden', !!i.paid);
+        $('ci-pay').onclick = () => { closeModal('card-insight'); openPaymentModal(i.id); };
+        $('ci-edit').onclick = () => { closeModal('card-insight'); openCardModal(i.id); };
+        openModal('card-insight');
+    }
+
+    // ---------- payment with statement choices ----------
+    let ccPayChoice = 'full';
+    function setupStmtPayment(item) {
+        const wrap = $('pay-stmt');
+        if (!item.stmt) { wrap.classList.add('hidden'); return false; }
+        wrap.classList.remove('hidden');
+        $('pay-extra-wrap').classList.add('hidden');
+        const s = item.stmt;
+        ccPayChoice = s.plan === 'min' ? 'min' : s.plan === 'custom' ? 'other' : 'full';
+        $('pay-cc-full').innerHTML = `${esc(t('ccPayFull'))}<b class="num">${fmt(s.full, 0)}</b>`;
+        $('pay-cc-min').innerHTML = `${esc(t('ccPayMin'))}<b class="num">${fmt(Math.min(s.min, s.full), 0)}</b>`;
+        $('pay-cc-other').innerHTML = `${esc(t('ccPayOther'))}<b>…</b>`;
+        $('pay-cc-amount').value = s.plan === 'custom' ? item.amount : '';
+        stmtPayPreview();
+        return true;
+    }
+    function pickPayChoice(k) { ccPayChoice = k; stmtPayPreview(); if (k === 'other') setTimeout(() => $('pay-cc-amount').focus(), 30); }
+    function stmtPayAmount(item) {
+        const s = item.stmt;
+        if (ccPayChoice === 'full') return s.full;
+        if (ccPayChoice === 'min') return Math.min(s.min, s.full);
+        return Math.max(0, parseFloat($('pay-cc-amount').value) || 0);
+    }
+    function stmtPayPreview() {
+        const item = state.items.find(i => i.id === activePaymentId);
+        if (!item || !item.stmt) return;
+        ['full', 'min', 'other'].forEach(k => $('pay-cc-' + k).classList.toggle('on', ccPayChoice === k));
+        $('pay-cc-amount-wrap').classList.toggle('hidden', ccPayChoice !== 'other');
+        const s = item.stmt, amt = stmtPayAmount(item), rest = Math.max(0, s.full - amt), el = $('pay-cc-msg');
+        if (amt >= s.full - 0.005) { el.className = 'note ok small'; el.textContent = t('ccPayOkFull'); }
+        else if (amt < Math.min(s.min, s.full) - 0.005) { el.className = 'note danger small'; el.textContent = t('ccPayLow', { min: fmt(s.min) }); }
+        else { el.className = 'note warn small'; el.textContent = t('ccPayRest', { rest: fmt(rest), int: fmt(rest * item.apr / 1200) }); }
+    }
+    // Returns a celebrate object or null; called from confirmTransaction for statement cards.
+    function confirmStmtPayment(item) {
+        const s = item.stmt, amt = round2(Math.min(s.full, stmtPayAmount(item)));
+        if (!(amt > 0)) return { abort: true };
+        item.lastPay = { balance: item.balance, monthsPaid: 0, extra: 0, stmt: { ...s }, wasPaid: false };
+        const extra = Math.max(0, round2(amt - item.amount));
+        item.balance = round2(Math.max(0, item.balance - amt));
+        item.extraPaid = (item.extraPaid || 0) + extra;
+        item.lastPay.extra = extra;
+        item.history = item.history || [];
+        item.history.push({ ts: Date.now(), amount: round2(amt - extra), extra });
+        const minNeeded = Math.min(s.min, s.full);
+        s.full = round2(Math.max(0, s.full - amt));
+        if (amt + 0.005 < minNeeded) { s.min = round2(minNeeded - amt); return { short: s.min }; }
+        s.min = 0;
+        item.paid = true;
+        return s.full === 0 ? { big: true, msg: t('ccPaidFullToast') } : null;
+    }
+
+    // ================= Web version: account login (Supabase) + 6-digit device PIN =================
+    // Security model: email + password identify you to the server. The 6-digit PIN never leaves the device:
+    // it derives (PBKDF2) an AES-GCM key that encrypts this device's saved session, so the PIN unlocks the
+    // account only on a device where you already signed in. Five wrong PINs erase the saved session.
+    Object.assign(I18N.es, {
+        aTagline: 'Tu dinero, claro y bajo control.',
+        aLoginTitle: 'Inicia sesión', aEmail: 'Correo electrónico', aPassword: 'Contraseña', aPassword2: 'Confirma la contraseña',
+        aLoginBtn: 'Entrar', aNoAccount: '¿No tienes cuenta?', aCreate: 'Crear cuenta', aForgot: '¿Olvidaste tu contraseña?',
+        aSignupTitle: 'Crea tu cuenta', aSignupBtn: 'Crear cuenta', aHaveAccount: '¿Ya tienes cuenta?', aLoginLink: 'Inicia sesión',
+        aPwHint: 'Mínimo 8 caracteres.',
+        aCheckTitle: 'Revisa tu correo', aCheckBody: 'Te enviamos un enlace a {email}. Ábrelo desde este dispositivo para confirmar tu cuenta.', aBack: 'Volver',
+        aForgotTitle: 'Recupera tu contraseña', aForgotBody: 'Te enviaremos un enlace para crear una nueva.', aForgotBtn: 'Enviar enlace',
+        aForgotSent: 'Si el correo está registrado, recibirás un enlace en unos minutos.',
+        aNewPassTitle: 'Nueva contraseña', aNewPassBtn: 'Guardar contraseña',
+        aPinCreateTitle: 'Crea tu PIN de 6 dígitos', aPinCreateBody: 'Es el PIN de tu cuenta: lo usarás en todos tus dispositivos. En cada dispositivo nuevo te lo pediremos después de tu contraseña, y luego entras solo con tu correo y PIN.',
+        aPinWrongN: 'PIN incorrecto. Te quedan {n} intentos.', aPinVerifyTitle: 'Ingresa tu PIN', aPinVerifyBody: 'Tu cuenta ya tiene un PIN. Úsalo para activar este dispositivo.', aPinForgot: 'Olvidé mi PIN',
+        aPinResetTitle: 'Crea un PIN nuevo', aPinResetBody: 'Reemplaza el PIN de tu cuenta. En tus otros dispositivos entrarás una vez con tu contraseña y luego con este PIN.',
+        aPinUnify: 'Tu cuenta ahora usa un solo PIN para todos tus dispositivos. Ingresa el PIN de tu cuenta.',
+        aPinSaveFail: 'No pudimos guardar el PIN en tu cuenta. Revisa tu internet y vuelve a crearlo desde Perfil → Cambiar PIN.',
+        aPinConfirmTitle: 'Confirma tu PIN', aPinMismatch: 'Los PIN no coinciden. Intenta de nuevo.',
+        aPinTitle: 'Bienvenido de vuelta', aPinBody: 'Ingresa tu correo y tu PIN.', aPinWrong: 'PIN incorrecto. Te quedan {n} intentos. Si cambiaste tu PIN en otro dispositivo, usa tu contraseña.',
+        aPinLocked: 'Por seguridad, entra con tu contraseña.', aPinOtherEmail: 'Este dispositivo está registrado con otro correo. Entra con tu contraseña.',
+        aUsePassword: 'Usar mi contraseña', aOtherAccount: 'Usar otra cuenta', aExpired: 'Tu sesión expiró. Entra con tu contraseña.',
+        aLoading: 'Cargando…', aPinChanged: 'PIN actualizado 🔒', aChangePin: 'Cambiar PIN', aLogout: 'Cerrar sesión', aLockNow: 'Bloquear ahora',
+        aLogoutConfirm: '¿Cerrar sesión en este dispositivo? Tus datos quedan guardados en tu cuenta.',
+        aSignedAs: 'Sesión: {email}', aOffline: 'Sin conexión: abriste tus datos guardados en este dispositivo.',
+        aConfigTitle: 'Falta conectar el servidor', aConfigBody: 'Abre el archivo config.js y pega la URL y la clave pública de tu proyecto de Supabase. La guía explica cada paso.',
+        aNoCrypto: 'Este navegador no permite guardar el PIN de forma segura. Abre la app desde su dirección https.',
+        eCreds: 'Correo o contraseña incorrectos.', eConfirm: 'Confirma tu correo primero: revisa el enlace que te enviamos.',
+        eExists: 'Ya existe una cuenta con ese correo. Inicia sesión.', eWeak: 'La contraseña es muy débil. Usa al menos 8 caracteres.',
+        eMatch: 'Las contraseñas no coinciden.', eEmail: 'Escribe un correo válido.', eRate: 'Demasiados intentos. Espera unos minutos.',
+        eNetwork: 'No hay conexión con el servidor. Revisa tu internet.', eGeneric: 'Algo salió mal: {msg}'
+    });
+    Object.assign(I18N.en, {
+        aTagline: 'Your money, clear and under control.',
+        aLoginTitle: 'Sign in', aEmail: 'Email', aPassword: 'Password', aPassword2: 'Confirm password',
+        aLoginBtn: 'Sign in', aNoAccount: "Don't have an account?", aCreate: 'Create account', aForgot: 'Forgot your password?',
+        aSignupTitle: 'Create your account', aSignupBtn: 'Create account', aHaveAccount: 'Already have an account?', aLoginLink: 'Sign in',
+        aPwHint: 'At least 8 characters.',
+        aCheckTitle: 'Check your email', aCheckBody: 'We sent a link to {email}. Open it on this device to confirm your account.', aBack: 'Back',
+        aForgotTitle: 'Reset your password', aForgotBody: "We'll email you a link to create a new one.", aForgotBtn: 'Send link',
+        aForgotSent: "If the email is registered, you'll get a link in a few minutes.",
+        aNewPassTitle: 'New password', aNewPassBtn: 'Save password',
+        aPinCreateTitle: 'Create your 6-digit PIN', aPinCreateBody: "This is your account PIN: you'll use it on all your devices. On each new device we ask for it after your password, then you sign in with just your email and PIN.",
+        aPinWrongN: 'Wrong PIN. {n} attempts left.', aPinVerifyTitle: 'Enter your PIN', aPinVerifyBody: 'Your account already has a PIN. Use it to set up this device.', aPinForgot: 'I forgot my PIN',
+        aPinResetTitle: 'Create a new PIN', aPinResetBody: 'This replaces your account PIN. On your other devices you sign in once with your password, then with this PIN.',
+        aPinUnify: 'Your account now uses one PIN for all your devices. Enter your account PIN.',
+        aPinSaveFail: "We couldn't save the PIN to your account. Check your internet and create it again from Profile → Change PIN.",
+        aPinConfirmTitle: 'Confirm your PIN', aPinMismatch: "PINs don't match. Try again.",
+        aPinTitle: 'Welcome back', aPinBody: 'Enter your email and PIN.', aPinWrong: 'Wrong PIN. {n} attempts left. If you changed your PIN on another device, use your password.',
+        aPinLocked: 'For security, sign in with your password.', aPinOtherEmail: 'This device is registered to another email. Sign in with your password.',
+        aUsePassword: 'Use my password', aOtherAccount: 'Use another account', aExpired: 'Your session expired. Sign in with your password.',
+        aLoading: 'Loading…', aPinChanged: 'PIN updated 🔒', aChangePin: 'Change PIN', aLogout: 'Sign out', aLockNow: 'Lock now',
+        aLogoutConfirm: 'Sign out on this device? Your data stays saved in your account.',
+        aSignedAs: 'Signed in: {email}', aOffline: "Offline: you opened the data saved on this device.",
+        aConfigTitle: 'Server not connected yet', aConfigBody: 'Open config.js and paste your Supabase project URL and public key. The guide explains each step.',
+        aNoCrypto: "This browser can't store the PIN securely. Open the app from its https address.",
+        eCreds: 'Wrong email or password.', eConfirm: 'Confirm your email first: check the link we sent you.',
+        eExists: 'An account with that email already exists. Sign in.', eWeak: 'Password is too weak. Use at least 8 characters.',
+        eMatch: "Passwords don't match.", eEmail: 'Enter a valid email.', eRate: 'Too many attempts. Wait a few minutes.',
+        eNetwork: "Can't reach the server. Check your internet.", eGeneric: 'Something went wrong: {msg}'
+    });
+
+    const AUTH = { sb: null, user: null, vaultKey: null, mem: new Map(), view: null, opts: {}, pinBuf: '', pinStage: 'new', pinFirst: '',
+                   started: false, hiddenAt: 0, recovery: false, channel: null, lastPull: 0, offline: false };
+    const VAULT_KEY = 'ap.vault', DEVICE_KEY = 'ap.device', PIN_LEN = 6, MAX_TRIES = 5;
+    const lsGet = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+    const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch (e) { /* blocked */ } };
+    const lsDel = k => { try { localStorage.removeItem(k); } catch (e) { /* blocked */ } };
+    function getDevice() { try { return JSON.parse(lsGet(DEVICE_KEY)); } catch (e) { return null; } }
+    function setDevice(d) { lsSet(DEVICE_KEY, JSON.stringify(d)); }
+    const appUrl = () => location.origin + location.pathname;
+
+    // ---------- crypto vault ----------
+    const b64e = buf => { const a = new Uint8Array(buf); let s = ''; for (let i = 0; i < a.length; i++) s += String.fromCharCode(a[i]); return btoa(s); };
+    const b64d = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+    const hasCrypto = () => !!(window.crypto && crypto.subtle && window.isSecureContext !== false);
+    async function deriveKey(pinStr, saltB64) {
+        const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(pinStr), 'PBKDF2', false, ['deriveKey']);
+        return crypto.subtle.deriveKey({ name: 'PBKDF2', salt: b64d(saltB64), iterations: 250000, hash: 'SHA-256' },
+            base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+    }
+    let vaultChain = Promise.resolve();
+    function persistVault() {
+        if (!AUTH.vaultKey) return vaultChain;
+        const key = AUTH.vaultKey, snapshot = JSON.stringify([...AUTH.mem]);
+        vaultChain = vaultChain.then(async () => {
+            const iv = crypto.getRandomValues(new Uint8Array(12));
+            const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode(snapshot));
+            lsSet(VAULT_KEY, JSON.stringify({ iv: b64e(iv), ct: b64e(ct) }));
+        }).catch(() => { /* keep the previous vault */ });
+        return vaultChain;
+    }
+    async function openVault(pinStr) {
+        const dev = getDevice(), raw = lsGet(VAULT_KEY);
+        if (!dev || !raw) return false;
+        try {
+            const key = await deriveKey(pinStr, dev.salt), v = JSON.parse(raw);
+            const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64d(v.iv) }, key, b64d(v.ct));
+            AUTH.mem = new Map(JSON.parse(new TextDecoder().decode(pt)));
+            AUTH.vaultKey = key;
+            return true;
+        } catch (e) { return false; }
+    }
+    function wipeDevice() { lsDel(VAULT_KEY); lsDel(DEVICE_KEY); AUTH.mem = new Map(); AUTH.vaultKey = null; }
+    // Supabase keeps its session here; nothing is written to disk until the PIN key exists, and then only encrypted.
+    const authStorage = {
+        getItem: k => (AUTH.mem.has(k) ? AUTH.mem.get(k) : null),
+        setItem: (k, v) => { AUTH.mem.set(k, v); persistVault(); },
+        removeItem: k => { AUTH.mem.delete(k); persistVault(); }
+    };
+
+    // ---------- account PIN: one PIN for every device (verifier kept in the account, hashed) ----------
+    async function pinVerifier(pinStr, saltB64) {
+        const base = await crypto.subtle.importKey('raw', new TextEncoder().encode('ap-account:' + pinStr), 'PBKDF2', false, ['deriveBits']);
+        const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', salt: b64d(saltB64), iterations: 310000, hash: 'SHA-256' }, base, 256);
+        return b64e(bits);
+    }
+    function accountPin(user) {
+        const m = (user && user.user_metadata) || {};
+        return m.pin_hash && m.pin_salt ? { hash: m.pin_hash, salt: m.pin_salt } : null;
+    }
+    async function freshUser(fallback) {
+        try { const r = await makeClient().auth.getUser(); if (r && r.data && r.data.user) return r.data.user; } catch (e) { /* offline */ }
+        return fallback;
+    }
+    async function saveAccountPin(pinStr) {
+        try {
+            const salt = b64e(crypto.getRandomValues(new Uint8Array(16)));
+            const hash = await pinVerifier(pinStr, salt);
+            const { data, error } = await makeClient().auth.updateUser({ data: { pin_salt: salt, pin_hash: hash, pin_v: 1 } });
+            if (error) throw error;
+            if (data && data.user) AUTH.user = data.user;
+            return true;
+        } catch (e) { return false; }
+    }
+    async function setupDeviceVault(pinStr, user) {
+        const salt = b64e(crypto.getRandomValues(new Uint8Array(16)));
+        AUTH.vaultKey = await deriveKey(pinStr, salt);
+        setDevice({ email: user.email, uid: user.id, salt, tries: 0 });
+        await persistVault();
+    }
+    function clearOtherUsers(uid) {
+        try { Object.keys(localStorage).filter(k => k.startsWith('arch_pro_v9:') && k !== 'arch_pro_v9:' + uid).forEach(lsDel); } catch (e) { /* blocked */ }
+    }
+    // After a correct password: reuse the account PIN if there is one, otherwise create it.
+    async function afterPasswordAuth(user) {
+        AUTH.user = await freshUser(user);
+        AUTH.verifyTries = 0;
+        showAuth(accountPin(AUTH.user) ? 'pinverify' : 'pinset');
+    }
+
+    function makeClient() {
+        if (AUTH.sb) return AUTH.sb;
+        const C = window.APP_CONFIG;
+        AUTH.sb = window.supabase.createClient(C.supabaseUrl, C.supabaseAnonKey, {
+            auth: { storage: authStorage, storageKey: 'ap-auth', persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: 'implicit' }
+        });
+        AUTH.sb.auth.onAuthStateChange(ev => { if (ev === 'PASSWORD_RECOVERY') { AUTH.recovery = true; showAuth('newpass'); } });
+        return AUTH.sb;
+    }
+
+    function authErr(error) {
+        if (!error) return '';
+        const code = String(error.code || ''), msg = String(error.message || error);
+        if (error instanceof TypeError || /fetch|network|Failed to/i.test(msg)) return t('eNetwork');
+        if (code === 'invalid_credentials' || /invalid login/i.test(msg)) return t('eCreds');
+        if (code === 'email_not_confirmed' || /not confirmed/i.test(msg)) return t('eConfirm');
+        if (code === 'user_already_exists' || /already registered/i.test(msg)) return t('eExists');
+        if (code === 'weak_password' || /password should/i.test(msg)) return t('eWeak');
+        if (/rate|too many/i.test(code + msg) || error.status === 429) return t('eRate');
+        return t('eGeneric', { msg });
+    }
+    const validEmail = e => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+
+    // ---------- screens ----------
+    function authShell(inner) {
+        return `<div class="auth-inner"><div class="auth-card">
+            <div class="auth-brand">
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAveElEQVR4nO19eZxcVZX/95x736ul9yX7CoQQEsKWiAhqd7tgRhkdlm6YgQEVJYCCCiigQHWxBcOA7JDAoKAoduGoLGpcprsVEEiCIZAYshCSdLbupNeqruW9e8/vj/eqExEhgaTDfPydz6e7IOlUvXvOuWf9ntPA/6d/PqpDnQZAB/o53g/Ew/lhjS0tCgAy8+acecz8+cdDhJBIDOszvN9oWA/fOWIEAUDmkPLj+2rdr4NIGptn/FPfhGHWvjYAgFdqywoTqk879NvfHpdCo/1nvgXDevD2+hkCAG6JKbUHVavs1LE3gkjq6uv/vwCGhxoFAJRDZfD64Y+pOueg2+Z9or2hwUfoH/7Z6IBonpBY7RgU4lq8KaMemHLxxeVobJR/RlM0zAdOEQBYz+RUDIA/6BVGVU32T5j+EIjsrLFjFf7JwtNhFUBd2woCAC8v3QQf2vGU19vvFyaOOO3gB269duncud6sJQv0cD7TgaYDcuWVZ96ABZyYDyW+LqTTfmHiiOTUO2740tLZc71ZCxY4B+K59pJIBJRIgPEebu0BEQBl8qsoC5AS0hEf7BnlkTG5KeMfmHL7jectnTvXq2ttfV9my42NjUqkRTFBiCDJJCwAEUlwS0vjXgcSwxuGtsECgGzoXSY7B30IlBP1hR0Q+R7nHWu9w8Y/OO2hWy9qb2jwIYL3iWOmlpZGJSKUSqUMUZOxAnXKp2aN+fwZH5kAVFQRJW1TU8qI7N3zDr+GiRCIaMqiW5fnx5TOQK5gTc5hO+iAxAq0Y6NOVEW2dd+x6syLLgNg6loTur0h6e/Hp6JEIkHJZFIASPCcoMZUI08fMZ2u+1jSl+BPcdXl/3rih46tPnNslfpYqWsmRtjnQt6me9P2+dYX++++cv6vfyeS4ObmJJJJ7Hq/f/TB+/FQb0lFZk792U3/lZ82+jI/nfEZSpu0A/gaTCSilY1WVSh3W2+7fn7dF19JJl9vlBaVal4hSCbtfn3AIkf+lm3OdTf/579OPci9aNIo/viEEQrK+CDfwIGPqAbiUQf9A4I//Lln/qlf/cUVxbexkuC25jZuSLabv3tXHJAbkGBQ0k677ZvH5mdPWlJwSViIRQgmGwGTA2YCNPlORZl2ezM73I3dly0/6yuPAKEA65MG9PaatYdEAOS8WxPVSqF04deTmwEYAPiPCy+sGjuVp9VWqDkjqum0sSP0jKqYDz+TFQ1jXBZ2SShCgIaBA2vLIz5K43H12G92XnfVwjX3bVi5PQPsHAAAIuDaaxOcfJMCDa8AEglGMimQBIGSdsovbvl9fnLNx20ma4hYidUgEwMxgQkgEkOxiIorB872vp9j5YYrln392jXA0E16S63a88cJGPLFe797WM1E96Vo1GzCYL5QGmF2xB8Vc0xtZSng2Dwkm7WarERJVIQNImwQIYFDFg4MIixQ4kuJawXicE+PP8DW7+vqtatWrc+3fOHKJx4BkBcRIqKhZz4wUUZLi0JTkzn8wcRHc9PGt+fJNwylwACsAyUuFAjMAESENNlIaanSXf0D7o70re4fXr7zmfvu6wGKN6LZYLdD7Q0lRDhJZC96/L+uHHVo9TzJ9UMXCnDFhzKeOMYzDgxHYDnKBhEKvly2cMkEX7BwGHAR/FlUWymJMDlkENNAoQCsWJdf/PhvO7447/4/v1oUPDBcAggcr3ww8Z36KPTz7UChccYMSjU1mUNTt/y8MHX0v/npQQN2FACwUXBJI/gfCgJta41ipSKRKNTOvo1OX+a22G9f/sHvFy7sA4BGaVHTm1fIm6/4nlBCEpykpP3iQzdcVDo6dkNJuVPl2AJ0IY8ICVzx4MIgAgOHDSLkh8y3iJAPhyxcAhxYKBI4sIiwkSgbG0feVkbhqJFleKY933v/kztn/uhHv94MEIggwxLi1bU1KwDITq76SPdB8UuRTNoVWKEgQs66HV/T3bk+iscJAgtRsAQUxIcQoAggCBSRYt+IyQwYWxGdiEPG3J4/48PLP/bLB799/A03jEtRk0kmkzYhwo0tLQqy58qVpKRNSIIf+uLV925oX33szjfSNw/02r96FJVBo2RQIhgUFxk4yFgHaesgLQ7SViNtXQxaB/1WY8AqaAZGuhbjXLETKiOquqTcWfk6r/zJjzqvef6Vns+VlEzsJiKh0IcNS9o/sisoQ+fZfxGjqp+a9l9XPr6yKbl6egvclVd+d+O0R26+QKoP/klOw0PBMMCwFshZHxHFiBKBBSAGMbNCwZOC71mnKjrRGV15Y+mI+OWfWvTQY7Kx+7+TREuLn1vXmtD1bbB7ciuSlLSNLS0q1dT0BoCrzv3+PIrWVh3u9w/4Phvtg+CB4IavnhB8MHyxSAswTmcxvaSAEQ7AYg0qStUbb3gbnl3Se83Z30z9FEDhrT53WASQWrFCAID+sm157jMjoA+b+HhdXd1x7Y3N+ektM9yVTU2PHfrYHUdFZ066Muv3e+yLAyJYIxj0fBjFKHMUtArzf02kQYrznvi+b5yYqlLV1RdSuXvB51of/j31DH6/86nFT7U3JAfaEZiYlakZlGpqsnhbp50CROiUu+cf44wb8Y2dmbzV4qiCMCIguGB4IDhgeIbgkQWsh1nxLD5QMgCHCBbKR2W5XrJscNF51y49Z/ny5Z2KCb//w0f1vfeOlFQqZXb/xOFzwiKUIKJHHr9riT917DHRtdueWHPqV06DiJmeSjkrm5oKh/3svnsLU8dcmO8b8Ngz2gIEIxAhaCKUuYxSl6AIYBAUERQELCKKxSgmHS2JwzUC9A9u4GwhZTp7f9Ry5mUvFx8j0ZrQybdy2iLUiBSjKaUKZ3zqxXht7ChkBqzLwi4sXPERYQOHfLjkQ8OAbR5zyrswu6Qf1hKswOiKUtX2TPrphnN/fAoRvP/93zrd0PDWOQAwjKWIurZmlQSs8swzkivY/ORRnz305wt/NotIr2xqKkz51R2R10678CJn1Za7Im7UEYGQZy2DwCBYYfTkgM6MIGcIjmJoEhBZkAIpZq1AMJmM8fJpwxV6UnxS9eUlU0e9dP5zDy/64pP3njlr1snxZEPSB5G0yN/4CZq1dKlOUZPZevInb82Pqj6qJ531M9CcsQoZUchAI2MDHzAoLvqMQn15H2aXDsC3Cr5VVpfF1Asvpl9qOPfHjVqRd/rpjaqhod3/R8wHhskEAbv8gO7NPak9uTjn5wo8dcxn04se/vX0X75w9spPf23blNW/iqye+ulLDv/+9zbRuJr5eVfD5j2fWGlQIIi8BbYPMjI+oSbKKNeAQwSIgAFokNJEQN6z+XzBagWtRkZPitVGTzru3tPWHN110kMbW1c+1ERNnUBwI9pQj/bZs71j7l94QWH0yK929wz4ESjtMeBBwYOBB4ZHFjEQ0j7jM+Xd+HB5Br5xYUXEjQObNpn0DfcvP4uZsj8+9XTV9CZz81Y0nHkAgUjqPnpOtOOqhr/mRpROttlCwSkvd92u/jeir3ee/+qXv/67Ysh6+O3f/XT+oJELvdrycWYwYwAmkGKAwvyVABDKXMLImEW148OFBQRgEigAGgIFIwxYDUBHtXIdDX9nZpvXmb3npZ+8cOeLjz7aTwAOf+AHX7Vjau6yJm8ipsAOg1zy4TLgkoULiwgFCfiMSB+uHvMGtBQgIiBrDMejauFPNn577rVPz2ttTeiGPaxdDWsiVtfaqtsbGvwpP73vem/6xKu9vj4fPoijEeUOFuB09d9e/sflNyy+556dADAzkRifO3z89/xxNafnGbC5gq8EKhAlA8IwAIgIJcrH6KjFqKiPuAIIFhALJYADgGEhsFaRWMfVOhZx4XelX+/flrvpF521De7BE86S7IBV+Rw5LKRhg/ieBS4ZRMhCM+BaD/PHr8OMyE4YS4CIVSUOrX4tt/GwOU/NELkgS5R8xyJckYa5HN1mISCs3LaAu/rScFwmgG160OasL7lxtV/fedKxf5n28D0XHXfWWeWvJJMda878cmNk3fZzY/2FzZGqKi2RCFlh31qIRZAjkBUM5BirezRe6nKxPu2gYBXiTIiwALAACRQJa5Cmgidef7+JVjkHT5pZ8+DHj4uf5WXTNusrNsqhHDRy5CJLDgZFIWM1Bq1GV8HBh0v6MCPeDysKzApKKQunlFZv9u8FtmfQBsZelEeGvRTRKC0qRU1masuC+fnDJnyzsKPbZ4GGFcBaI25EOazBPek1bsZ/hLb1tqy6/PLVADD1pw9f41WXfcNUV1TZXBY2kwNMoGwU5pQWwa2IK2BstICJJQXURDwoGFgrUARosnAg0ELWZZIyZbElG1FPbKvG9nwUMWUg1sARCxXeBAWLUpvBjyYuw6GxDCxHQEKiIpp2djuZr92+eNqjj7ZvTiRAYZNmj+jA9APQTDMv6qzI/Mtxy/OVJeMwmBcoYlgAVsQSW0RjSkfjUH3prBrMP8Np72fuc2t+JQM9EW/O7DP9qtJ/9xx1mLVQYgyo2BkkBhFgheB5AlcMRsU9TK3MY1y8AAUfsIHjdkHQEJBYlGqLjHXxWEct1g/GEYcHsUFpwSWLjA98vuQ1zBu5HHly4ThRkNLGqS5Xq1bk/nD4J2//hEiCifauFDL8DXAiQUsLv3JfsmfatIPOk8Oji/JMhnyQMBEUE6AUFYz1vLQ1roqpitpPMviT3sgKoOCt4IH887ype1FUvK3ZitITUFEeDUJKBogglkAiiDDBiINNAxpb+iMYX+bhyJpBTIrnoERgrYBgoVmQtxblKoNzJ3h4aF0t3hiII+YAlgieKERNBqdG16KQz8NTCpA8tDYC36Kjc7BdAArNz14J4MC0+5qaTGNLi1r1tW/91t3YdY0bK9GGyIcAIgyAQQRmEQ3PF78/bQr9/X5eAV5l6Qxv8pjz8lMnfCM3esTHJBKNihCBFEAcREcSXDQjBBLAVQqsNTak4/htRy3+1FmLnImgVAsUhUIgC88SojSI/5i8DTV6EFmfQWLR5zE+7a7H4bIF/TmBKRTgFTwY3+NsdxYdHZnnCJBU18q9rsi+2QRRo7TslVA620YQ0Bb0e/euEkl1ra2qvaHBP2TBnQv8wyedX8jmfBIoKCYSgkgQ4UAAEkAEAisiFiIkAJQCM8gi6HgAQTuFQksHAEIgCTroTAQhhicKlcrDR2q7cXRFL8R6MCLFSAlxLmD1QAUe/OtY+E4EtejDY6U/x8HcA1/FoBSDlSMlpS51DUQHr7xz06GPPfH7LSIg2stG0b71ASLciBSl6J1qLrt9fksLo6nJHPqDhfO8Q8ZfmRcPyBUMCSsCEPRiAyZCLMQKIAQBgTi0+7t/Uqj9JAQCBYKg4lGD4zIxDDSssTimogcnjeqEQ4PwLOCyANaiVHv45aYx+HnHBMwvX4TP82KkKQrNBKU0iNlWVMR4zRZn3dGn/+RwIngSZNZ7JQAdMi6o19/ffIZ/7Nj/LEQkrT3DIiJirQhZZuIhyAUFCmop4xe0L+tNJv9y5I2BF/5MtCEVnrXxpy0q1dT0TpmgoKnJQoTXEF015cEFazBx5Pf8iqpy0z9gxUIIoiAUxJwSnE+IQBTYe9iitkug6UJh8SLkBPGQYEJRQoSgYKCYsbhnBDozCqdM7ECtk4GxQd0JFqgbO4CxfYtxqlmKAQMQF2BZAdYCSokYjb4B73UAnrV774B3CYAIkAQP3NP5tHSVnegfMeZi42URcRWUqyCK4QvAVop+Dhxqlg+C5H0MTs4Ozlp873POztwPnp9zaUuqqckrhpzvKITAMau1TU0PHXbddc+q6VPn+dUVp/glDmQgLWLEwBadgwJQtPVBoQ7F3lIAuCi+Kf7mdoQ3AuF3CX8+ygYb0uX48eoJOPvQDRjtDsBYBUChVhscO2oT7PoM4Lgga2E5CNjIWrGeg84ubwMAtLW17bUD3iUAQEBJWQmkAVxy8H9f3ZU7uOa6gXw27zhaueVRRMsiUK6CFQsrliyUiAgkMNCkylScRpV8gsdXfOK4l+//FtZu/3aKmp4eMsbv1DJsajJoaVGvNTW9BuDUqXffP0ePqb7MuM4n/JISbQt5iGcsBJaYCAJGsa0hIVuJsCuuYEAEJLuEUzRBEoarYgGxgqgWdHmleHTtZHx56lrU6CzIamhjsKNqAso3/xXxfBpWaRBZCCsoAbJZF929hVcAFEcf9pre7HCpTlr16+fdcH10c9+P3NKSiF8wlO3O6/7OrB7sL2gGtFZKAVaDRDNBK7CCJ2L60yY7OGAKo+NH2tmTnpr9h1tvBZGAWXZ5xXcQQiLBEOHVX73gN+tOa/pk7JU3jo9u3HqP05vZ5CqXdXmlpnipEuWQWLJi4IvACMhCSIr+ASLhLdmVH4AIQzfISvAlgBWG6xC25ivw+MaDwRSFQwKyPqwbRbpiLKTgQYyB9T0Yz4P1Pe7uLWDdFu+vANC1cuS76kn/PVMSCcaMGXTkEw9E+0/72Ev5kaWHouCLELEA0C6hpMKBG9cwxkAVbRJC+wqBMcZaxRIpK1Vq5fan+LJHz1i6ZEk2+KE9bJ63tCg0Ntriz0+vayy1p37ihEJF6Ukmoj8srA6XSKxcYjGIUoE58jyIZwRWTGDYSAVMZxAUAm4jNF0InPkQDijoL+SMg5PHbMJpY9YjW7BQWqO8dwvGvNIK5sC/CLHEXKJNfZHstxZmDn3+5Zc3JxLgvcmA/7EAiodvajLT7rmqLnfkuLYsG8MeVKBYAmsMYmUOymoiIJLQ8Q1ZA1gIyAgMkedWlDn61e2/549949MHS4tNYRdT94gSCUZzM4Hob3zJ9MsTowuja2eirOoYG418wDrudOvwJHJjJeJGYJkh+SwkdOAkEoSrRcaHTAcXTRMFfo0VCBaXTnkVU6M7kDNA1OQw5qXfIpJLA9oBhGx5ieLlG/Wrn7nyxaNFYPc2/Hx7AWAXgu3gn817rHDoyDP8ngFDgIIAYi3ECNwyjYoRMRAR7JC9DQQQ2F+CEXhuVbmjX978/Zc+efkX3wPMkNDSwnUjRlB7ff1bwVB4/DduGBOrHXmwlEWnWq2PzVHsfJTHFUc0kWaIEYixEBv4i6JTLv63gMEEZK2DY8u245JDlsPz8iBmjHrljyjf0QFyI2CQX14WVb9/Gd8/Z97i81pb63TYeNlr+odJV3s9LETI2didUD3ZAjRzkAQJAAI7jMKgRe/2HGxoSyV4CY4V+j1FcHL9/Z4cMfYLH3jipgvaG5J+47sbRxI0NZn2hgZ/6Nq1tKi61laNFlEg2I7vXb15zXfO/9PaS8757+wfNz3jr8+q/EubbW5pBwort8N2DYB8ASsOmB86ZhEOMnABrAFi5GN5bzVe7a1AjD1YBryS8iAxBIFhaTBPtGWH/A4A2trexWlCelvHGKIEzMGPz2spHFTTaHrTPkA6qHsFIZ/1DXSEUD4yHvRMijcxeNowTBThmGujA7Ygz6yfufT8G15HczPtY5wnobGF6y4aQat/srQSNaNXWSdWYwczVozH4gdtWSpx4IyughpdDSgFMcX0NfRgQmAI0p7GCeUb8JWpf4FHDsq3rEPtyiVgx5FYhKmjO5q+5ieZQ9sXr9wmob69m4d+27JDCilAQM729O3cl4XlwEwW42sxAkUEL+MjsyMbHgDFDAiQICVixYScB4wqifH0UbeBSBpn7PP5YMH0EdTe0OBzrOqrqBxZY/2CT0xMWoNjEXAkAuQs8q93IfdqB2QgD9YaUry6YcRkheCSwYr+KmzPxxElH+RGA8gkxMRcR7rS/If2xSu3SUujerfMB96pGNeUMkCCXvvKjc+p7sxzKhZlQAwg4UNbiAiUVsj1e8gNFEBD9VUKgiMKri0xqXx/2tD48s/OfviaulRYkHu3D/53lEgwmuvNxLNuG8NjRn9dXLaqrExxaSk4FgcrB8QMdh2oeBzI+siu2Ah/azdYBT2zomMWATQJ+goxvNZThQhbQLkgUmASyhQ0rdtkfggAzSs635MivXPhrTn4GbUze5v2gWKO/7cukMBaYXBnATYvIN7tmWToG2BFTFyDDqq5AgCmNzbuC4QzAKBxRjOBSJyZh1zhTD6oQpfErVNVQbq6Gk5tLfTIkXBqRoBLy0GsQJqhmVF4fRu8Ld1grQAblLLFhjpNDl4bqAWRCswtkY1HNa/bJhvvfGDbr0RAyQB2/q7pnQWQTPoQoYqF25+gzv7XyI0wrIS2ewjVASiGEWCwrwDmAFhLxVtQJIHOD2StX1ty0tH3XXFUEiTYy4mSt6REglONsFMuvmM8qqu/5BcGLZFVQoKgO8+giAMqLYWuqoFTXQuORiHEUI4Db2MXTFd/0PMXExT+oKC0QkeuEjmJwiUDBWPBEVq7Ve7vQEe2rbkuTC7ePe3R4evamtXSpQs9pz93h8OKQCIkssvhhkxmrZAbtPByEhTLpFhzAcIeOcS31lZGFU0Z9XUQpBHv3RcUtV9NmHgp1dSUwHoWmom0AmkF1gqkGMICYQtEHDg1NXAqqwBWUMzwNmyHZPIBS8JcwWGg2ytDn4lB+1mJOaTWbKcdP1iUXigCqn+P2g/soQDaG5IGIoSlax6lzt5OcnXQqQCCDlToxBgEssEtwG7RULHmIiKAscrrHxRTET3jqHlfm5xC03vbFRFq/7TzbxgjFeXnmWxaGFDMCqQCAUAxoDgIPxlW2PqWYbmiAm5VDUhrwPPgb90RVksDxWESZH2N/kIMMT9jlBOhNdv4nsWrVu1sa657T863SHt6cKlra1Zr73q03+kvLHTcCFkhK2HwVUSvkQ3esJD24edC2FkxR8BQ7YUkbwxqS2Nq5vgLQZC6+nffmatDPYNIaMq0r1FNbbmIb0gREUswaROAhKwo9uFo4XgpuyWVOsKaKZv2qCQKp6oKynVh+zNAJgfmoJxNAvhgZDxtK/yMWruNOx9s67tLBNSwD7Qf2IuWZHtbUGFQa7ffR13pNDtakbAMRf62mIQFVcbBfg9BkhNmxSY0QZZAFsrP5sVURL80K3F+bXt9s9mjYt2bKZHg9uZ6c/QXbhyBqqq5vl8QxcRMVgjWgMSQ4xCXVXCkslq7WpGT6VvvdG55KNrx+qfdvu67VTQGjseMKisH+QLTnw6qEzZ4biMM38uLWyjQsvW4ZfHiQPuxD7Qf2JuecDJpG9HCryXv2aIGvB+pWIwQVCExFMJZBCUJIuQHPHgFE+YL2JUfCAFgsnnPyMjKav+oQ74AIinOEOwNFbXfP/bISzB2TKWI74EI0A7pkhLlxmLKLeQKbveOJXrDhnnO6tX1+Zu+M2PNt04+7683ff7XUhIfCaUgJKLK4uBYFJLJQnwzdGOtha2WQX5tzcDGS+/bdL8kEryvtB/YS1REqnmFQEDq1q47uDp+nu+SJlO09TRUfxcA1hfk+g1KKxyYsHwRCCD4AbJgP58XXRG9+Mizz763vb55EEjueUtPhNoBc0TP7aNkxMiLPRHrVFS67PlA984d1LvzT8gM/trdtr1t2S0Xrtn9n9a1im5vbga50ZmGEfQotYYqL4PX1wfxDMjVsNbCgS+l6W5e+eqOG4GudBvaNIB9NjK7d7Y3mbSNqRZeffltq7g396SKxUgEwUC1hKVeK6EvYOT7fRg/LNKFt2NXjA02+bylcbUT8NkjzgGR1LUm9vgW1LW1KRAJz5z+VRo3vkJpBd7UsYjWvv4vpYtfnLnygjmnrrzs1AeW3XLhGhChLtGq0diikEhwewP5U8eiUuKxg4gBaEXCDFUWB7QGPAMmhmfYji0p8NZV29bOW/jGIwmRfar9wLuApaTCV2d7+jaVLkAAFikiF8KSrw0Mk8lb5AZM2P94Uy3eBgj/AnzByLJLp8yZE2mvbw4xDe9AItReX2+mn5eoptqaC01+UFgx6RHV41TX5tWL7/3WtlkLljiNLaLCBg/akw0+Uk0GK4OwVyZNPESXlpYRibATVEsp4oJjMYjvh4mXklqkaWB773c2ALkZqdReN93fifY++mhqMpAEr77k+mdVd6ZdxSJM1hiyYZcQAWjWhk30bJ8H6wNkw96t3a2RTsQmk7UYVTGl5JyPNAJAo7Q4da0J/XZOuaj97odOvIBHj66BKRjx8rAjRx3BJ3542fRbW+YsPX+Wn1rR/HeD3XXTg711PKL6ECotBRFZ0gqswuy4JMB4WQMTi0fVjm2Df/jODU+2NLa0qKZ3BhnsNb2r8K8xFWiR6hq4RecFgl25gFgEWFgbZMI2a1EYCCrIAePDG4AhXwAPRkxt+aUgkhQ1FdrDIYrEW2XJofYf9sVvlqGm6mLfywuTsNJM0t9jCmVlZe5BB//6hKsXHozrrvv7HKM+eCHXPRyOBhSEFYLsXTFU1AURQ5QilU1Lz9beawAglXrzg+wbelcCSIW92zVfuf431NW/jCNRhiUbruLY1QwXAETIDXhDCh0IQILELPhSfn+GqNI96gO/v2vRca0P/PL4Rfdd9cGrLhlVHJzb/bOL2h//UP25MmrkaFPIWSoG7hHHxpiAnTsSzjNbNjT+9KfqzTdgZH29AAC76jDAQHGQtLMOkY2uA2htVGklq77uX224+Ut/bmxpUUjte+0H3gM0MUyejNOT/54WRRZWRHaZGgntPQHwchaFQR9DvXKRoDvlG4gVxCPalowq59ixh5ykZ477rH/EmJvwmaOXfPTR+R9KNTWZutZEMVqj9vp6U3fuuVGpqbq0EIA7g4ITay9eVunI2jX3LPvynOva65vtEC5JQsBQIsGpEDoirKeK8cEgouAKgJhBioBohDg3KGr7zusBof2k/MGB3tO/FcHxTU3R7ad+cEWhOjbZ5nwhgCWMeopkrUDHFcpGurC+DaTgC8QaRMpdU1ZbpWTzwDJ/c/+DxFRqq+JfkQkjJuit/b38122fev7LV75Yl0ho1NejvaHB/8BDv/6Sf8SMB3KDGaOElAG8kooqB6vX/njJmSeeFQ6CBB0YEQbRrqcRoZlnXVXp/8vJ6/yy8irx8gJWRGH5wS94xkYqlN6+5enXL2o4udiUeg98elt6L5VIqWtrVs+nUlnVn79Ls0tkxIrBEPNFaMgZe4M2KE8UIT0C6Ljjl4yoVFjf/T87jr/5+CWnXXrP4lO+8V31u9V16vWdq8yY6ko7bcKvZt9+4xHtyaQ/sr5LpsyZE5FRtVcYJlHEZAl+pLzCkbWrf7PkzBP/MyHC7fX1BoDUtYoGkT3y7l9eNuvRPz055bg55SASOubIqRSPVon4QoooQLQEQDOOuORks5a2diUA2m+2v0jvqRRcLCHElnX8AF0DO0RrhRCuBWBX5isEGEI+bUEcMN+Ja79yfI2mNTt/5370wjPW0rr8rCULnOktCffFG29dH1my7jN6c99GmTyqJnLc4U+ecMf8Q1LUZKr//etn6YkTpsDLWjCsW16h3U0b2p1Lv3kqRCTZ3Iwgp2jV7Q3kH3X3L86iKYfekp8w6eSyyxN/nH7R/NGiI6O4vALEZIgVmDhoM5MYp6SSaUfnE+uub1ra2PLT/Wb7i/TeavFhCeGV++7rUX25B1UkQkIwJFxsCaMIFwfCIl0e0C5M9bhqrd/oW7zju8+d3i5icO21vHT2XG9lU7JQ15rQz1x18+v8ase/6S19/WbiiMn2qClPHfed6w9S40d9TZSIAhu3okLrzZtWuot+ccrzm1/IFvvMxVm0I2//n5Odww7/oYlGxM/0e/74iUc5H6trM2WlXxYSMBEHvYug8smaifq7jdm+IQHZv7a/SO+5GVIs0vG23nu4O50BKyVWBMKwYbgZBqqweUF+oGCqxlUrbOpbI//7+mfW/ubRfiBs0CcSDAG1NyT9utZW/eeLrvoLr9tyutnaawqjaqbJx0/8s1cWPcLPpK1bXua6O3Zu4iXLPvXMfTf3FCOeIvOPmv/Yie6RM1v8khjIGDiu49hMr5Xa2sP4kENOtvkCWCkmFUA3hGCcaAmr7u2PrZ/35eWNqRRjP9r+Ir33blRYnlibnN+h+nMtKhojETLFeJ+kiEhmQIypmlyueNvApp5FL//LM9+Z19XY0qJAIfOTSVssrrY3NPh1ra362f+4+Hf02pYvqBzgj6odZdmKikfZ6e/rzT737GdfTJ7fUXSUjS0tqr2hwf/ATQ9PdY4+8gm/LB4zXk5IM5MiKK1ZTMHC+JYcBSgFkAKDhF2XVH9P3ul4IwkRSq3Yd+3St6N9MiET7oKgyI7+26h/0AigxA+mF8PqJ6wvdsSMSlWaL/R6z6+ds+Kau9YVGZeQgPknXnLFxMbGRjcIG0HtDQ3+rCULnBfPnvtDrOm6KqIjoNK4OOlB339p2b+9fPX5y+paW3WR+ammJjPjwusn4Nhjf+3VVlebXNaQ0gwGwAxRDGZmxcQB74NGjTAbt6Scua/7h8tuuHBNYwqMJNl3OPY+oX0zopRMWojQqu/Me1X3DC7SsQiRWJ9MWFP3rK08pBQjSnTWe3795168cN7KutbEEOOSlLQfuvs7k/isGUu2zP34Q4FvaVUAaOnsuV6dtOrFTaffTKs7FpR6ovLLV572/Fea2ovmBokEp844w8w5K1Fe9rnPPeGPG3uw5LI+a60onCUgRWGDhoMdRMxQQe9axNEKvTuykS0bbwq0v3lYtB/YlzNiQaEKqjt7i8p4EAuGBcxgQaLVLKOro5xbuuXsxRfc+McheGIiwammJvOBxOWjneOnLvJGR0f4k2rO+uAv7rypvaHBn7Ug2KLbjnoDERr/yB8vwZ+ePWHJl095smhuIEJobpbx4z4Y6zv71KfN5MlH28G0r5XSzAAxBV/EweyA4iDpUoFQiJSJlFUQ9/b88MVrzl8faP9+Xgy4G+27KcmwPLHuqmT7xHtvWcIjy2bb3rThKMvoCRVaVm390gv/fuX/zFqwwGlvmOuFoFscue65EnXSoU8WRpUc1r+p2zeWJTa66qojF964den5c++atWCBs5TIA4AUUEAKz4drxkyw4QScIrKH/G7FY2bKlA/ndnb5SiktIkHhj4MZYhEbNE4DBDtggna2ijnsDPTmZWPHfIhQqnn4tB/Y91OSDECcnHenZgUTYW/UIVVavbb56mc/d9l/10mrXjp3rgcBJYJ43cbO+dfHzfiK2b2vb/f9QaMxWNDp/gHfTKy6c+Zd1zYGW3SLpQihwGQFY3kh881Hnn7pET78sM966T5PK6V5N23n0ORQ8ZXCkoNmQLGJlJcz7ex+dOk1n1/XiOHV/iLD9h0lA/TEiD93PS596fU108ZGI1t6bnnh9CtvrJNW3U4NPgCqa2tVSSL7od/e8SCmjpzTv7rLt4NWw1qIWCLPVwUma6eM/eHMe5MfCcLShAZIimWBWUuW6BSRqX966S3OMUefnU33eSA4HJoWDplPXJypCkxRMM5AAJFwxGXs7M7bNZsC29+8b2v9e0L7+gaE5YnvZUutPBbd0P304tMu/VZda6tup4aQcQt0e0ODf8KiO+apw8ad17N+pyc+NECAsUEZg5jgGRSiHLGTxj113K13HlXMDYL3WOIsnT3bO+F/nvumzDzq8mym3yMRJ3CwRfvOQ/Y/gKMEfyfEECYIs4mUljN1bX946TX/Hmr/8EQ+u9M+n5QPd3lSzaqt8zpveaUQ9G7JAJBZCxY4S2fP9T74+H99TU8df+WG5Z2eP2icsloXJu+H/WQJ5reYWXK+yUcj5WXHzHii4frHP9ra0LChUUSliLwTf9J+Hh159PzBQs5n32hmBRKBkAVZDtbIAEA4LDI0N0shpNV1WHZ0DeZeXTPvQNj+Iu1rhPI/pGLkc+zC65oisyb9dOu2QTOwPc/KVVQ+wgGLgZhg/wmIw/49weSyJlZ9sKqOTl8rr6xufO78k5d/6LHWc/moox/KaW2VlycipgCPWkRn27DsHVReye7qQVgRWGt9p7xS4+Xldy9uPPHiUKj7Pet9K9qfuyKGpq/qEgHzP3B/4qNy6Ogfbds4YNPbcqxiLtm8RWHAIFbGkN1reAKIsWDlqsGta23kiBlTosd/8IWPLN6wDuWVhxe0gsrnCMwhTljCDy0O5AkgCuF8UrBVhQVkrVA0ytTZmcarK757ILU/eN79TeGu6KNuu3oGHTnp2d60V57uSAtHXS6iVVgzKka6AIIlQEH/RAKfIIAt5OGUTrC1R5zM7DiwmYxYawOPulvjQShEbVOwrAPY1YFD+Gqs9d2ySo2/LLv1+VOPv/xAaj+wv7elhCPs02/GRH/qmKcyVlWkt/cZjrpq1yAHYDxBPiuIlDDEWFhrQdYGcHEISDvwsp1s+rYIlYwUERvspAmWSUCGtL/4LYj1h2Y3iYObYK2oaFRR57YBvfLlWw+09gP7eVtKXVuzApGY6rIb0k58cnpTn8eOVrufmBDsdcinfViDANJidkFYgr6ygoGPgZ7XiZnZFucxiyPA4bjdrm80hAMLZ/ACIWhloiXlpHbsvP9PV8/dWtfW9nc94+Gm/SqA9uLG3O7Bp7xt/SABh34xnFYPmjVEgMlZeBk/BHGFiOqwoioWYNLI7HwDhWwvmJ2hrlrRcQSV78AGye7onaExHSsqElGybVs6+5cl34MItbe1HVDmA/t7X1CwiINqUr/8OfWm18JxGBa2qLPFrQ1F/Giuz4e1Eoy5ougLAkGQYdhsGgOdq8FKAbDhivvgPQgYGroOkM0hWCw8pSU2TjxO0tn5wNKr5249EFnvW9H+XtgkaG5WS5cu9VTWv0uzphCcCA6ZC6Eg/BSBl7UoZG3YPygi6AKUhbUWYI1051rYXF8ohNCL/80kThj9EwL/YAVirLATUdi8bSC39JVb3g+2v0j7f2NWc7OBgKq2dj3CvQM74Dgh53bDDu3WtsylbdDMl90gLGH8DmKYQgZ9nauh2EHRnAHBbdn1fnYo6hEARsSqWIzs1i13L736P98Xtr9I+18ARILmhHr5jjt6VcE8qONxEpAxQIikC2DgJAIGweQlGHESGgJv2aIztgCzg4Etq+ClO6G0EyRbRTO/2y0YCrKsEbgRth0dPdkXltxWRNbt93PvIQ3XzjgLEXK3d9+jejMZ0pphRazYoQma4g1gEeT7PdjdYYzFEScb5AVSyGH7a8/A+rlgxDTEZwGhLMLNKCQCw9q48RKSjk13LE3O3VFE1g3Tud+Rhq0UUVwAMnH+/Ju9cbVXeH39vojoQPt3wRYBQIzAKWG4pWpoDcJQTInAhZtCAZHKMRg9owFOrBLGL8CaXYotAKAcC+0gvfy5HR0Lb53W99RTvcEbvH8EMHxbExuDX9ys1+6cR509W6C0IiN2V7wfgnUlKIYW0gb+YNEhI/ATIfTd+gbEGrnerdj4l6fQt2UFyHpwIi6cSARuJALXcZDv77RdLy3inmd/892+p5/uQXPz+0r7geG8AcDQLZh0deLUwoRRPyvk8x5ZcSDBHjgARWzvUHYbLdfQLsMYCxT3FYcZMLEKi2sGOlaBeMVIONEyiPGR7e+2g9le0tt3rpu0rfPI58vL89j9F7W9T2h4BQAMCWHCdTc8WBhde56fTntE7BS5sgu+XiwmC6KlCspFuG4mcLFSTLDCn7PGhzU2DKhIRLsm6sR0ZNPOk9YnrvwdGhsV9mCd/HDT8AsAILS08JSH/qQHPzKmzauuON5ksl6Q3obMD2N4AOGNEDhRgo7Q0A0pRkXFErSEpgsAjGLPiVc66o0tN3Zcc9XVRaEfgLO+Ix2IzbmCFStk7W/uykc37fyc7k2v5JK4Y63xik54d81GCCvxckAuLfC9ok8IahRibRgdWVjPE9+3vnJijtq6fWHHNVddjURCI/jdMe9LOhA3IKAQCTfp3ItGFw6b9DOvqvwEL5MxJACY1a4NYLyrwllMtohAFOJeAECsWAsDVtrRGk7PwG0dzVdfFkLT33d2f3c6MLujARSxoBsevnebu+hXH4909d0XUa7iaFQhyA58AawMLfOhsHYXlCmsD/E9MV5efN8HQUe0znmdkY6d53Q0X30ZEon3PfOBA3kDilTEhAKYfOX1JxUqotd60eiJJupCjBdsQjQiRGSLa6mESAV7IDTYF6j+gT6nkP9hbEvXd9c+eFfH+9nmv5kOvAACGtohDQDjrkjUm9L4KcJcZxUOFsVl4jgBpFAAeAawdqcyskzl8k9FO3f8bN19t20CgP9LzAfePwIIqLFRoaXlb9ZaHnTJJaNMpGqcJ6hFBEC2IDFyt/pbOzdv/HHwCz0B/N2e0f8r9P4SQJEaWxSmryBcl/Tf1oJLgsONXnu7Ov99Q/8P+F8VlVtPjNEAAAAASUVORK5CYII=" alt="" width="84" height="84">
+                <h1 class="wordmark" style="font-size:34px"><span>V</span>aliu</h1><p class="muted small">${esc(t('aTagline'))}</p>
+            </div>
+            ${inner}
+            <div class="auth-lang">
+                <button class="${state.lang === 'es' ? 'on' : ''}" onclick="authLang('es')">Español</button><span>·</span>
+                <button class="${state.lang === 'en' ? 'on' : ''}" onclick="authLang('en')">English</button>
+            </div>
+        </div></div>`;
+    }
+    const field = (id, label, type, val = '', extra = '') => `<div><label class="label" for="${id}">${esc(label)}</label><input id="${id}" type="${type}" class="input" value="${esc(val)}" ${extra}></div>`;
+    const msgP = o => `<p id="a-msg" class="small ${o.ok ? 'accent' : 'danger'}" style="min-height:20px">${esc(o.msg || '')}</p>`;
+    function keypadAuth() {
+        const k = n => `<button onclick="authKey('${n}')">${n}</button>`;
+        return `<div class="keypad">${[1, 2, 3, 4, 5, 6, 7, 8, 9].map(k).join('')}<span></span>${k(0)}<button class="ghost" onclick="authKey('del')" aria-label="⌫">⌫</button></div>`;
+    }
+    const dotsAuth = n => `<div id="a-dots" class="pin-dots">${Array.from({ length: PIN_LEN }, (_, i) => `<i class="${i < n ? 'on' : ''}"></i>`).join('')}</div>`;
+
+    function showAuth(view, opts = {}) {
+        AUTH.view = view; AUTH.opts = opts;
+        const el = $('auth'), dev = getDevice();
+        let html = '';
+        if (view === 'loading') html = `<p class="muted" style="text-align:center">${esc(t('aLoading'))}</p>`;
+        else if (view === 'config') html = `<h2 class="auth-h">${esc(t('aConfigTitle'))}</h2><p class="small muted">${esc(t('aConfigBody'))}</p>`;
+        else if (view === 'login') html = `<h2 class="auth-h">${esc(t('aLoginTitle'))}</h2>
+            <form class="stack" style="gap:12px" onsubmit="event.preventDefault(); doLogin()">
+                ${field('a-email', t('aEmail'), 'email', opts.email || (dev && dev.email) || '', 'autocomplete="email" inputmode="email" required')}
+                ${field('a-pass', t('aPassword'), 'password', '', 'autocomplete="current-password" required')}
+                ${msgP(opts)}
+                <button class="btn btn-primary btn-block" type="submit">${esc(t('aLoginBtn'))}</button>
+            </form>
+            <div class="auth-links"><button class="btn-link small" onclick="showAuth('forgot', {email: $('a-email').value})">${esc(t('aForgot'))}</button>
+            <p class="small muted">${esc(t('aNoAccount'))} <button class="btn-link small" onclick="showAuth('signup', {email: $('a-email').value})">${esc(t('aCreate'))}</button></p></div>`;
+        else if (view === 'signup') html = `<h2 class="auth-h">${esc(t('aSignupTitle'))}</h2>
+            <form class="stack" style="gap:12px" onsubmit="event.preventDefault(); doSignup()">
+                ${field('a-email', t('aEmail'), 'email', opts.email || '', 'autocomplete="email" inputmode="email" required')}
+                ${field('a-pass', t('aPassword'), 'password', '', 'autocomplete="new-password" minlength="8" required')}
+                ${field('a-pass2', t('aPassword2'), 'password', '', 'autocomplete="new-password" minlength="8" required')}
+                <p class="tiny muted">${esc(t('aPwHint'))}</p>${msgP(opts)}
+                <button class="btn btn-primary btn-block" type="submit">${esc(t('aSignupBtn'))}</button>
+            </form>
+            <div class="auth-links"><p class="small muted">${esc(t('aHaveAccount'))} <button class="btn-link small" onclick="showAuth('login')">${esc(t('aLoginLink'))}</button></p></div>`;
+        else if (view === 'check') html = `<h2 class="auth-h">📬 ${esc(t('aCheckTitle'))}</h2><p class="muted">${esc(t('aCheckBody', { email: opts.email || '' }))}</p>
+            <button class="btn btn-ghost btn-block mt-4" onclick="showAuth('login', {email: '${esc(opts.email || '')}'})">${esc(t('aBack'))}</button>`;
+        else if (view === 'forgot') html = `<h2 class="auth-h">${esc(t('aForgotTitle'))}</h2><p class="small muted mb-3">${esc(t('aForgotBody'))}</p>
+            <form class="stack" style="gap:12px" onsubmit="event.preventDefault(); doForgot()">
+                ${field('a-email', t('aEmail'), 'email', opts.email || '', 'autocomplete="email" inputmode="email" required')}
+                ${msgP(opts)}<button class="btn btn-primary btn-block" type="submit">${esc(t('aForgotBtn'))}</button>
+            </form><div class="auth-links"><button class="btn-link small" onclick="showAuth('login')">${esc(t('aBack'))}</button></div>`;
+        else if (view === 'newpass') html = `<h2 class="auth-h">${esc(t('aNewPassTitle'))}</h2>
+            <form class="stack" style="gap:12px" onsubmit="event.preventDefault(); doNewPass()">
+                ${field('a-pass', t('aPassword'), 'password', '', 'autocomplete="new-password" minlength="8" required')}
+                ${field('a-pass2', t('aPassword2'), 'password', '', 'autocomplete="new-password" minlength="8" required')}
+                ${msgP(opts)}<button class="btn btn-primary btn-block" type="submit">${esc(t('aNewPassBtn'))}</button>
+            </form>`;
+        else if (view === 'pinset') {
+            AUTH.pinBuf = ''; AUTH.pinStage = 'new'; AUTH.pinFirst = '';
+            html = `<div class="auth-pin"><h2 class="auth-h" id="a-pin-title">${esc(t(opts.reset || opts.change ? 'aPinResetTitle' : 'aPinCreateTitle'))}</h2><p class="small muted" id="a-pin-body">${esc(t(opts.reset || opts.change ? 'aPinResetBody' : 'aPinCreateBody'))}</p>
+                ${dotsAuth(0)}${keypadAuth()}${msgP(opts)}</div>`;
+        } else if (view === 'pinverify') {
+            AUTH.pinBuf = '';
+            html = `<div class="auth-pin"><h2 class="auth-h">${esc(t('aPinVerifyTitle'))}</h2><p class="small muted">${esc(opts.migrate ? t('aPinUnify') : t('aPinVerifyBody'))}</p>
+                ${dotsAuth(0)}${keypadAuth()}${msgP(opts)}
+                <div class="auth-links"><button class="btn-link small" onclick="forgotAccountPin()">${esc(t('aPinForgot'))}</button></div></div>`;
+        } else if (view === 'pin') {
+            AUTH.pinBuf = '';
+            html = `<div class="auth-pin"><h2 class="auth-h">${esc(t('aPinTitle'))}</h2><p class="small muted">${esc(t('aPinBody'))}</p>
+                <input id="a-email" type="email" class="input" style="text-align:center" value="${esc((dev && dev.email) || '')}" autocomplete="email" inputmode="email" aria-label="${esc(t('aEmail'))}" ${opts.relock ? 'readonly' : ''}>
+                ${dotsAuth(0)}${keypadAuth()}${msgP(opts)}
+                <div class="auth-links"><button class="btn-link small" onclick="showAuth('login', {email: (getDevice()||{}).email})">${esc(t('aUsePassword'))}</button>
+                ${opts.relock ? '' : `<button class="btn-link small muted" onclick="switchAccount()">${esc(t('aOtherAccount'))}</button>`}</div></div>`;
+        }
+        el.innerHTML = authShell(html);
+        el.classList.add('open');
+        document.body.style.overflow = 'hidden';
+        const first = el.querySelector('input:not([readonly])');
+        if (first && view !== 'pin') setTimeout(() => first.focus(), 50);
+    }
+    function hideAuth() { $('auth').classList.remove('open'); $('auth').innerHTML = ''; document.body.style.overflow = ''; AUTH.view = null; }
+    function setAuthMsg(msg, ok) { const m = $('a-msg'); if (m) { m.textContent = msg; m.className = 'small ' + (ok ? 'accent' : 'danger'); } }
+    function busy(on) { $('auth').querySelectorAll('button[type=submit]').forEach(b => { b.disabled = on; b.style.opacity = on ? .6 : 1; }); }
+    function authLang(l) { state.lang = l; lsSet('ap.lang', l); applyStaticTranslations(); showAuth(AUTH.view, AUTH.opts); }
+
+    // ---------- actions ----------
+    async function doLogin() {
+        const email = $('a-email').value.trim(), password = $('a-pass').value;
+        if (!validEmail(email)) return setAuthMsg(t('eEmail'));
+        busy(true);
+        try {
+            const { data, error } = await makeClient().auth.signInWithPassword({ email, password });
+            if (error) return setAuthMsg(authErr(error));
+            await afterPasswordAuth(data.user);
+        } catch (e) { setAuthMsg(authErr(e)); } finally { busy(false); }
+    }
+    async function doSignup() {
+        const email = $('a-email').value.trim(), p1 = $('a-pass').value, p2 = $('a-pass2').value;
+        if (!validEmail(email)) return setAuthMsg(t('eEmail'));
+        if (p1.length < 8) return setAuthMsg(t('eWeak'));
+        if (p1 !== p2) return setAuthMsg(t('eMatch'));
+        busy(true);
+        try {
+            const { data, error } = await makeClient().auth.signUp({ email, password: p1, options: { emailRedirectTo: appUrl() } });
+            if (error) return setAuthMsg(authErr(error));
+            if (data.session) await afterPasswordAuth(data.user);
+            else showAuth('check', { email });
+        } catch (e) { setAuthMsg(authErr(e)); } finally { busy(false); }
+    }
+    async function doForgot() {
+        const email = $('a-email').value.trim();
+        if (!validEmail(email)) return setAuthMsg(t('eEmail'));
+        busy(true);
+        try {
+            const { error } = await makeClient().auth.resetPasswordForEmail(email, { redirectTo: appUrl() });
+            if (error && /rate|too many/i.test(String(error.message || '') + (error.status || ''))) return setAuthMsg(t('eRate'));
+            setAuthMsg(t('aForgotSent'), true);
+        } catch (e) { setAuthMsg(authErr(e)); } finally { busy(false); }
+    }
+    async function doNewPass() {
+        const p1 = $('a-pass').value, p2 = $('a-pass2').value;
+        if (p1.length < 8) return setAuthMsg(t('eWeak'));
+        if (p1 !== p2) return setAuthMsg(t('eMatch'));
+        busy(true);
+        try {
+            const { data, error } = await makeClient().auth.updateUser({ password: p1 });
+            if (error) return setAuthMsg(authErr(error));
+            AUTH.recovery = false;
+            await afterPasswordAuth(data.user);
+        } catch (e) { setAuthMsg(authErr(e)); } finally { busy(false); }
+    }
+    function switchAccount() { wipeDevice(); showAuth('login'); }
+
+    function drawAuthDots(n) { const d = $('a-dots'); if (d) d.innerHTML = Array.from({ length: PIN_LEN }, (_, i) => `<i class="${i < n ? 'on' : ''}"></i>`).join(''); }
+    function shakeAuth() { const d = $('a-dots'); if (d) { d.classList.remove('shake'); void d.offsetWidth; d.classList.add('shake'); } }
+    async function authKey(k) {
+        if (AUTH.view !== 'pin' && AUTH.view !== 'pinset' && AUTH.view !== 'pinverify') return;
+        if (AUTH.checking) return;
+        if (k === 'del') AUTH.pinBuf = AUTH.pinBuf.slice(0, -1); else if (AUTH.pinBuf.length < PIN_LEN) AUTH.pinBuf += k;
+        drawAuthDots(AUTH.pinBuf.length);
+        if (AUTH.pinBuf.length < PIN_LEN) return;
+        const entered = AUTH.pinBuf;
+        AUTH.checking = true;
+        try { if (AUTH.view === 'pinset') await pinSetStep(entered); else if (AUTH.view === 'pinverify') await pinVerifyStep(entered); else await pinUnlock(entered); }
+        finally { AUTH.checking = false; }
+    }
+    async function pinSetStep(entered) {
+        if (AUTH.pinStage === 'new') {
+            AUTH.pinFirst = entered; AUTH.pinBuf = ''; AUTH.pinStage = 'confirm';
+            $('a-pin-title').textContent = t('aPinConfirmTitle'); setAuthMsg('');
+            setTimeout(() => drawAuthDots(0), 150);
+            return;
+        }
+        if (entered !== AUTH.pinFirst) {
+            AUTH.pinBuf = ''; AUTH.pinFirst = ''; AUTH.pinStage = 'new';
+            $('a-pin-title').textContent = t('aPinCreateTitle'); setAuthMsg(t('aPinMismatch')); shakeAuth();
+            setTimeout(() => drawAuthDots(0), 400);
+            return;
+        }
+        if (!hasCrypto()) { setAuthMsg(t('aNoCrypto')); return; }
+        const user = AUTH.user || ((await makeClient().auth.getUser()).data || {}).user;
+        const changing = AUTH.opts.change;
+        const saved = await saveAccountPin(entered);
+        await setupDeviceVault(entered, AUTH.user || user);
+        if (!saved) toast(t('aPinSaveFail'));
+        if (changing) { hideAuth(); if (saved) toast(t('aPinChanged')); return; }
+        clearOtherUsers(user.id); // a different account on this device: drop other people's cached data
+        startApp(AUTH.user || user);
+    }
+    async function pinVerifyStep(entered) {
+        const ap = accountPin(AUTH.user);
+        if (!ap) { showAuth('pinset'); return; }
+        const ok = (await pinVerifier(entered, ap.salt)) === ap.hash;
+        AUTH.pinBuf = '';
+        if (!ok) {
+            AUTH.verifyTries = (AUTH.verifyTries || 0) + 1;
+            if (AUTH.verifyTries >= MAX_TRIES) {
+                try { await makeClient().auth.signOut({ scope: 'local' }); } catch (e) { /* offline */ }
+                wipeDevice(); showAuth('login', { email: AUTH.user.email, msg: t('aPinLocked') }); return;
+            }
+            setAuthMsg(t('aPinWrongN', { n: MAX_TRIES - AUTH.verifyTries })); shakeAuth();
+            setTimeout(() => drawAuthDots(0), 400);
+            return;
+        }
+        await setupDeviceVault(entered, AUTH.user);
+        clearOtherUsers(AUTH.user.id);
+        startApp(AUTH.user);
+    }
+    // Only offered right after a correct password (or a correct old PIN), so replacing the PIN is safe.
+    function forgotAccountPin() { showAuth('pinset', { reset: true }); }
+
+    async function pinUnlock(entered) {
+        const dev = getDevice();
+        const email = ($('a-email').value || '').trim().toLowerCase();
+        if (!dev) { showAuth('login'); return; }
+        if (email !== String(dev.email).toLowerCase()) {
+            AUTH.pinBuf = ''; drawAuthDots(0);
+            setAuthMsg(t('aPinOtherEmail'));
+            setTimeout(() => showAuth('login', { email: $('a-email') ? $('a-email').value.trim() : '' }), 1600);
+            return;
+        }
+        const ok = await openVault(entered);
+        if (!ok) {
+            dev.tries = (dev.tries || 0) + 1;
+            AUTH.pinBuf = '';
+            if (dev.tries >= MAX_TRIES) { wipeDevice(); showAuth('login', { email: dev.email, msg: t('aPinLocked') }); return; }
+            setDevice(dev); setAuthMsg(t('aPinWrong', { n: MAX_TRIES - dev.tries })); shakeAuth();
+            setTimeout(() => drawAuthDots(0), 400);
+            return;
+        }
+        dev.tries = 0; setDevice(dev);
+        if (AUTH.opts.relock && AUTH.started) { hideAuth(); return; }
+        const sb = makeClient();
+        let session = null;
+        try { session = (await sb.auth.getSession()).data.session; } catch (e) { session = null; }
+        if (session && session.user) {
+            const user = await freshUser(session.user);
+            const ap = accountPin(user);
+            if (!ap) { AUTH.user = user; if (navigator.onLine) saveAccountPin(entered); startApp(AUTH.user); return; }
+            if ((await pinVerifier(entered, ap.salt)) === ap.hash) { startApp(user); return; }
+            // This device still has an older, different PIN: switch it to the account PIN.
+            AUTH.user = user; AUTH.verifyTries = 0;
+            showAuth('pinverify', { migrate: true });
+            return;
+        }
+        if (!navigator.onLine && AUTH.mem.size) { AUTH.offline = true; startApp({ id: dev.uid, email: dev.email }); return; }
+        wipeDevice();
+        showAuth('login', { email: dev.email, msg: t('aExpired') });
+    }
+
+    // ---------- app start + data sync ----------
+    function startApp(user) {
+        AUTH.user = user; AUTH.started = true;
+        STORAGE_KEY = 'arch_pro_v9:' + user.id;
+        // Data from the older single-user version on this same address: adopt it once, then remove the unprotected copy.
+        const legacy = lsGet('arch_pro_v9');
+        if (legacy && !lsGet(STORAGE_KEY)) { lsSet(STORAGE_KEY, legacy); AUTH.legacyImported = true; }
+        if (legacy) lsDel('arch_pro_v9');
+        const lang = state.lang;
+        state = defaults(); state.lang = lang;
+        sync.lastBody = null;
+        loadState();
+        hideAuth();
+        resetCharts(); render();
+        if (AUTH.offline) toast(t('aOffline'));
+        initWebSync();
+    }
+
+    async function pullRemote(force) {
+        if (!AUTH.sb || !AUTH.user || AUTH.offline && !navigator.onLine) return;
+        if (!force && Date.now() - AUTH.lastPull < 20000) return;
+        AUTH.lastPull = Date.now();
+        try {
+            const { data, error } = await AUTH.sb.from('app_state').select('data, updated_at').eq('user_id', AUTH.user.id).maybeSingle();
+            if (error) throw error;
+            AUTH.offline = false; sync.on = true;
+            if (data && +data.updated_at > (state.updatedAt || 0)) {
+                if (applyRemote(JSON.stringify(data.data))) render();
+            } else if (!data || (state.updatedAt || 0) > +data.updated_at) {
+                if (state.items.length || state.income || state.expenses.length || state.goals.length) pushRemote();
+            }
+        } catch (e) { sync.on = false; }
+        renderSyncStatus();
+    }
+
+    function initWebSync() {
+        const sb = AUTH.sb, uid = AUTH.user.id;
+        if (!sb) return;
+        sync.writer = async payload => {
+            try {
+                const { error } = await sb.from('app_state').upsert({ user_id: uid, data: JSON.parse(payload.json), updated_at: payload.updatedAt });
+                if (error) throw error;
+                sync.on = true;
+            } catch (e) { sync.on = false; }
+            renderSyncStatus();
+        };
+        pullRemote(true);
+        try {
+            if (AUTH.channel) sb.removeChannel(AUTH.channel);
+            AUTH.channel = sb.channel('app_state_' + uid)
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'app_state', filter: 'user_id=eq.' + uid }, p => {
+                    const r = p.new;
+                    if (r && r.data && +r.updated_at > (state.updatedAt || 0) && applyRemote(JSON.stringify(r.data))) { render(); toast(t('syncUpdated')); }
+                }).subscribe();
+        } catch (e) { /* realtime is optional; focus refresh still works */ }
+    }
+    window.addEventListener('online', () => { if (AUTH.started) pullRemote(true); });
+    window.addEventListener('focus', () => { if (AUTH.started) pullRemote(false); });
+    document.addEventListener('visibilitychange', () => {
+        if (!window.APP_CONFIG || !AUTH.started) return;
+        if (document.hidden) { AUTH.hiddenAt = Date.now(); return; }
+        if (AUTH.hiddenAt && Date.now() - AUTH.hiddenAt > 2 * 60 * 1000 && getDevice()) showAuth('pin', { relock: true });
+        else pullRemote(false);
+    });
+    document.addEventListener('keydown', e => {
+        if (!AUTH.view || !['pin', 'pinset', 'pinverify'].includes(AUTH.view)) return;
+        if (document.activeElement && document.activeElement.id === 'a-email') return;
+        if (/^[0-9]$/.test(e.key)) authKey(e.key); else if (e.key === 'Backspace') authKey('del');
+    });
+
+    // ---------- profile: account section ----------
+    function webAccountHTML() {
+        const email = AUTH.user ? AUTH.user.email : '';
+        return `<div class="note plain small full">👤 ${esc(t('aSignedAs', { email }))}</div>
+            <button class="btn btn-ghost" onclick="webChangePin()"><i data-lucide="lock"></i>${esc(t('aChangePin'))}</button>
+            <button class="btn btn-ghost" onclick="webLockNow()">${esc(t('aLockNow'))}</button>
+            <button class="btn btn-ghost danger full" onclick="webLogout()">${esc(t('aLogout'))}</button>`;
+    }
+    function webChangePin() { closeModal('config-modal'); showAuth('pinset', { change: true }); }
+    function webLockNow() { closeModal('config-modal'); showAuth('pin', { relock: true }); }
+    async function webLogout() {
+        if (!(await askConfirm(t('aLogoutConfirm'), t('aLogout'), true))) return;
+        try { if (AUTH.channel) AUTH.sb.removeChannel(AUTH.channel); await AUTH.sb.auth.signOut({ scope: 'local' }); } catch (e) { /* offline */ }
+        wipeDevice();
+        lsDel(STORAGE_KEY);
+        location.replace(appUrl());
+    }
+
+    // ---------- boot ----------
+    async function webBoot() {
+        const savedLang = lsGet('ap.lang');
+        if (savedLang && LOCALES[savedLang]) state.lang = savedLang;
+        applyTheme(); applyStaticTranslations();
+        const C = window.APP_CONFIG || {};
+        if (!window.supabase || !C.supabaseUrl || !C.supabaseAnonKey || /TU-PROYECTO|PEGA_AQUI/.test(C.supabaseUrl + C.supabaseAnonKey)) { showAuth('config'); return; }
+        const hash = location.hash || '';
+        if (/access_token=|type=recovery|error_description=/.test(hash)) {
+            AUTH.recovery = /type=recovery/.test(hash);
+            const errMsg = (hash.match(/error_description=([^&]+)/) || [])[1];
+            showAuth('loading');
+            const sb = makeClient();
+            let session = null;
+            try { session = (await sb.auth.getSession()).data.session; } catch (e) { /* handled below */ }
+            history.replaceState(null, '', appUrl());
+            if (AUTH.recovery && session) { AUTH.user = session.user; showAuth('newpass'); return; }
+            if (session) { await afterPasswordAuth(session.user); return; }
+            showAuth('login', { msg: errMsg ? decodeURIComponent(errMsg.replace(/\+/g, ' ')) : t('aExpired') });
+            return;
+        }
+        const dev = getDevice();
+        if (dev && lsGet(VAULT_KEY)) showAuth('pin'); else showAuth('login');
+    }
+
+    if ('serviceWorker' in navigator && location.protocol === 'https:') {
+        window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
     }
 
     </script>
