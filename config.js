@@ -7,5 +7,7 @@
 // ============================================================
 window.APP_CONFIG = {
     supabaseUrl: 'https://fbcmeqsxrvusnpcfwufu.supabase.co',
-    supabaseAnonKey: 'sb_publishable_ez7eeVi31Vqa-maHfhYoRA_2Z1vCM31'
+    supabaseAnonKey: 'sb_publishable_ez7eeVi31Vqa-maHfhYoRA_2Z1vCM31',
+    // Llave pública para notificaciones (la privada va solo en Supabase → Edge Functions → Secrets)
+    vapidPublicKey: 'BGI4aCyLzVW9O9POAsVfgqEEorcD9dv9SXXY9v2d1tlYZ2-QxtbXDGF0la63VUXZqCF_PhoPj3iTb5M7jl04_5Y'
 };

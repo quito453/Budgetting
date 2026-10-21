@@ -4186,7 +4186,11 @@
             return true;
         } catch (e) { return false; }
     }
-    function wipeDevice() { lsDel(VAULT_KEY); lsDel(DEVICE_KEY); AUTH.mem = new Map(); AUTH.vaultKey = null; }
+    function wipeDevice() {
+        AUTH.vaultKey = null; AUTH.mem = new Map();
+        lsDel(VAULT_KEY); lsDel(DEVICE_KEY);
+        vaultChain.then(() => { if (!AUTH.vaultKey) lsDel(VAULT_KEY); }); // a write already in flight must not bring it back
+    }
     // Supabase keeps its session here; nothing is written to disk until the PIN key exists, and then only encrypted.
     const authStorage = {
         getItem: k => (AUTH.mem.has(k) ? AUTH.mem.get(k) : null),
@@ -4284,6 +4288,7 @@
         const el = $('auth'), dev = getDevice();
         let html = '';
         if (view === 'loading') html = `<p class="muted" style="text-align:center">${esc(t('aLoading'))}</p>`;
+        else if (view === 'delete') html = deleteViewHTML();
         else if (view === 'config') html = `<h2 class="auth-h">${esc(t('aConfigTitle'))}</h2><p class="small muted">${esc(t('aConfigBody'))}</p>`;
         else if (view === 'login') html = `<h2 class="auth-h">${esc(t('aLoginTitle'))}</h2>
             <form class="stack" style="gap:12px" onsubmit="event.preventDefault(); doLogin()">
@@ -4293,13 +4298,17 @@
                 <button class="btn btn-primary btn-block" type="submit">${esc(t('aLoginBtn'))}</button>
             </form>
             <div class="auth-links"><button class="btn-link small" onclick="showAuth('forgot', {email: $('a-email').value})">${esc(t('aForgot'))}</button>
-            <p class="small muted">${esc(t('aNoAccount'))} <button class="btn-link small" onclick="showAuth('signup', {email: $('a-email').value})">${esc(t('aCreate'))}</button></p></div>`;
+            <p class="small muted">${esc(t('aNoAccount'))} <button class="btn-link small" onclick="showAuth('signup', {email: $('a-email').value})">${esc(t('aCreate'))}</button></p>
+            ${legalLinkHTML('btn-link tiny muted')}</div>`;
         else if (view === 'signup') html = `<h2 class="auth-h">${esc(t('aSignupTitle'))}</h2>
             <form class="stack" style="gap:12px" onsubmit="event.preventDefault(); doSignup()">
                 ${field('a-email', t('aEmail'), 'email', opts.email || '', 'autocomplete="email" inputmode="email" required')}
                 ${field('a-pass', t('aPassword'), 'password', '', 'autocomplete="new-password" minlength="8" required')}
                 ${field('a-pass2', t('aPassword2'), 'password', '', 'autocomplete="new-password" minlength="8" required')}
-                <p class="tiny muted">${esc(t('aPwHint'))}</p>${msgP(opts)}
+                <p class="tiny muted">${esc(t('aPwHint'))}</p>
+                <label class="row small" style="gap:10px; align-items:flex-start; cursor:pointer"><input type="checkbox" id="a-agree" style="width:18px; height:18px; margin-top:2px; accent-color: var(--accent)">
+                    <span>${esc(t('signupAgree', { link: '\u0000' })).replace('\u0000', `<a class="btn-link small" href="${legalUrl()}" target="_blank" rel="noopener">${esc(t('signupAgreeLink'))}</a>`)}</span></label>
+                ${msgP(opts)}
                 <button class="btn btn-primary btn-block" type="submit">${esc(t('aSignupBtn'))}</button>
             </form>
             <div class="auth-links"><p class="small muted">${esc(t('aHaveAccount'))} <button class="btn-link small" onclick="showAuth('login')">${esc(t('aLoginLink'))}</button></p></div>`;
@@ -4360,9 +4369,10 @@
         if (!validEmail(email)) return setAuthMsg(t('eEmail'));
         if (p1.length < 8) return setAuthMsg(t('eWeak'));
         if (p1 !== p2) return setAuthMsg(t('eMatch'));
+        if (!$('a-agree').checked) return setAuthMsg(t('eAgree'));
         busy(true);
         try {
-            const { data, error } = await makeClient().auth.signUp({ email, password: p1, options: { emailRedirectTo: appUrl() } });
+            const { data, error } = await makeClient().auth.signUp({ email, password: p1, options: { emailRedirectTo: appUrl(), data: { accepted_terms: '2026-10-20' } } });
             if (error) return setAuthMsg(authErr(error));
             if (data.session) await afterPasswordAuth(data.user);
             else showAuth('check', { email });
@@ -4565,7 +4575,9 @@
         return `<div class="note plain small full">👤 ${esc(t('aSignedAs', { email }))}</div>
             <button class="btn btn-ghost" onclick="webChangePin()"><i data-lucide="lock"></i>${esc(t('aChangePin'))}</button>
             <button class="btn btn-ghost" onclick="webLockNow()">${esc(t('aLockNow'))}</button>
-            <button class="btn btn-ghost danger full" onclick="webLogout()">${esc(t('aLogout'))}</button>`;
+            <button class="btn btn-ghost danger full" onclick="webLogout()">${esc(t('aLogout'))}</button>
+            ${remindersHTML()}
+            <div class="full row wrap mt-2" style="gap:14px; justify-content:space-between">${legalLinkHTML()}<button class="btn-link small danger" onclick="webDeleteAccount()">${esc(t('delBtn'))}</button></div>`;
     }
     function webChangePin() { closeModal('config-modal'); showAuth('pinset', { change: true }); }
     function webLockNow() { closeModal('config-modal'); showAuth('pin', { relock: true }); }
@@ -4602,7 +4614,148 @@
         if (dev && lsGet(VAULT_KEY)) showAuth('pin'); else showAuth('login');
     }
 
-    if ('serviceWorker' in navigator && location.protocol === 'https:') {
+    // ================= Web version: reminders (Web Push), delete account, legal links =================
+    Object.assign(I18N.es, {
+        nTitle: 'Recordatorios de tarjetas', nDesc: 'Te avisamos antes de la fecha límite de tus tarjetas, aunque Valiu esté cerrada.',
+        nOn: 'Activar recordatorios', nOff: 'Desactivar', nActive: 'Recordatorios activos en este dispositivo ✓', nInactive: 'Recordatorios apagados en este dispositivo.',
+        nWhen: 'Avisarme', nD3: '3 días antes', nD1: '1 día antes', nD0: 'El día límite', nDm1: 'Si se me pasa',
+        nTest: 'Enviar notificación de prueba', nTestTitle: 'Valiu', nTestBody: 'Así se verán tus recordatorios de pago. 🔔',
+        nDenied: 'Las notificaciones están bloqueadas. Actívalas en la configuración del navegador para este sitio.',
+        nUnsupported: 'Este navegador no permite notificaciones.', nIos: 'En iPhone: primero agrega Valiu a tu pantalla de inicio (Compartir → Agregar a inicio) y ábrela desde ahí.',
+        nEnabled: 'Recordatorios activados 🔔', nDisabled: 'Recordatorios desactivados.', nFail: 'No pudimos activar los recordatorios: {msg}',
+        nNote: 'Te avisamos a las 8:00 a. m. (hora de Guatemala) sobre las tarjetas que agregaste con su estado de cuenta.',
+        delTitle: 'Eliminar mi cuenta', delBtn: 'Eliminar mi cuenta', delBody: 'Esto borra para siempre tu cuenta, tus datos financieros y tus recordatorios. No se puede deshacer.',
+        delExport: 'Antes de borrar, puedes guardar una copia:', delExportBtn: 'Exportar respaldo', delPass: 'Escribe tu contraseña para confirmar',
+        delConfirm: 'Eliminar para siempre', delDone: 'Tu cuenta y tus datos fueron eliminados.', delFail: 'No se pudo eliminar la cuenta: {msg}',
+        legalLink: 'Aviso de privacidad y términos', signupAgree: 'Acepto el {link}.', signupAgreeLink: 'aviso de privacidad y los términos de uso',
+        eAgree: 'Para crear tu cuenta, acepta el aviso de privacidad y los términos.'
+    });
+    Object.assign(I18N.en, {
+        nTitle: 'Card reminders', nDesc: 'We remind you before your cards are due, even when Valiu is closed.',
+        nOn: 'Turn on reminders', nOff: 'Turn off', nActive: 'Reminders on for this device ✓', nInactive: 'Reminders off for this device.',
+        nWhen: 'Remind me', nD3: '3 days before', nD1: '1 day before', nD0: 'On the due date', nDm1: 'If I miss it',
+        nTest: 'Send a test notification', nTestTitle: 'Valiu', nTestBody: 'This is how your payment reminders will look. 🔔',
+        nDenied: 'Notifications are blocked. Allow them for this site in your browser settings.',
+        nUnsupported: "This browser doesn't support notifications.", nIos: 'On iPhone: first add Valiu to your Home Screen (Share → Add to Home Screen) and open it from there.',
+        nEnabled: 'Reminders turned on 🔔', nDisabled: 'Reminders turned off.', nFail: "Couldn't turn on reminders: {msg}",
+        nNote: 'We notify you at 8:00 a.m. (Guatemala time) about cards you added with their statement.',
+        delTitle: 'Delete my account', delBtn: 'Delete my account', delBody: 'This permanently deletes your account, your financial data and your reminders. It cannot be undone.',
+        delExport: 'Before deleting, you can save a copy:', delExportBtn: 'Export backup', delPass: 'Enter your password to confirm',
+        delConfirm: 'Delete forever', delDone: 'Your account and data were deleted.', delFail: "Couldn't delete the account: {msg}",
+        legalLink: 'Privacy notice and terms', signupAgree: 'I accept the {link}.', signupAgreeLink: 'privacy notice and terms of use',
+        eAgree: 'To create your account, accept the privacy notice and terms.'
+    });
+
+    // ---------- push reminders ----------
+    const NOTIFY_DAYS = [3, 1, 0, -1];
+    function notifyPrefs() {
+        const n = state.notify || {};
+        return { on: !!n.on, days: Array.isArray(n.days) && n.days.length ? n.days.filter(d => NOTIFY_DAYS.includes(d)) : [3, 1, 0] };
+    }
+    const vapidKey = () => (window.APP_CONFIG || {}).vapidPublicKey;
+    const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent);
+    const isStandalone = () => (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+    function pushSupported() { return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window && !!vapidKey(); }
+    function b64urlToBytes(s) {
+        const pad = '='.repeat((4 - s.length % 4) % 4), b = atob((s + pad).replace(/-/g, '+').replace(/_/g, '/'));
+        return Uint8Array.from(b, c => c.charCodeAt(0));
+    }
+    async function swReady() {
+        if (!navigator.serviceWorker.controller && (location.protocol === 'https:' || location.hostname === 'localhost')) { try { await navigator.serviceWorker.register('sw.js'); } catch (e) { /* already registered */ } }
+        return Promise.race([navigator.serviceWorker.ready, new Promise((_, rej) => setTimeout(() => rej(new Error('service worker')), 8000))]);
+    }
+    async function enableReminders() {
+        if (!pushSupported()) { toast(isIOS() && !isStandalone() ? t('nIos') : t('nUnsupported')); return; }
+        if (isIOS() && !isStandalone()) { toast(t('nIos')); return; }
+        try {
+            const perm = await Notification.requestPermission();
+            if (perm !== 'granted') { toast(t('nDenied')); return; }
+            const reg = await swReady();
+            let sub = await reg.pushManager.getSubscription();
+            if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64urlToBytes(vapidKey()) });
+            const j = sub.toJSON();
+            const { error } = await AUTH.sb.from('push_subscriptions').upsert({
+                endpoint: j.endpoint, user_id: AUTH.user.id, p256dh: j.keys.p256dh, auth: j.keys.auth, lang: state.lang, ua: navigator.userAgent.slice(0, 180)
+            });
+            if (error) throw error;
+            state.notify = { ...notifyPrefs(), on: true };
+            render(); renderProfileExtras(); toast(t('nEnabled'));
+        } catch (e) { toast(t('nFail', { msg: e && e.message ? e.message : String(e) })); }
+    }
+    async function disableReminders() {
+        try {
+            const reg = await navigator.serviceWorker.getRegistration();
+            const sub = reg && await reg.pushManager.getSubscription();
+            if (sub) { await AUTH.sb.from('push_subscriptions').delete().eq('endpoint', sub.endpoint); await sub.unsubscribe(); }
+        } catch (e) { /* still turn it off locally */ }
+        state.notify = { ...notifyPrefs(), on: false };
+        render(); renderProfileExtras(); toast(t('nDisabled'));
+    }
+    function toggleNotifyDay(d) {
+        const p = notifyPrefs();
+        p.days = p.days.includes(d) ? p.days.filter(x => x !== d) : [...p.days, d].sort((a, b) => b - a);
+        state.notify = p; render(); renderProfileExtras();
+    }
+    async function testReminder() {
+        try {
+            const reg = await swReady();
+            await reg.showNotification(t('nTestTitle'), { body: t('nTestBody'), icon: 'icons/icon-192.png', badge: 'icons/icon-192.png', tag: 'valiu-test' });
+        } catch (e) { toast(t('nFail', { msg: e.message || e })); }
+    }
+    function remindersHTML() {
+        const p = notifyPrefs();
+        const granted = 'Notification' in window && Notification.permission === 'granted';
+        const on = p.on && granted;
+        const chip = (d, k) => `<button class="toggle-chip ${p.days.includes(d) ? 'on' : ''}" onclick="toggleNotifyDay(${d})">${p.days.includes(d) ? '✓ ' : ''}${esc(t(k))}</button>`;
+        return `<p class="label full mt-2">🔔 ${esc(t('nTitle'))}</p>
+            <p class="tiny muted full">${esc(t('nDesc'))}</p>
+            <div class="note ${on ? 'ok' : 'plain'} small full">${esc(on ? t('nActive') : t('nInactive'))}</div>
+            ${on ? `<button class="btn btn-ghost" onclick="testReminder()">${esc(t('nTest'))}</button><button class="btn btn-ghost" onclick="disableReminders()">${esc(t('nOff'))}</button>`
+                 : `<button class="btn btn-primary full" onclick="enableReminders()">${esc(t('nOn'))}</button>`}
+            <div class="full"><p class="tiny muted mb-2">${esc(t('nWhen'))}</p><div class="row wrap" style="gap:6px">${chip(3, 'nD3')}${chip(1, 'nD1')}${chip(0, 'nD0')}${chip(-1, 'nDm1')}</div></div>
+            <p class="tiny faint full">${esc(t('nNote'))}</p>`;
+    }
+
+    // ---------- delete account ----------
+    function webDeleteAccount() { closeModal('config-modal'); showAuth('delete'); }
+    async function doDeleteAccount() {
+        const pass = $('a-pass').value;
+        if (!pass) return setAuthMsg(t('delPass'));
+        busy(true);
+        try {
+            const sb = makeClient();
+            const { error: e1 } = await sb.auth.signInWithPassword({ email: AUTH.user.email, password: pass });
+            if (e1) return setAuthMsg(authErr(e1));
+            try {
+                const reg = await navigator.serviceWorker.getRegistration();
+                const sub = reg && await reg.pushManager.getSubscription();
+                if (sub) await sub.unsubscribe();
+            } catch (e) { /* no push */ }
+            const { error: e2 } = await sb.rpc('delete_my_account');
+            if (e2) return setAuthMsg(t('delFail', { msg: e2.message || e2 }));
+            try { if (AUTH.channel) sb.removeChannel(AUTH.channel); await sb.auth.signOut({ scope: 'local' }); } catch (e) { /* already gone */ }
+            wipeDevice(); lsDel(STORAGE_KEY);
+            AUTH.started = false; state = defaults(); sync.on = false; sync.writer = null;
+            showAuth('login', { msg: t('delDone'), ok: true });
+        } catch (e) { setAuthMsg(t('delFail', { msg: e.message || e })); } finally { busy(false); }
+    }
+    function deleteViewHTML() {
+        return `<h2 class="auth-h danger">${esc(t('delTitle'))}</h2>
+            <p class="small muted">${esc(t('delBody'))}</p>
+            <div class="note plain small">${esc(t('delExport'))} <button class="btn-link small" onclick="exportBackup()">${esc(t('delExportBtn'))}</button></div>
+            <form class="stack" style="gap:12px" onsubmit="event.preventDefault(); doDeleteAccount()">
+                <div><label class="label" for="a-pass">${esc(t('delPass'))}</label><input id="a-pass" type="password" class="input" autocomplete="current-password" required></div>
+                <p id="a-msg" class="small danger" style="min-height:20px"></p>
+                <button class="btn btn-danger btn-block" type="submit">${esc(t('delConfirm'))}</button>
+            </form>
+            <div class="auth-links"><button class="btn-link small" onclick="hideAuth()">${esc(t('cancel'))}</button></div>`;
+    }
+
+    // ---------- legal ----------
+    const legalUrl = () => 'privacidad.html' + (state.lang === 'en' ? '#en' : '');
+    function legalLinkHTML(cls = 'btn-link small') { return `<a class="${cls}" href="${legalUrl()}" target="_blank" rel="noopener">${esc(t('legalLink'))}</a>`; }
+
+    if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
         window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
     }
 
