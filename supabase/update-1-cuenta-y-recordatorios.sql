@@ -13,6 +13,7 @@ create table if not exists public.push_subscriptions (
 );
 create index if not exists push_subscriptions_user_idx on public.push_subscriptions (user_id);
 alter table public.push_subscriptions enable row level security;
+grant select, insert, update, delete on public.push_subscriptions to authenticated;
 
 drop policy if exists "push_select_own" on public.push_subscriptions;
 drop policy if exists "push_insert_own" on public.push_subscriptions;
@@ -42,3 +43,6 @@ end;
 $$;
 revoke all on function public.delete_my_account() from public, anon;
 grant execute on function public.delete_my_account() to authenticated;
+
+-- 3) Que la API vea los cambios de inmediato
+notify pgrst, 'reload schema';
