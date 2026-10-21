@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#f4f6fb" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#0b1330" media="(prefers-color-scheme: dark)">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -164,7 +164,7 @@
         .btn-soft:hover { background: var(--accent); color: var(--accent-ink); }
         .btn-ghost { background: var(--surface-2); color: var(--text); }
         .btn-ghost:hover { background: var(--surface-3); }
-        .btn-link { color: var(--accent); font-weight: 600; font-size: 14px; display: inline-flex; align-items: center; gap: 4px; }
+        .btn-link { color: var(--accent); font-weight: 600; font-size: 14px; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; flex-shrink: 0; }
         .btn-link:hover { text-decoration: underline; }
         .btn-sm { padding: 7px 13px; font-size: 13px; border-radius: 10px; }
         .btn-block { width: 100%; }
@@ -429,6 +429,118 @@
             #print-report .k { border: 1px solid #ddd; border-radius: 8px; padding: 8px; }
             #print-report .k b { display: block; font-size: 16px; }
         }
+
+        /* ---------- No zoom on double tap / input focus (iOS) ---------- */
+        html, body, button, a, input, select, textarea, label { touch-action: manipulation; }
+        .input, select, textarea { font-size: 16px; }
+        .tab.active { animation: tabIn .28s ease both; }
+        @keyframes tabIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* ---------- Home: headline number + next payment ---------- */
+        .hero-card { background: radial-gradient(120% 90% at 100% 0%, var(--accent-soft), transparent 55%), var(--surface); }
+        .hero2 { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+        .hero-head { min-width: 0; }
+        .hero-amount { font-size: clamp(40px, 11vw, 56px); line-height: 1.02; margin: 6px 0 4px; letter-spacing: -.03em; overflow-wrap: anywhere; }
+        .hero-amount.grad { color: var(--text); }
+        :root[data-theme="dark"] .hero-amount.grad { background: linear-gradient(135deg, var(--brand-1), var(--brand-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hero-amount.grad { background: linear-gradient(135deg, var(--brand-1), var(--brand-2)); -webkit-background-clip: text; background-clip: text; color: transparent; } }
+        .ring-wrap.mini { width: 104px; height: 104px; margin: 0; flex-shrink: 0; }
+        .ring-wrap.mini .ring-center { padding: 10px; gap: 2px; }
+        @media (min-width: 560px) { .ring-wrap.mini { width: 128px; height: 128px; } }
+        .next-due { width: 100%; display: flex; align-items: center; gap: 14px; text-align: left; padding: 12px; border-radius: 16px; background: var(--surface-2); border: 1.5px solid transparent; transition: transform .12s, border-color .2s; }
+        .next-due:active { transform: scale(.985); }
+        .nd-days { width: 58px; height: 58px; border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; line-height: 1; }
+        .nd-days b { font-family: 'Poppins', system-ui, sans-serif; font-size: 22px; }
+        .nd-days small { font-size: 11px; font-weight: 700; margin-top: 3px; }
+        .next-due.ok .nd-days { background: var(--accent-soft); color: var(--accent); }
+        .next-due.warn { border-color: color-mix(in srgb, var(--warn) 45%, transparent); }
+        .next-due.warn .nd-days { background: var(--warn-soft); color: var(--warn); }
+        .next-due.danger { border-color: color-mix(in srgb, var(--danger) 50%, transparent); }
+        .next-due.danger .nd-days { background: var(--danger-soft); color: var(--danger); }
+        .nd-btn { background: var(--accent); color: var(--accent-ink); flex-shrink: 0; }
+
+        /* ---------- Tucked explanations ---------- */
+        .info-btn { width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: var(--faint); margin-left: 2px; transition: background .2s, color .2s; flex-shrink: 0; }
+        .info-btn svg.lucide { width: 17px !important; height: 17px !important; color: inherit !important; }
+        .info-btn:hover, .info-btn.on { background: var(--accent-soft); color: var(--accent); }
+        .card-sub.tuck { display: none; }
+        .card-sub.tuck.show { display: block; background: var(--surface-2); border-radius: 12px; padding: 10px 12px; margin-top: 10px; animation: rise .25s ease both; }
+        .tuck-details summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--accent); }
+        .tuck-details summary::-webkit-details-marker { display: none; }
+        .tuck-details summary svg.lucide { width: 16px; height: 16px; }
+
+        /* ---------- Empty states ---------- */
+        .empty { text-align: center; padding: 18px 10px 8px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .empty .small { max-width: 320px; }
+        .empty-t { font-family: 'Poppins', system-ui, sans-serif; font-weight: 600; font-size: 16px; margin-top: 8px; }
+        .empty-art { position: relative; width: 84px; height: 84px; }
+        .empty-art > span { position: absolute; inset: 8px; border-radius: 24px; display: flex; align-items: center; justify-content: center; background: linear-gradient(145deg, var(--accent-soft), color-mix(in srgb, var(--brand-2) 16%, transparent)); color: var(--accent); transform: rotate(-6deg); animation: floaty 4s ease-in-out infinite; }
+        .empty-art > span svg.lucide { width: 30px; height: 30px; transform: rotate(6deg); }
+        .empty-art .spark { position: absolute; border-radius: 50%; background: var(--brand-2); opacity: .55; }
+        .empty-art .s1 { width: 8px; height: 8px; top: 2px; right: 6px; } .empty-art .s2 { width: 5px; height: 5px; bottom: 6px; left: 2px; background: var(--gold); } .empty-art .s3 { width: 6px; height: 6px; top: 30px; left: -4px; background: var(--brand-1); }
+        @keyframes floaty { 0%, 100% { transform: rotate(-6deg) translateY(0); } 50% { transform: rotate(-3deg) translateY(-4px); } }
+
+        /* ---------- Profile, grouped like phone settings ---------- */
+        .profile-sheet { background: var(--bg); }
+        .profile-sheet h2 { font-family: 'Poppins', system-ui, sans-serif; }
+        .set-group { margin-top: 22px; }
+        .set-head { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 0 4px 8px; }
+        .set-head svg.lucide { width: 15px; height: 15px; color: var(--accent); }
+        .set-card { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 16px; }
+        .set-card.rows { padding: 4px 0; }
+        .set-foot { margin: 8px 6px 0; }
+        .set-row { width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px 14px; text-align: left; font-weight: 600; font-size: 15px; color: var(--text); text-decoration: none; transition: background .15s; }
+        .set-row + .set-row { border-top: 1px solid var(--border); }
+        .set-row:hover, .set-row:active { background: var(--surface-2); }
+        .set-row:first-child { border-radius: 18px 18px 0 0; } .set-row:last-child { border-radius: 0 0 18px 18px; } .set-row:only-child { border-radius: 18px; }
+        .set-row.danger { color: var(--danger); } .set-row.danger .set-ic { background: var(--danger-soft); color: var(--danger); }
+        .set-ic { width: 32px; height: 32px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; background: var(--accent-soft); color: var(--accent); flex-shrink: 0; }
+        .set-ic svg.lucide { width: 17px; height: 17px; }
+        .acct { display: flex; align-items: center; gap: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 14px 16px; margin-bottom: 10px; }
+        .avatar { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Poppins', system-ui, sans-serif; font-weight: 600; font-size: 20px; color: #0b1330; background: linear-gradient(135deg, var(--brand-1), var(--brand-2)); flex-shrink: 0; }
+
+        /* ---------- Welcome guide ---------- */
+        .onboard { position: fixed; inset: 0; z-index: 400; background: var(--bg); display: none; overflow-y: auto; }
+        .onboard.open { display: block; }
+        .onboard::before { content: ''; position: fixed; inset: -20% -20% auto auto; width: 70vw; height: 70vw; max-width: 520px; max-height: 520px; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--brand-2) 22%, transparent), transparent 70%); pointer-events: none; }
+        .ob-wrap { position: relative; max-width: 460px; margin: 0 auto; min-height: 100%; padding: calc(14px + env(safe-area-inset-top)) 20px calc(24px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; }
+        .ob-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 44px; }
+        .ob-dots { display: flex; gap: 6px; }
+        .ob-dots i { width: 8px; height: 8px; border-radius: 999px; background: var(--surface-3); transition: width .3s, background .3s; }
+        .ob-dots i.done { background: color-mix(in srgb, var(--accent) 55%, transparent); }
+        .ob-dots i.on { width: 24px; background: var(--accent); }
+        .ob-body { flex: 1; display: flex; flex-direction: column; padding-top: 18px; animation: obIn .35s cubic-bezier(.2, .8, .2, 1) both; }
+        @keyframes obIn { from { opacity: 0; transform: translateX(18px); } to { opacity: 1; transform: none; } }
+        .ob-hero { display: flex; justify-content: center; margin: 20px 0 10px; }
+        .ob-hero img { filter: drop-shadow(0 12px 28px color-mix(in srgb, var(--brand-2) 40%, transparent)); animation: floaty 5s ease-in-out infinite; }
+        .ob-icon { width: 64px; height: 64px; border-radius: 20px; display: flex; align-items: center; justify-content: center; background: linear-gradient(145deg, var(--accent-soft), color-mix(in srgb, var(--brand-2) 18%, transparent)); color: var(--accent); margin-bottom: 18px; }
+        .ob-icon svg.lucide { width: 30px; height: 30px; }
+        .ob-icon.party { margin: 18px auto 10px; }
+        .ob-h { font-family: 'Poppins', system-ui, sans-serif; font-weight: 600; font-size: 28px; line-height: 1.15; letter-spacing: -.02em; text-wrap: balance; }
+        .ob-hero + .ob-h, .ob-hero ~ .ob-s { text-align: center; }
+        .ob-s { color: var(--muted); font-size: 16px; margin-top: 8px; text-wrap: pretty; }
+        .ob-benefits { display: grid; gap: 10px; margin: 26px 0 8px; }
+        .ob-benefits > div { display: flex; align-items: center; gap: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 12px 14px; font-weight: 600; }
+        .ob-cta { margin-top: auto; padding-top: 24px; }
+        .btn.ob-cta { margin-top: auto; padding: 15px 18px; font-size: 16px; }
+        .ob-body > .btn.ob-cta { margin-top: 28px; }
+        @media (max-height: 760px) { .ob-body > .btn.ob-cta { margin-top: 22px; } }
+        .ob-body .chips { flex-wrap: wrap; overflow: visible; }
+        .ob-body .chip { min-width: 0; flex-direction: row; padding: 8px 12px; border-radius: 999px; }
+        .ob-money { display: flex; gap: 10px; }
+        .ob-money .amount-in { font-size: 24px; font-weight: 700; }
+        .ob-bill { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; }
+        .ob-bill #ob-name { grid-column: 1 / -1; }
+        .ob-bill .btn { grid-column: 1 / -1; }
+        @media (min-width: 420px) { .ob-bill { grid-template-columns: minmax(0, 2fr) minmax(0, 1.3fr) minmax(0, .8fr); } .ob-bill #ob-name { grid-column: auto; } }
+        .ob-cardart { position: relative; width: 240px; max-width: 80%; aspect-ratio: 1.586; margin: 30px auto 10px; border-radius: 18px; background: linear-gradient(135deg, #0d1633, #1d3a7a 55%, #2ab9e6); box-shadow: 0 18px 40px -16px rgba(13, 22, 51, .6); transform: rotate(-5deg); animation: floaty 5s ease-in-out infinite; }
+        .ob-cardart .chip-gold { position: absolute; left: 22px; top: 34%; width: 38px; height: 28px; border-radius: 6px; background: linear-gradient(135deg, #f0bd4a, #e8a02a); }
+        .ob-cardart .ln { position: absolute; left: 22px; height: 8px; border-radius: 4px; background: rgba(255,255,255,.35); }
+        .ob-cardart .l1 { bottom: 34px; width: 55%; } .ob-cardart .l2 { bottom: 18px; width: 30%; background: rgba(255,255,255,.2); }
+        .ob-reveal { text-align: center; font-size: clamp(52px, 16vw, 76px); line-height: 1; margin: 10px 0 6px; background: linear-gradient(135deg, var(--brand-1), var(--brand-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .ob-reveal ~ .ob-s, .ob-icon.party ~ .ob-s { text-align: center; }
+        :root[data-theme="light"] .ob-reveal { background: linear-gradient(135deg, var(--accent), var(--info)); -webkit-background-clip: text; background-clip: text; }
+        @media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) .ob-reveal { background: linear-gradient(135deg, var(--accent), var(--info)); -webkit-background-clip: text; background-clip: text; } }
         /* ---------- Login (web version) ---------- */
         .auth { position: fixed; inset: 0; z-index: 420; background: var(--bg); display: none; overflow-y: auto; }
         .auth.open { display: block; }
@@ -488,34 +600,34 @@
                         <button class="btn btn-primary mt-4" onclick="openConfigModal()" data-i18n="setupBtn"></button>
                     </div>
 
-                    <div id="hero-card" class="card anim">
-                        <div class="hero">
-                            <div class="ring-wrap">
+                    <div id="hero-card" class="card anim hero-card">
+                        <div class="hero2">
+                            <div class="hero-head">
+                                <p id="hero-label" class="eyebrow"></p>
+                                <p id="hero-left" class="hero-amount serif num"></p>
+                                <p id="hero-of" class="small muted"></p>
+                            </div>
+                            <div class="ring-wrap mini">
                                 <svg viewBox="0 0 120 120" aria-hidden="true">
                                     <defs><linearGradient id="brandGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--brand-1)"/><stop offset="1" stop-color="var(--brand-2)"/></linearGradient></defs>
-                                    <circle class="ring-track" cx="60" cy="60" r="52" fill="none" stroke-width="10"/>
-                                    <circle id="hero-ring" class="ring-fg" cx="60" cy="60" r="52" fill="none" stroke-width="10" stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/>
+                                    <circle class="ring-track" cx="60" cy="60" r="50" fill="none" stroke-width="13"/>
+                                    <circle id="hero-ring" class="ring-fg" cx="60" cy="60" r="50" fill="none" stroke-width="13" stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/>
                                 </svg>
-                                <div class="ring-center">
-                                    <span class="eyebrow" data-i18n="heroLabel"></span>
-                                    <span id="hero-left" class="serif big num"></span>
-                                    <span id="hero-of" class="tiny muted"></span>
-                                </div>
-                            </div>
-                            <div class="stack" style="gap:16px">
-                                <p id="hero-msg" class="hero-msg"></p>
-                                <span id="streak-chip" class="streak"></span>
-                                <div>
-                                    <div class="between small mb-2"><span id="hero-month" class="muted"></span><span id="hero-month-pct" class="muted num"></span></div>
-                                    <div class="bar"><span id="hero-month-bar"></span></div>
-                                </div>
-                                <div class="stat-row">
-                                    <div class="stat"><p class="tiny muted" data-i18n="heroSpentToday"></p><p id="st-today" class="v num truncate"></p></div>
-                                    <div class="stat"><p class="tiny muted" data-i18n="heroSpentMonth"></p><p id="st-month" class="v num truncate"></p></div>
-                                    <div class="stat"><p class="tiny muted" data-i18n="heroDays"></p><p id="st-days" class="v num"></p></div>
-                                </div>
+                                <div class="ring-center"><span id="hero-pct" class="serif num" style="font-size:22px; line-height:1"></span><span class="tiny muted" data-i18n="heroPctLeft"></span></div>
                             </div>
                         </div>
+                        <p id="hero-msg" class="hero-msg mt-4"></p>
+                        <span id="streak-chip" class="streak mt-3"></span>
+                        <div class="mt-4">
+                            <div class="between small mb-2"><span id="hero-month" class="muted"></span><span id="hero-month-pct" class="muted num"></span></div>
+                            <div class="bar"><span id="hero-month-bar"></span></div>
+                        </div>
+                        <div class="stat-row mt-4">
+                            <div class="stat"><p class="tiny muted" data-i18n="heroSpentToday"></p><p id="st-today" class="v num truncate"></p></div>
+                            <div class="stat"><p class="tiny muted" data-i18n="heroSpentMonth"></p><p id="st-month" class="v num truncate"></p></div>
+                            <div class="stat"><p class="tiny muted" data-i18n="heroDays"></p><p id="st-days" class="v num"></p></div>
+                        </div>
+                        <div id="next-due" class="mt-4"></div>
                     </div>
 
                     <div class="card anim">
@@ -819,12 +931,26 @@
 
     <!-- CONFIG -->
     <div id="config-modal" class="modal" onclick="if(event.target===this)closeModal('config-modal')">
-        <div class="sheet">
+        <div class="sheet profile-sheet">
             <div class="grab"></div>
-            <h2 data-i18n="configTitle"></h2>
-            <div class="stack" style="gap:14px">
-                <div><label class="label" for="c-income" data-i18n="incomeLabel"></label><input type="number" id="c-income" min="0" step="0.01" inputmode="decimal" class="input amount-in"></div>
-                <div class="form-grid">
+            <div class="between mb-3">
+                <h2 data-i18n="configTitle" style="margin:0"></h2>
+                <button class="icon-btn" onclick="closeModal('config-modal')" data-i18n-title="close"><i data-lucide="x"></i></button>
+            </div>
+            <div id="acct-head"></div>
+            <div id="sync-status" class="note plain small"></div>
+
+            <section class="set-group">
+                <p class="set-head"><i data-lucide="wallet"></i><span data-i18n="setBudget"></span></p>
+                <div class="set-card stack" style="gap:14px">
+                    <div><label class="label" for="c-income" data-i18n="incomeLabel"></label><input type="number" id="c-income" min="0" step="0.01" inputmode="decimal" class="input amount-in"></div>
+                    <div>
+                        <p class="label" data-i18n="payFreqLabel"></p>
+                        <div class="seg-wide" id="c-freq">
+                            <button data-freq="monthly" onclick="pickFreq('monthly')" data-i18n="freqMonthly"></button>
+                            <button data-freq="biweekly" onclick="pickFreq('biweekly')" data-i18n="freqBiweekly"></button>
+                        </div>
+                    </div>
                     <div>
                         <label class="label" for="c-currency" data-i18n="currencyLabel"></label>
                         <select id="c-currency" class="input">
@@ -832,11 +958,23 @@
                             <option value="HNL">HNL (L)</option><option value="CRC">CRC (₡)</option><option value="COP">COP ($)</option><option value="GBP">GBP (£)</option>
                         </select>
                     </div>
+                    <div class="form-grid">
+                        <div><label class="label" for="c-buffer" data-i18n="bufferPctLabel"></label><input type="number" id="c-buffer" min="0" max="100" inputmode="numeric" class="input"></div>
+                        <div><label class="label" for="c-surplus" data-i18n="surplusPctLabel"></label><input type="number" id="c-surplus" min="0" max="100" inputmode="numeric" class="input"></div>
+                    </div>
+                    <details class="tuck-details"><summary><i data-lucide="info"></i><span data-i18n="whatIsThis"></span></summary><p class="tiny muted mt-2" data-i18n="pctHelp"></p></details>
+                    <button class="btn btn-primary btn-block" onclick="saveProfile()" data-i18n="save"></button>
+                </div>
+            </section>
+
+            <section class="set-group">
+                <p class="set-head"><i data-lucide="palette"></i><span data-i18n="setLook"></span></p>
+                <div class="set-card stack" style="gap:14px">
                     <div>
                         <label class="label" for="c-lang" data-i18n="langLabel"></label>
-                        <select id="c-lang" class="input"><option value="es">Español</option><option value="en">English</option></select>
+                        <select id="c-lang" class="input" onchange="setLang(this.value); renderProfileExtras()"><option value="es">Español</option><option value="en">English</option></select>
                     </div>
-                    <div class="full">
+                    <div>
                         <p class="label" data-i18n="themeLabel"></p>
                         <div class="seg-wide" style="grid-template-columns: repeat(3, 1fr)" id="c-theme">
                             <button data-theme-opt="system" onclick="pickThemeOpt('system')" data-i18n="themeSystem"></button>
@@ -844,50 +982,59 @@
                             <button data-theme-opt="dark" onclick="pickThemeOpt('dark')" data-i18n="themeDark"></button>
                         </div>
                     </div>
-                    <div class="full">
-                        <p class="label" data-i18n="payFreqLabel"></p>
-                        <div class="seg-wide" id="c-freq">
-                            <button data-freq="monthly" onclick="pickFreq('monthly')" data-i18n="freqMonthly"></button>
-                            <button data-freq="biweekly" onclick="pickFreq('biweekly')" data-i18n="freqBiweekly"></button>
-                        </div>
-                    </div>
-                    <div><label class="label" for="c-buffer" data-i18n="bufferPctLabel"></label><input type="number" id="c-buffer" min="0" max="100" class="input"></div>
-                    <div><label class="label" for="c-surplus" data-i18n="surplusPctLabel"></label><input type="number" id="c-surplus" min="0" max="100" class="input"></div>
                 </div>
-                <p class="tiny muted" data-i18n="pctHelp"></p>
-                <button class="btn btn-primary btn-block" onclick="saveProfile()" data-i18n="save"></button>
-                <div class="divider" style="margin:4px 0"></div>
-                <p class="label" data-i18n="syncTitle"></p>
-                <div id="sync-status" class="note plain small"></div>
-                <p class="label mt-2" data-i18n="securityTitle"></p>
-                <div id="pin-actions" class="form-grid"></div>
-                <p class="tiny muted" data-i18n="pinNote"></p>
-                <p class="label mt-2" data-i18n="installTitle"></p>
-                <button id="install-btn" class="btn btn-primary hidden" onclick="installApp()"><i data-lucide="smartphone"></i><span data-i18n="installBtn"></span></button>
-                <p class="tiny muted" data-i18n="installIos"></p>
-                <p class="tiny muted" data-i18n="installAndroid"></p>
-                <p class="label mt-2" data-i18n="exportTitle"></p>
-                <div class="form-grid">
-                    <button class="btn btn-ghost" onclick="exportCSV()"><i data-lucide="download"></i><span data-i18n="exportCsv"></span></button>
-                    <button class="btn btn-ghost" onclick="printReport()"><i data-lucide="file-text"></i><span data-i18n="exportPdf"></span></button>
-                </div>
-                <a id="open-synced" class="btn btn-soft hidden" href="https://claude.ai/artifact/V9LMZvaB2ujpi9nvLL4zja" target="_blank" rel="noopener"><span data-i18n="openSynced"></span></a>
-                <p class="label mt-2" data-i18n="transferTitle"></p>
-                <p class="tiny muted" data-i18n="transferDesc"></p>
-                <div class="form-grid">
-                    <button class="btn btn-ghost" onclick="copyTransfer()"><span data-i18n="transferCopy"></span></button>
-                    <button class="btn btn-ghost" onclick="toggleTransferPaste()"><span data-i18n="transferPaste"></span></button>
-                </div>
-                <textarea id="transfer-box" class="input hidden" rows="4" style="font-family:ui-monospace,monospace; font-size:12px; resize:vertical"></textarea>
-                <button id="transfer-apply" class="btn btn-primary hidden" onclick="applyTransfer()" data-i18n="transferApply"></button>
-                <p class="label mt-2" data-i18n="backupTitle"></p>
-                <div class="form-grid">
-                    <button class="btn btn-ghost" onclick="exportBackup()"><i data-lucide="download"></i><span data-i18n="backupExport"></span></button>
-                    <button class="btn btn-ghost" onclick="document.getElementById('import-file').click()"><i data-lucide="upload"></i><span data-i18n="backupImport"></span></button>
+            </section>
+
+            <section class="set-group">
+                <p class="set-head"><i data-lucide="shield-check"></i><span data-i18n="securityTitle"></span></p>
+                <div id="pin-actions" class="set-card rows"></div>
+                <p class="tiny muted set-foot" data-i18n="pinNote"></p>
+            </section>
+
+            <section id="notify-group" class="set-group hidden">
+                <p class="set-head"><i data-lucide="bell"></i><span data-i18n="nTitle"></span></p>
+                <div id="notify-box" class="set-card form-grid"></div>
+            </section>
+
+            <section class="set-group">
+                <p class="set-head"><i data-lucide="database"></i><span data-i18n="setData"></span></p>
+                <div class="set-card rows">
+                    <button class="set-row" onclick="exportCSV()"><span class="set-ic"><i data-lucide="download"></i></span><span class="grow" data-i18n="exportCsv"></span><i data-lucide="chevron-right" class="faint"></i></button>
+                    <button class="set-row" onclick="printReport()"><span class="set-ic"><i data-lucide="file-text"></i></span><span class="grow" data-i18n="exportPdf"></span><i data-lucide="chevron-right" class="faint"></i></button>
+                    <button class="set-row" onclick="exportBackup()"><span class="set-ic"><i data-lucide="download"></i></span><span class="grow" data-i18n="backupExport"></span><i data-lucide="chevron-right" class="faint"></i></button>
+                    <button class="set-row" onclick="document.getElementById('import-file').click()"><span class="set-ic"><i data-lucide="upload"></i></span><span class="grow" data-i18n="backupImport"></span><i data-lucide="chevron-right" class="faint"></i></button>
+                    <a id="open-synced" class="set-row hidden" href="https://claude.ai/artifact/V9LMZvaB2ujpi9nvLL4zja" target="_blank" rel="noopener"><span class="set-ic"><i data-lucide="arrow-right"></i></span><span class="grow" data-i18n="openSynced"></span><i data-lucide="chevron-right" class="faint"></i></a>
                 </div>
                 <input type="file" id="import-file" accept="application/json,.json" class="hidden" onchange="importBackup(event)">
-                <button class="btn btn-block muted" onclick="closeModal('config-modal')" data-i18n="cancel"></button>
-            </div>
+                <details class="set-card tuck-details mt-2">
+                    <summary><i data-lucide="combine"></i><span data-i18n="transferTitle"></span></summary>
+                    <div class="stack mt-3" style="gap:10px">
+                        <p class="tiny muted" data-i18n="transferDesc"></p>
+                        <div class="form-grid">
+                            <button class="btn btn-ghost" onclick="copyTransfer()"><span data-i18n="transferCopy"></span></button>
+                            <button class="btn btn-ghost" onclick="toggleTransferPaste()"><span data-i18n="transferPaste"></span></button>
+                        </div>
+                        <textarea id="transfer-box" class="input hidden" rows="4" style="font-family:ui-monospace,monospace; font-size:16px; resize:vertical"></textarea>
+                        <button id="transfer-apply" class="btn btn-primary hidden" onclick="applyTransfer()" data-i18n="transferApply"></button>
+                    </div>
+                </details>
+            </section>
+
+            <section class="set-group">
+                <p class="set-head"><i data-lucide="smartphone"></i><span data-i18n="installTitle"></span></p>
+                <div class="set-card stack" style="gap:8px">
+                    <button id="install-btn" class="btn btn-primary hidden" onclick="installApp()"><i data-lucide="smartphone"></i><span data-i18n="installBtn"></span></button>
+                    <p class="small muted" data-i18n="installIos"></p>
+                    <p class="small muted" data-i18n="installAndroid"></p>
+                </div>
+            </section>
+
+            <section id="legal-group" class="set-group hidden">
+                <p class="set-head"><i data-lucide="scale"></i><span data-i18n="setAccount"></span></p>
+                <div id="legal-box" class="set-card rows"></div>
+            </section>
+
+            <button class="btn btn-block btn-ghost mt-4" onclick="closeModal('config-modal')" data-i18n="close"></button>
         </div>
     </div>
 
@@ -1131,7 +1278,7 @@
 
     <script>
     // ================= Icons (inlined from Lucide, ISC license) — no external download needed =================
-    const ICONS = {"building-2":"<path d=\"M10 12h4\"/><path d=\"M10 8h4\"/><path d=\"M14 21v-3a2 2 0 0 0-4 0v3\"/><path d=\"M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2\"/><path d=\"M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16\"/>","calendar-arrow-down":"<path d=\"m14 17 4 4 4-4\"/><path d=\"M16 2v3\"/><path d=\"M18 13v8\"/><path d=\"M21 10.354V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h7.343\"/><path d=\"M3 9h18\"/><path d=\"M8 2v3\"/>","calendar-days":"<path d=\"M8 2v3\"/><path d=\"M16 2v3\"/><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\"/><path d=\"M3 9h18\"/><path d=\"M8 13h.01\"/><path d=\"M12 13h.01\"/><path d=\"M16 13h.01\"/><path d=\"M8 17h.01\"/><path d=\"M12 17h.01\"/><path d=\"M16 17h.01\"/>","chart-pie":"<path d=\"M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z\"/><path d=\"M21.21 15.89A10 10 0 1 1 8 2.83\"/>","chevron-right":"<path d=\"m9 18 6-6-6-6\"/>","combine":"<path d=\"M14 3a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1\"/><path d=\"M19 3a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1\"/><path d=\"m7 15 3 3\"/><path d=\"m7 21 3-3H5a2 2 0 0 1-2-2v-2\"/><rect x=\"14\" y=\"14\" width=\"7\" height=\"7\" rx=\"1\"/><rect x=\"3\" y=\"3\" width=\"7\" height=\"7\" rx=\"1\"/>","credit-card":"<rect width=\"20\" height=\"14\" x=\"2\" y=\"5\" rx=\"2\"/><line x1=\"2\" x2=\"22\" y1=\"10\" y2=\"10\"/>","download":"<path d=\"M12 15V3\"/><path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"/><path d=\"m7 10 5 5 5-5\"/>","file-text":"<path d=\"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z\"/><path d=\"M14 2v5a1 1 0 0 0 1 1h5\"/><path d=\"M10 9H8\"/><path d=\"M16 13H8\"/><path d=\"M16 17H8\"/>","gift":"<path d=\"M12 7v14\"/><path d=\"M20 11v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8\"/><path d=\"M7.5 7a1 1 0 0 1 0-5A4.8 8 0 0 1 12 7a4.8 8 0 0 1 4.5-5 1 1 0 0 1 0 5\"/><rect x=\"3\" y=\"7\" width=\"18\" height=\"4\" rx=\"1\"/>","hand-coins":"<path d=\"M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17\"/><path d=\"m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9\"/><path d=\"m2 16 6 6\"/><circle cx=\"16\" cy=\"9\" r=\"2.9\"/><circle cx=\"6\" cy=\"5\" r=\"3\"/>","heart-pulse":"<path d=\"M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5\"/><path d=\"M3.22 13H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27\"/>","history":"<path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"/><path d=\"M3 3v5h5\"/><path d=\"M12 7v5l4 2\"/>","house":"<path d=\"M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8\"/><path d=\"M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/>","landmark":"<path d=\"M10 18v-7\"/><path d=\"M11.119 2.205a2 2 0 0 1 1.762 0l7.84 3.846A.5.5 0 0 1 20.5 7h-17a.5.5 0 0 1-.22-.949z\"/><path d=\"M14 18v-7\"/><path d=\"M18 18v-7\"/><path d=\"M3 22h18\"/><path d=\"M6 18v-7\"/>","lightbulb":"<path d=\"M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5\"/><path d=\"M9 18h6\"/><path d=\"M10 22h4\"/>","list-checks":"<path d=\"M13 5h8\"/><path d=\"M13 12h8\"/><path d=\"M13 19h8\"/><path d=\"m3 17 2 2 4-4\"/><path d=\"m3 7 2 2 4-4\"/>","lock":"<rect width=\"18\" height=\"11\" x=\"3\" y=\"11\" rx=\"2\" ry=\"2\"/><path d=\"M7 11V7a5 5 0 0 1 10 0v4\"/>","piggy-bank":"<path d=\"M11 17h3v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a3.16 3.16 0 0 0 2-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1a5 5 0 0 0-2-4V3a4 4 0 0 0-3.2 1.6l-.3.4H11a6 6 0 0 0-6 6v1a5 5 0 0 0 2 4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z\"/><path d=\"M16 10h.01\"/><path d=\"M2 8v1a2 2 0 0 0 2 2h1\"/>","plus":"<path d=\"M5 12h14\"/><path d=\"M12 5v14\"/>","receipt":"<path d=\"M12 17V7\"/><path d=\"M16 8h-6a2 2 0 0 0 0 4h4a2 2 0 0 1 0 4H8\"/><path d=\"M4 3a1 1 0 0 1 1-1 1.3 1.3 0 0 1 .7.2l.933.6a1.3 1.3 0 0 0 1.4 0l.934-.6a1.3 1.3 0 0 1 1.4 0l.933.6a1.3 1.3 0 0 0 1.4 0l.933-.6a1.3 1.3 0 0 1 1.4 0l.934.6a1.3 1.3 0 0 0 1.4 0l.933-.6A1.3 1.3 0 0 1 19 2a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1 1.3 1.3 0 0 1-.7-.2l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.934.6a1.3 1.3 0 0 1-1.4 0l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-1.4 0l-.934-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-.7.2 1 1 0 0 1-1-1z\"/>","shield-check":"<path d=\"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z\"/><path d=\"m9 12 2 2 4-4\"/>","smartphone":"<rect width=\"14\" height=\"20\" x=\"5\" y=\"2\" rx=\"2\" ry=\"2\"/><path d=\"M12 18h.01\"/>","sparkles":"<path d=\"M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z\"/><path d=\"M20 2v4\"/><path d=\"M22 4h-4\"/><circle cx=\"4\" cy=\"20\" r=\"2\"/>","target":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><circle cx=\"12\" cy=\"12\" r=\"6\"/><circle cx=\"12\" cy=\"12\" r=\"2\"/>","trending-down":"<path d=\"M16 17h6v-6\"/><path d=\"m22 17-8.5-8.5-5 5L2 7\"/>","trophy":"<path d=\"M10 14.66V17a1 1 0 0 1-1 1 2 2 0 0 0-2 2v2\"/><path d=\"M14 14.66V17a1 1 0 0 0 1 1 2 2 0 0 1 2 2v2\"/><path d=\"M17.916 10H19.5A2.5 2.5 0 0 0 22 7.5V5a1 1 0 0 0-1-1h-3\"/><path d=\"M4 22h16\"/><path d=\"M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z\"/><path d=\"M6.084 10H4.5A2.5 2.5 0 0 1 2 7.5V5a1 1 0 0 1 1-1h3\"/>","upload":"<path d=\"M12 3v12\"/><path d=\"m17 8-5-5-5 5\"/><path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"/>","user-cog":"<path d=\"M10 15H6a4 4 0 0 0-4 4v2\"/><path d=\"m14.305 16.53.923-.382\"/><path d=\"m15.228 13.852-.923-.383\"/><path d=\"m16.852 12.228-.383-.923\"/><path d=\"m16.852 17.772-.383.924\"/><path d=\"m19.148 12.228.383-.923\"/><path d=\"m19.53 18.696-.382-.924\"/><path d=\"m20.772 13.852.924-.383\"/><path d=\"m20.772 16.148.924.383\"/><circle cx=\"18\" cy=\"15\" r=\"3\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/>","wallet":"<path d=\"M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1\"/><path d=\"M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4\"/>","sun":"<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2\"/><path d=\"M12 20v2\"/><path d=\"m4.93 4.93 1.41 1.41\"/><path d=\"m17.66 17.66 1.41 1.41\"/><path d=\"M2 12h2\"/><path d=\"M20 12h2\"/><path d=\"m6.34 17.66-1.41 1.41\"/><path d=\"m19.07 4.93-1.41 1.41\"/>","moon":"<path d=\"M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401\"/>","sun-moon":"<path d=\"M12 2v2\"/><path d=\"M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715\"/><path d=\"M16 12a4 4 0 0 0-4-4\"/><path d=\"m19 5-1.256 1.256\"/><path d=\"M20 12h2\"/>"};
+    const ICONS = {"building-2":"<path d=\"M10 12h4\"/><path d=\"M10 8h4\"/><path d=\"M14 21v-3a2 2 0 0 0-4 0v3\"/><path d=\"M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2\"/><path d=\"M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16\"/>","calendar-arrow-down":"<path d=\"m14 17 4 4 4-4\"/><path d=\"M16 2v3\"/><path d=\"M18 13v8\"/><path d=\"M21 10.354V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h7.343\"/><path d=\"M3 9h18\"/><path d=\"M8 2v3\"/>","calendar-days":"<path d=\"M8 2v3\"/><path d=\"M16 2v3\"/><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\"/><path d=\"M3 9h18\"/><path d=\"M8 13h.01\"/><path d=\"M12 13h.01\"/><path d=\"M16 13h.01\"/><path d=\"M8 17h.01\"/><path d=\"M12 17h.01\"/><path d=\"M16 17h.01\"/>","chart-pie":"<path d=\"M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z\"/><path d=\"M21.21 15.89A10 10 0 1 1 8 2.83\"/>","chevron-right":"<path d=\"m9 18 6-6-6-6\"/>","combine":"<path d=\"M14 3a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1\"/><path d=\"M19 3a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1\"/><path d=\"m7 15 3 3\"/><path d=\"m7 21 3-3H5a2 2 0 0 1-2-2v-2\"/><rect x=\"14\" y=\"14\" width=\"7\" height=\"7\" rx=\"1\"/><rect x=\"3\" y=\"3\" width=\"7\" height=\"7\" rx=\"1\"/>","credit-card":"<rect width=\"20\" height=\"14\" x=\"2\" y=\"5\" rx=\"2\"/><line x1=\"2\" x2=\"22\" y1=\"10\" y2=\"10\"/>","download":"<path d=\"M12 15V3\"/><path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"/><path d=\"m7 10 5 5 5-5\"/>","file-text":"<path d=\"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z\"/><path d=\"M14 2v5a1 1 0 0 0 1 1h5\"/><path d=\"M10 9H8\"/><path d=\"M16 13H8\"/><path d=\"M16 17H8\"/>","gift":"<path d=\"M12 7v14\"/><path d=\"M20 11v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8\"/><path d=\"M7.5 7a1 1 0 0 1 0-5A4.8 8 0 0 1 12 7a4.8 8 0 0 1 4.5-5 1 1 0 0 1 0 5\"/><rect x=\"3\" y=\"7\" width=\"18\" height=\"4\" rx=\"1\"/>","hand-coins":"<path d=\"M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17\"/><path d=\"m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9\"/><path d=\"m2 16 6 6\"/><circle cx=\"16\" cy=\"9\" r=\"2.9\"/><circle cx=\"6\" cy=\"5\" r=\"3\"/>","heart-pulse":"<path d=\"M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5\"/><path d=\"M3.22 13H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27\"/>","history":"<path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"/><path d=\"M3 3v5h5\"/><path d=\"M12 7v5l4 2\"/>","house":"<path d=\"M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8\"/><path d=\"M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/>","landmark":"<path d=\"M10 18v-7\"/><path d=\"M11.119 2.205a2 2 0 0 1 1.762 0l7.84 3.846A.5.5 0 0 1 20.5 7h-17a.5.5 0 0 1-.22-.949z\"/><path d=\"M14 18v-7\"/><path d=\"M18 18v-7\"/><path d=\"M3 22h18\"/><path d=\"M6 18v-7\"/>","lightbulb":"<path d=\"M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5\"/><path d=\"M9 18h6\"/><path d=\"M10 22h4\"/>","list-checks":"<path d=\"M13 5h8\"/><path d=\"M13 12h8\"/><path d=\"M13 19h8\"/><path d=\"m3 17 2 2 4-4\"/><path d=\"m3 7 2 2 4-4\"/>","lock":"<rect width=\"18\" height=\"11\" x=\"3\" y=\"11\" rx=\"2\" ry=\"2\"/><path d=\"M7 11V7a5 5 0 0 1 10 0v4\"/>","piggy-bank":"<path d=\"M11 17h3v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a3.16 3.16 0 0 0 2-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1a5 5 0 0 0-2-4V3a4 4 0 0 0-3.2 1.6l-.3.4H11a6 6 0 0 0-6 6v1a5 5 0 0 0 2 4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z\"/><path d=\"M16 10h.01\"/><path d=\"M2 8v1a2 2 0 0 0 2 2h1\"/>","plus":"<path d=\"M5 12h14\"/><path d=\"M12 5v14\"/>","receipt":"<path d=\"M12 17V7\"/><path d=\"M16 8h-6a2 2 0 0 0 0 4h4a2 2 0 0 1 0 4H8\"/><path d=\"M4 3a1 1 0 0 1 1-1 1.3 1.3 0 0 1 .7.2l.933.6a1.3 1.3 0 0 0 1.4 0l.934-.6a1.3 1.3 0 0 1 1.4 0l.933.6a1.3 1.3 0 0 0 1.4 0l.933-.6a1.3 1.3 0 0 1 1.4 0l.934.6a1.3 1.3 0 0 0 1.4 0l.933-.6A1.3 1.3 0 0 1 19 2a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1 1.3 1.3 0 0 1-.7-.2l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.934.6a1.3 1.3 0 0 1-1.4 0l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-1.4 0l-.934-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-.7.2 1 1 0 0 1-1-1z\"/>","shield-check":"<path d=\"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z\"/><path d=\"m9 12 2 2 4-4\"/>","smartphone":"<rect width=\"14\" height=\"20\" x=\"5\" y=\"2\" rx=\"2\" ry=\"2\"/><path d=\"M12 18h.01\"/>","sparkles":"<path d=\"M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z\"/><path d=\"M20 2v4\"/><path d=\"M22 4h-4\"/><circle cx=\"4\" cy=\"20\" r=\"2\"/>","target":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><circle cx=\"12\" cy=\"12\" r=\"6\"/><circle cx=\"12\" cy=\"12\" r=\"2\"/>","trending-down":"<path d=\"M16 17h6v-6\"/><path d=\"m22 17-8.5-8.5-5 5L2 7\"/>","trophy":"<path d=\"M10 14.66V17a1 1 0 0 1-1 1 2 2 0 0 0-2 2v2\"/><path d=\"M14 14.66V17a1 1 0 0 0 1 1 2 2 0 0 1 2 2v2\"/><path d=\"M17.916 10H19.5A2.5 2.5 0 0 0 22 7.5V5a1 1 0 0 0-1-1h-3\"/><path d=\"M4 22h16\"/><path d=\"M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z\"/><path d=\"M6.084 10H4.5A2.5 2.5 0 0 1 2 7.5V5a1 1 0 0 1 1-1h3\"/>","upload":"<path d=\"M12 3v12\"/><path d=\"m17 8-5-5-5 5\"/><path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"/>","user-cog":"<path d=\"M10 15H6a4 4 0 0 0-4 4v2\"/><path d=\"m14.305 16.53.923-.382\"/><path d=\"m15.228 13.852-.923-.383\"/><path d=\"m16.852 12.228-.383-.923\"/><path d=\"m16.852 17.772-.383.924\"/><path d=\"m19.148 12.228.383-.923\"/><path d=\"m19.53 18.696-.382-.924\"/><path d=\"m20.772 13.852.924-.383\"/><path d=\"m20.772 16.148.924.383\"/><circle cx=\"18\" cy=\"15\" r=\"3\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/>","wallet":"<path d=\"M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1\"/><path d=\"M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4\"/>","sun":"<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2\"/><path d=\"M12 20v2\"/><path d=\"m4.93 4.93 1.41 1.41\"/><path d=\"m17.66 17.66 1.41 1.41\"/><path d=\"M2 12h2\"/><path d=\"M20 12h2\"/><path d=\"m6.34 17.66-1.41 1.41\"/><path d=\"m19.07 4.93-1.41 1.41\"/>","moon":"<path d=\"M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401\"/>","sun-moon":"<path d=\"M12 2v2\"/><path d=\"M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715\"/><path d=\"M16 12a4 4 0 0 0-4-4\"/><path d=\"m19 5-1.256 1.256\"/><path d=\"M20 12h2\"/>","info":"<circle cx=\"12\" cy=\"12\" r=\"10\" /><path d=\"M12 16v-4\" /><path d=\"M12 8h.01\" />","bell":"<path d=\"M10.268 21a2 2 0 0 0 3.464 0\" /><path d=\"M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326\" />","user":"<path d=\"M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2\" /><circle cx=\"12\" cy=\"7\" r=\"4\" />","palette":"<path d=\"M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z\" /><circle cx=\"13.5\" cy=\"6.5\" r=\".5\" fill=\"currentColor\" /><circle cx=\"17.5\" cy=\"10.5\" r=\".5\" fill=\"currentColor\" /><circle cx=\"6.5\" cy=\"12.5\" r=\".5\" fill=\"currentColor\" /><circle cx=\"8.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\" />","database":"<ellipse cx=\"12\" cy=\"5\" rx=\"9\" ry=\"3\" /><path d=\"M3 5V19A9 3 0 0 0 21 19V5\" /><path d=\"M3 12A9 3 0 0 0 21 12\" />","settings-2":"<path d=\"M14 17H5\" /><path d=\"M19 7h-9\" /><circle cx=\"17\" cy=\"17\" r=\"3\" /><circle cx=\"7\" cy=\"7\" r=\"3\" />","log-out":"<path d=\"m16 17 5-5-5-5\" /><path d=\"M21 12H9\" /><path d=\"M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4\" />","trash-2":"<path d=\"M10 11v6\" /><path d=\"M14 11v6\" /><path d=\"M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6\" /><path d=\"M3 6h18\" /><path d=\"M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2\" />","scale":"<path d=\"M12 3v18\" /><path d=\"m19 8 3 8a5 5 0 0 1-6 0zV7\" /><path d=\"M3 7h1a17 17 0 0 0 8-2 17 17 0 0 0 8 2h1\" /><path d=\"m5 8 3 8a5 5 0 0 1-6 0zV7\" /><path d=\"M7 21h10\" />","circle-help":"<circle cx=\"12\" cy=\"12\" r=\"10\" /><path d=\"M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3\" /><path d=\"M12 17h.01\" />","arrow-right":"<path d=\"M5 12h14\" /><path d=\"m12 5 7 7-7 7\" />","check":"<path d=\"M20 6 9 17l-5-5\" />","party-popper":"<path d=\"M5.8 11.3 2 22l10.7-3.79\" /><path d=\"M4 3h.01\" /><path d=\"M22 8h.01\" /><path d=\"M15 2h.01\" /><path d=\"M22 20h.01\" /><path d=\"m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10\" /><path d=\"m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17\" /><path d=\"m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7\" /><path d=\"M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z\" />","wand-sparkles":"<path d=\"m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72\" /><path d=\"m14 7 3 3\" /><path d=\"M5 6v4\" /><path d=\"M19 14v4\" /><path d=\"M10 2v2\" /><path d=\"M7 8H3\" /><path d=\"M21 16h-4\" /><path d=\"M11 3H9\" />","chevron-left":"<path d=\"m15 18-6-6 6-6\" />","x":"<path d=\"M18 6 6 18\" /><path d=\"m6 6 12 12\" />","calendar-clock":"<path d=\"M16 14v2.2l1.6 1\" /><path d=\"M16 2v3\" /><path d=\"M21 7.338V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h2.338\" /><path d=\"M3 9h5.859\" /><path d=\"M8 2v3\" /><circle cx=\"16\" cy=\"16\" r=\"6\" />","wallet-cards":"<path d=\"M3 11h3.75a2 2 0 0 1 1.6.8l.45.6a4 4 0 0 0 6.4 0l.45-.6a2 2 0 0 1 1.6-.8H21\" /><path d=\"M3 7h18\" /><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\" />","sliders-horizontal":"<path d=\"M10 5H3\" /><path d=\"M12 19H3\" /><path d=\"M14 3v4\" /><path d=\"M16 17v4\" /><path d=\"M21 12h-9\" /><path d=\"M21 19h-5\" /><path d=\"M21 5h-7\" /><path d=\"M8 10v4\" /><path d=\"M8 12H3\" />"};
     window.lucide = { createIcons() {
         document.querySelectorAll("i[data-lucide]").forEach(el => {
             const name = el.getAttribute("data-lucide"), body = ICONS[name];
@@ -2343,6 +2490,7 @@
 
         const overdue = state.items.some(i => itemStatus(i).k === 'overdue');
         $('nav-badge').classList.toggle('hidden', !overdue);
+        setupInfoToggles(); obCheckRemote();
         if (window.lucide) lucide.createIcons();
         saveState();
         if (state.pendingRecap && !recapShown && !$('lock').classList.contains('open') && state.months.some(m => m.period === state.pendingRecap)) showRecap(state.pendingRecap);
@@ -2444,8 +2592,12 @@
         const toneColor = cssVar('--' + tone);
         setRing($('hero-ring'), ratio * 100, tone === 'accent' ? 'url(#brandGrad)' : toneColor);
         const left = $('hero-left');
-        left.style.color = tone === 'accent' ? 'var(--text)' : toneColor;
-        countTo(left, c.todayLeft, v => fmt(v));
+        left.classList.toggle('grad', tone === 'accent');
+        left.style.color = tone === 'accent' ? '' : toneColor;
+        $('hero-label').textContent = t(over ? 'heroCanOver' : 'heroCan');
+        countTo(left, Math.abs(c.todayLeft), v => fmt(v));
+        $('hero-pct').textContent = Math.round(ratio * 100) + '%';
+        $('next-due').innerHTML = nextDueHTML();
         $('hero-of').textContent = t('heroOf', { x: fmt(c.dailyBudget) });
 
         let msg;
@@ -2478,10 +2630,12 @@
                 <b class="num shrink-0">${fmt(e.amount)}</b>
                 <button class="icon-btn sm del" onclick="removeExpense('${e.id}')" title="${esc(t('deleteExpense'))}" aria-label="${esc(t('deleteExpense'))}">${X_ICON}</button>
             </div>`;
-        }).join('') : `<p class="muted small">${esc(t('spendEmpty'))}</p>`;
+        }).join('') : emptyHTML('receipt', t('emptySpendTitle'), t('spendEmpty'));
 
         const upcoming = state.items.filter(i => !i.paid && !i.completed).sort((a, b) => dueDiff(a) - dueDiff(b)).slice(0, 4);
-        $('upcoming-list').innerHTML = upcoming.length ? upcoming.map(i => obRow(i, 'compact')).join('') : `<p class="muted">${esc(t('upcomingEmpty'))}</p>`;
+        $('upcoming-list').innerHTML = upcoming.length ? upcoming.map(i => obRow(i, 'compact')).join('')
+            : state.items.length ? emptyHTML('party-popper', t('emptyAllPaidTitle'), t('upcomingEmpty'))
+            : emptyHTML('calendar-clock', t('emptyBillsTitle'), t('emptySchedule'), t('addObligation'), 'openEntryModal()');
         $('tip-today').innerHTML = ccTip() + agentHTML(c);
     }
 
@@ -2524,7 +2678,7 @@
         const paid = state.items.filter(i => i.paid).sort((a, b) => dueDay(a) - dueDay(b));
         $('ledger-list').innerHTML = state.items.length
             ? (unpaid.map(i => obRow(i)).join('') || `<p class="muted">${esc(t('upcomingEmpty'))}</p>`)
-            : `<div class="note plain">${esc(t('emptySchedule'))}</div><button class="btn btn-primary mt-3" onclick="openEntryModal()">${esc(t('addObligation'))}</button>`;
+            : emptyHTML('calendar-clock', t('emptyBillsTitle'), t('emptySchedule'), t('addObligation'), 'openEntryModal()');
         $('completed-wrap').classList.toggle('hidden', !paid.length);
         $('completed-list').innerHTML = paid.map(i => obRow(i)).join('');
         animBars($('ledger-list')); animBars($('completed-list'));
@@ -2590,7 +2744,7 @@
                     ${!i.paid && !i.completed ? `<button class="btn btn-primary btn-sm" onclick="openPaymentModal('${i.id}')">${esc(t('payBtn'))}</button>` : ''}
                 </div>
             </div>`;
-        }).join('') : `<div class="note plain" style="grid-column:1/-1">${esc(t('debtsEmpty'))}</div>`;
+        }).join('') : `<div style="grid-column:1/-1">${emptyHTML('trending-down', t('emptyDebtTitle'), t('emptyDebtText'), t('ccAdd'), 'openCardModal()')}</div>`;
         animBars($('debt-cards'));
 
         renderPlan(c, P);
@@ -3055,7 +3209,8 @@
         if (window.Chart && Chart.defaults) Chart.defaults.font.family = "'DM Sans', system-ui, sans-serif";
         if (window.APP_CONFIG && typeof webBoot === 'function') { webBoot(); return; } // web version: login first
         loadState(); render();
-        setupInstall(); maybeLock(); initSync();
+        setupInstall(); maybeLock();
+        Promise.resolve(initSync()).finally(() => setTimeout(maybeOnboard, 300));
     });
     document.addEventListener('visibilitychange', () => { if (!document.hidden) render(); });
     window.addEventListener('resize', () => { /* charts resize themselves */ });
@@ -3127,7 +3282,7 @@
                 <div class="between"><span class="tiny muted">${line}</span><span class="serif accent num" style="font-size:18px">${Math.round(pct)}%</span></div>
                 ${pct < 100 ? `<button class="btn btn-soft btn-sm" onclick="openContrib('${g.id}')">${esc(t('goalContribute'))}</button>` : ''}
             </div>`;
-        }).join('') : `<div class="note plain" style="grid-column:1/-1">${esc(t('goalsEmpty'))}</div>`;
+        }).join('') : `<div style="grid-column:1/-1">${emptyHTML('target', t('emptyGoalTitle'), t('goalsEmpty'), t('goalNew'), 'openGoalModal()')}</div>`;
         animBars($('goal-grid'));
 
         renderBonus(c);
@@ -3524,9 +3679,17 @@
     function renderProfileExtras() {
         document.querySelectorAll('[data-freq]').forEach(b => b.classList.toggle('active', b.dataset.freq === state.payFreq));
         renderSyncStatus();
-        $('pin-actions').innerHTML = window.APP_CONFIG && typeof webAccountHTML === 'function' ? webAccountHTML() : state.pinHash
-            ? `<button class="btn btn-ghost" onclick="startPinSetup()"><i data-lucide="lock"></i>${esc(t('pinChange'))}</button><button class="btn btn-ghost danger" onclick="removePin()">${esc(t('pinRemove'))}</button>`
-            : `<button class="btn btn-ghost full" onclick="startPinSetup()"><i data-lucide="lock"></i>${esc(t('pinSet'))}</button>`;
+        const web = !!(window.APP_CONFIG && typeof webAccountHTML === 'function');
+        $('pin-actions').innerHTML = web ? webAccountHTML() : state.pinHash
+            ? setRow('lock', t('pinChange'), 'startPinSetup()') + setRow('trash-2', t('pinRemove'), 'removePin()', 'danger')
+            : setRow('lock', t('pinSet'), 'startPinSetup()');
+        $('acct-head').innerHTML = web && AUTH.user ? acctHeadHTML(AUTH.user.email) : '';
+        $('notify-group').classList.toggle('hidden', !web);
+        $('legal-group').classList.toggle('hidden', !web);
+        if (web) {
+            $('notify-box').innerHTML = remindersHTML();
+            $('legal-box').innerHTML = setRow('file-text', t('legalLink'), `window.open('${legalUrl()}', '_blank', 'noopener')`) + setRow('trash-2', t('delBtn'), 'webDeleteAccount()', 'danger');
+        }
         $('install-btn').classList.toggle('hidden', !installPrompt);
         if (window.lucide) lucide.createIcons();
     }
@@ -4082,6 +4245,255 @@
         return s.full === 0 ? { big: true, msg: t('ccPaidFullToast') } : null;
     }
 
+    // ================= UX layer: profile rows, empty states, next payment, tucked explanations, welcome guide, zoom guard =================
+    Object.assign(I18N.es, {
+        heroCan: 'Hoy puedes gastar', heroCanOver: 'Hoy te pasaste por', heroPctLeft: 'disponible',
+        nextDue: 'Próximo pago', ndToday: 'Hoy', ndDay: 'día', ndDays: 'días', ndLate: 'tarde',
+        setBudget: 'Mi presupuesto', setLook: 'Apariencia', setData: 'Mis datos', setAccount: 'Privacidad y cuenta', whatIsThis: '¿Qué significa esto?',
+        backupExport: 'Guardar respaldo', backupImport: 'Restaurar respaldo',
+        nTitle: 'Recordatorios de tarjetas', infoShow: 'Ver explicación', infoHide: 'Ocultar explicación',
+        emptySpendTitle: 'Tu primer gasto', emptyAllPaidTitle: '¡Todo pagado!', emptyBillsTitle: 'Agrega tus pagos fijos',
+        emptyDebtTitle: 'Sin deudas registradas', emptyDebtText: 'Si tienes tarjeta de crédito o un préstamo, agrégalo y te mostramos cómo pagarlo más rápido y con menos intereses.',
+        emptyGoalTitle: 'Crea tu primera meta',
+        obSkip: 'Saltar', obBack: 'Atrás', obNext: 'Continuar', obStart: 'Empezar',
+        obWelcomeT: 'Bienvenido a Valiu', obWelcomeS: 'En un minuto calculamos cuánto puedes gastar cada día sin descuidar tus pagos.',
+        obB1: 'Tu límite diario, siempre claro', obB2: 'Recordatorios antes de cada fecha límite', obB3: 'Un plan para salir de deudas',
+        obIncomeT: '¿Cuánto ganas al mes?', obIncomeS: 'Tu ingreso neto: lo que te cae en la cuenta después de descuentos.', obIncomeErr: 'Escribe tu ingreso para continuar.',
+        obBillsT: 'Tus pagos fijos', obBillsS: 'Lo que pagas todos los meses: alquiler, luz, internet, colegiatura… Puedes agregar más después.',
+        obBillName: 'Nombre', obBillAmount: 'Monto', obBillDay: 'Día', obBillAdd: 'Agregar', obBillsNone: 'Todavía no agregaste ninguno.',
+        obBillErr: 'Completa nombre, monto y un día del 1 al 31.',
+        obSugg: 'Alquiler,Luz,Agua,Internet,Teléfono,Colegiatura,Seguro',
+        obCardT: '¿Tienes tarjeta de crédito?', obCardS: 'Con los datos de tu estado de cuenta te decimos cuánto pagar, cuándo, y qué pasa si solo pagas el mínimo.',
+        obCardYes: 'Sí, agregar una tarjeta', obCardNo: 'No, por ahora no',
+        obRevealT: 'Tu límite diario es', obRevealS: 'Esto puedes gastar cada día y aun así cubrir tus pagos fijos y ahorrar.',
+        obRevealLine: '{income} de ingreso − {fixed} en pagos fijos − {save} para ahorro y deudas, repartido en los días que quedan del mes.',
+        obGo: 'Ver mi presupuesto', obGoCard: 'Agregar mi tarjeta'
+    });
+    Object.assign(I18N.en, {
+        heroCan: 'You can spend today', heroCanOver: 'Today you went over by', heroPctLeft: 'left',
+        nextDue: 'Next payment', ndToday: 'Today', ndDay: 'day', ndDays: 'days', ndLate: 'late',
+        setBudget: 'My budget', setLook: 'Appearance', setData: 'My data', setAccount: 'Privacy and account', whatIsThis: 'What does this mean?',
+        backupExport: 'Save a backup', backupImport: 'Restore a backup',
+        nTitle: 'Card reminders', infoShow: 'Show explanation', infoHide: 'Hide explanation',
+        emptySpendTitle: 'Your first expense', emptyAllPaidTitle: 'All paid!', emptyBillsTitle: 'Add your fixed bills',
+        emptyDebtTitle: 'No debts yet', emptyDebtText: 'If you have a credit card or a loan, add it and we\'ll show you how to pay it off faster with less interest.',
+        emptyGoalTitle: 'Create your first goal',
+        obSkip: 'Skip', obBack: 'Back', obNext: 'Continue', obStart: 'Get started',
+        obWelcomeT: 'Welcome to Valiu', obWelcomeS: 'In one minute we\'ll work out how much you can spend each day without missing a payment.',
+        obB1: 'Your daily limit, always clear', obB2: 'Reminders before every due date', obB3: 'A plan to get out of debt',
+        obIncomeT: 'How much do you earn a month?', obIncomeS: 'Your net income: what lands in your account after deductions.', obIncomeErr: 'Enter your income to continue.',
+        obBillsT: 'Your fixed bills', obBillsS: 'What you pay every month: rent, power, internet, tuition… You can add more later.',
+        obBillName: 'Name', obBillAmount: 'Amount', obBillDay: 'Day', obBillAdd: 'Add', obBillsNone: 'None added yet.',
+        obBillErr: 'Fill in a name, an amount and a day from 1 to 31.',
+        obSugg: 'Rent,Power,Water,Internet,Phone,Tuition,Insurance',
+        obCardT: 'Do you have a credit card?', obCardS: 'With your statement details we\'ll tell you how much to pay, when, and what happens if you only pay the minimum.',
+        obCardYes: 'Yes, add a card', obCardNo: 'Not right now',
+        obRevealT: 'Your daily limit is', obRevealS: 'You can spend this every day and still cover your bills and save.',
+        obRevealLine: '{income} income − {fixed} in fixed bills − {save} for savings and debt, spread over the days left this month.',
+        obGo: 'See my budget', obGoCard: 'Add my card'
+    });
+
+    // ---------- small builders ----------
+    function setRow(icon, label, onclick, tone = '') {
+        return `<button class="set-row ${tone}" onclick="${onclick}"><span class="set-ic"><i data-lucide="${icon}"></i></span><span class="grow">${esc(label)}</span><i data-lucide="chevron-right" class="faint"></i></button>`;
+    }
+    function acctHeadHTML(email) {
+        const initial = (email || '?').trim().charAt(0).toUpperCase();
+        return `<div class="acct"><span class="avatar">${esc(initial)}</span><div class="grow"><p class="tiny muted">${esc(t('aSignedAs', { email: '' }).replace(/[:\s]+$/, ''))}</p><p class="truncate" style="font-weight:700">${esc(email)}</p></div></div>`;
+    }
+    function emptyHTML(icon, title, text, btn, action) {
+        return `<div class="empty">
+            <div class="empty-art" aria-hidden="true"><i class="spark s1"></i><i class="spark s2"></i><i class="spark s3"></i><span><i data-lucide="${icon}"></i></span></div>
+            <p class="empty-t">${esc(title)}</p>
+            <p class="small muted">${esc(text)}</p>
+            ${btn ? `<button class="btn btn-primary btn-sm mt-3" onclick="${action}"><i data-lucide="plus"></i>${esc(btn)}</button>` : ''}
+        </div>`;
+    }
+
+    // ---------- next payment strip on the home card ----------
+    function nextDueHTML() {
+        const next = state.items.filter(i => !i.paid && !i.completed).sort((a, b) => dueDiff(a) - dueDiff(b))[0];
+        if (!next) return '';
+        const d = dueDiff(next);
+        const tone = d < 0 ? 'danger' : d <= 3 ? 'warn' : 'ok';
+        const big = d === 0 ? t('ndToday') : String(Math.abs(d));
+        const small = d === 0 ? '' : d < 0 ? t('ndLate') : d === 1 ? t('ndDay') : t('ndDays');
+        const date = next.stmt ? parseISO(next.stmt.due) : (() => { const x = new Date(); x.setDate(dueDay(next)); return x; })();
+        return `<button class="next-due ${tone}" onclick="openPaymentModal('${next.id}')">
+            <span class="nd-days"><b class="num">${esc(big)}</b>${small ? `<small>${esc(small)}</small>` : ''}</span>
+            <span class="grow" style="min-width:0">
+                <span class="tiny muted" style="display:block">${esc(t('nextDue'))} · ${esc(date.toLocaleDateString(LOCALES[state.lang], { day: 'numeric', month: 'short' }))}</span>
+                <b class="truncate" style="display:block">${esc(next.name)}</b>
+                <span class="small num">${fmt(next.amount)}</span>
+            </span>
+            <span class="btn btn-sm nd-btn">${esc(t('payBtn'))}</span>
+        </button>`;
+    }
+
+    // ---------- tuck long explanations behind an ⓘ button ----------
+    function setupInfoToggles() {
+        document.querySelectorAll('main .card > .card-sub').forEach(sub => {
+            if (sub._label) { sub._label(); return; }
+            if (sub.closest('#setup-card')) return;
+            const card = sub.parentElement, title = card.querySelector('.card-title');
+            if (!title) return;
+            sub.dataset.tucked = '1'; sub.classList.add('tuck');
+            const btn = document.createElement('button');
+            btn.className = 'info-btn'; btn.type = 'button';
+            btn.innerHTML = '<i data-lucide="info"></i>';
+            const label = () => { const open = sub.classList.contains('show'); btn.title = t(open ? 'infoHide' : 'infoShow'); btn.setAttribute('aria-label', btn.title); btn.setAttribute('aria-expanded', open); btn.classList.toggle('on', open); };
+            btn.onclick = e => { e.stopPropagation(); sub.classList.toggle('show'); label(); };
+            if (title.hasAttribute('data-i18n')) title.insertAdjacentElement('afterend', btn); else title.appendChild(btn);
+            sub._label = label; label();
+        });
+    }
+
+    // ---------- welcome guide ----------
+    const OB = { open: false, step: 0, income: '', freq: 'monthly', currency: '', bills: [], wantCard: false, err: '' };
+    const OB_STEPS = 5;
+    function needsOnboarding() {
+        return !state.onboarded && !(state.income > 0) && !state.items.length && !state.expenses.length && !(state.goals || []).length;
+    }
+    function maybeOnboard() {
+        if (OB.open || !needsOnboarding()) return;
+        const auth = $('auth'), lock = $('lock');
+        if ((auth && auth.classList.contains('open')) || (lock && lock.classList.contains('open'))) { setTimeout(maybeOnboard, 900); return; }
+        OB.open = true; OB.step = 0; OB.err = '';
+        OB.currency = state.currencyCode && state.currencyCode !== 'USD' ? state.currencyCode : (state.lang === 'es' ? 'GTQ' : 'USD');
+        OB.freq = state.payFreq || 'monthly';
+        let el = $('onboard');
+        if (!el) { el = document.createElement('div'); el.id = 'onboard'; el.className = 'onboard'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); document.body.appendChild(el); }
+        el.classList.add('open'); document.body.style.overflow = 'hidden';
+        obRender();
+    }
+    function obClose() {
+        OB.open = false;
+        const el = $('onboard'); if (el) el.classList.remove('open');
+        if (!document.querySelector('.modal.open')) document.body.style.overflow = '';
+    }
+    function obSkip() { state.onboarded = true; obClose(); render(); }
+    function obGo(step) { OB.err = ''; OB.step = Math.max(0, Math.min(OB_STEPS - 1, step)); obRender(); }
+    function obNext() {
+        if (OB.step === 1) {
+            const v = parseFloat(OB.income);
+            if (!(v > 0)) { OB.err = t('obIncomeErr'); obRender(); return; }
+        }
+        if (OB.step === 2 && $('ob-name') && $('ob-name').value.trim() && $('ob-amount').value) { if (!obAddBill()) return; }
+        obGo(OB.step + 1);
+    }
+    function obAddBill() {
+        const name = $('ob-name').value.trim(), amount = parseFloat($('ob-amount').value), day = parseInt($('ob-day').value, 10);
+        if (!name || !(amount > 0) || !(day >= 1 && day <= 31)) { OB.err = t('obBillErr'); obRender(); return false; }
+        OB.bills.push({ name: name.slice(0, 40), amount: round2(amount), date: day });
+        OB.err = ''; obRender();
+        setTimeout(() => { const n = $('ob-name'); if (n) n.focus(); }, 30);
+        return true;
+    }
+    function obDelBill(k) { OB.bills.splice(k, 1); obRender(); }
+    function obSugg(name) { const n = $('ob-name'); if (n) { n.value = name; $('ob-amount').focus(); } }
+    function obCard(yes) { OB.wantCard = yes; obFinish(); }
+    function obFinish() {
+        state.income = round2(parseFloat(OB.income) || 0);
+        state.payFreq = OB.freq;
+        state.currencyCode = OB.currency || state.currencyCode;
+        const today = new Date().getDate();
+        // A bill whose day already passed this month was most likely paid already.
+        OB.bills.forEach(b => state.items.push({ id: uid(), type: 'fixed', subtype: null, name: b.name, amount: b.amount, date: b.date, balance: 0, startBalance: 0, apr: 0,
+            totalMonths: 0, monthsPaid: 0, paid: b.date < today, completed: false, extraPaid: 0, lastPay: null, history: [] }));
+        state.onboarded = true;
+        OB.step = 4;
+        resetCharts(); render(); obRender();
+        const el = $('ob-reveal'), c = compute();
+        if (el) { el._v = 0; countTo(el, c.dailyBudget, v => fmt(v)); }
+        if (!reduceMotion()) setTimeout(() => confetti(true), 450);
+    }
+    function obDone() {
+        obClose();
+        if (OB.wantCard && typeof openCardModal === 'function') setTimeout(() => openCardModal(), 250);
+    }
+    function obRender() {
+        const el = $('onboard'); if (!el) return;
+        const s = OB.step;
+        const dots = Array.from({ length: OB_STEPS }, (_, k) => `<i class="${k === s ? 'on' : k < s ? 'done' : ''}"></i>`).join('');
+        const top = `<div class="ob-top">
+            ${s > 0 && s < 4 ? `<button class="icon-btn" onclick="obGo(${s - 1})" aria-label="${esc(t('obBack'))}"><i data-lucide="chevron-left"></i></button>` : '<span style="width:40px"></span>'}
+            <div class="ob-dots">${dots}</div>
+            ${s < 4 ? `<button class="btn-link small" onclick="obSkip()">${esc(t('obSkip'))}</button>` : '<span style="width:40px"></span>'}
+        </div>`;
+        const err = OB.err ? `<p class="small danger mt-3">${esc(OB.err)}</p>` : '';
+        let body = '';
+        if (s === 0) {
+            body = `<div class="ob-hero"><img src="${document.querySelector('.brand-mark').src}" alt="" width="84" height="84"></div>
+                <h2 class="ob-h">${esc(t('obWelcomeT'))}</h2>
+                <p class="ob-s">${esc(t('obWelcomeS'))}</p>
+                <div class="ob-benefits">
+                    <div><span class="set-ic"><i data-lucide="wallet"></i></span>${esc(t('obB1'))}</div>
+                    <div><span class="set-ic"><i data-lucide="bell"></i></span>${esc(t('obB2'))}</div>
+                    <div><span class="set-ic"><i data-lucide="trending-down"></i></span>${esc(t('obB3'))}</div>
+                </div>
+                <button class="btn btn-primary btn-block ob-cta" onclick="obGo(1)">${esc(t('obStart'))}<i data-lucide="arrow-right"></i></button>`;
+        } else if (s === 1) {
+            const opts = ['GTQ', 'USD', 'MXN', 'EUR', 'HNL', 'CRC', 'COP', 'GBP'].map(c => `<option value="${c}" ${c === OB.currency ? 'selected' : ''}>${c}</option>`).join('');
+            body = `<div class="ob-icon"><i data-lucide="hand-coins"></i></div>
+                <h2 class="ob-h">${esc(t('obIncomeT'))}</h2>
+                <p class="ob-s">${esc(t('obIncomeS'))}</p>
+                <div class="ob-money mt-4">
+                    <select class="input" style="width:104px" onchange="OB.currency=this.value" aria-label="${esc(t('currencyLabel'))}">${opts}</select>
+                    <input id="ob-income" class="input amount-in grow" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0.00" value="${esc(String(OB.income))}" oninput="OB.income=this.value" onkeydown="if(event.key==='Enter')obNext()">
+                </div>
+                <p class="label mt-4">${esc(t('payFreqLabel'))}</p>
+                <div class="seg-wide">
+                    <button class="${OB.freq === 'monthly' ? 'active' : ''}" onclick="OB.freq='monthly'; obRender()">${esc(t('freqMonthly'))}</button>
+                    <button class="${OB.freq === 'biweekly' ? 'active' : ''}" onclick="OB.freq='biweekly'; obRender()">${esc(t('freqBiweekly'))}</button>
+                </div>
+                ${err}
+                <button class="btn btn-primary btn-block ob-cta" onclick="obNext()">${esc(t('obNext'))}<i data-lucide="arrow-right"></i></button>`;
+        } else if (s === 2) {
+            const sugg = t('obSugg').split(',').filter(n => !OB.bills.some(b => b.name === n)).map(n => `<button class="chip" onclick="obSugg('${esc(n)}')">${esc(n)}</button>`).join('');
+            const list = OB.bills.length ? OB.bills.map((b, k) => `<div class="list-row"><span class="emoji-badge">🧾</span><div class="grow"><p class="truncate" style="font-weight:600">${esc(b.name)}</p><p class="tiny muted">${esc(t('obBillDay'))} ${b.date}</p></div><b class="num">${fmt(b.amount)}</b><button class="icon-btn sm del" onclick="obDelBill(${k})" aria-label="${esc(t('deleteBtn'))}"><i data-lucide="x"></i></button></div>`).join('')
+                : `<p class="small faint">${esc(t('obBillsNone'))}</p>`;
+            body = `<div class="ob-icon"><i data-lucide="calendar-days"></i></div>
+                <h2 class="ob-h">${esc(t('obBillsT'))}</h2>
+                <p class="ob-s">${esc(t('obBillsS'))}</p>
+                <div class="chips mt-4">${sugg}</div>
+                <div class="ob-bill mt-3">
+                    <input id="ob-name" class="input" maxlength="40" placeholder="${esc(t('obBillName'))}">
+                    <input id="ob-amount" class="input" type="number" inputmode="decimal" min="0" step="0.01" placeholder="${esc(t('obBillAmount'))}">
+                    <input id="ob-day" class="input" type="number" inputmode="numeric" min="1" max="31" placeholder="${esc(t('obBillDay'))}" onkeydown="if(event.key==='Enter')obAddBill()">
+                    <button class="btn btn-soft" onclick="obAddBill()"><i data-lucide="plus"></i><span>${esc(t('obBillAdd'))}</span></button>
+                </div>
+                ${err}
+                <div class="mt-4">${list}</div>
+                <button class="btn btn-primary btn-block ob-cta" onclick="obNext()">${esc(t('obNext'))}<i data-lucide="arrow-right"></i></button>`;
+        } else if (s === 3) {
+            body = `<div class="ob-icon"><i data-lucide="credit-card"></i></div>
+                <h2 class="ob-h">${esc(t('obCardT'))}</h2>
+                <p class="ob-s">${esc(t('obCardS'))}</p>
+                <div class="ob-cardart" aria-hidden="true"><span class="chip-gold"></span><span class="ln l1"></span><span class="ln l2"></span></div>
+                <div class="stack ob-cta" style="gap:10px">
+                    <button class="btn btn-primary btn-block" onclick="obCard(true)"><i data-lucide="credit-card"></i>${esc(t('obCardYes'))}</button>
+                    <button class="btn btn-ghost btn-block" onclick="obCard(false)">${esc(t('obCardNo'))}</button>
+                </div>`;
+        } else {
+            const c = compute();
+            body = `<div class="ob-icon party"><i data-lucide="party-popper"></i></div>
+                <p class="ob-s" style="margin-top:6px">${esc(t('obRevealT'))}</p>
+                <p id="ob-reveal" class="ob-reveal serif num">${fmt(0)}</p>
+                <p class="ob-s">${esc(t('obRevealS'))}</p>
+                <div class="note plain small mt-4">${esc(t('obRevealLine', { income: fmt(c.income, 0), fixed: fmt(c.fixed, 0), save: fmt(Math.max(0, c.income - c.fixed - c.buffer), 0) }))}</div>
+                <button class="btn btn-primary btn-block ob-cta" onclick="obDone()">${esc(OB.wantCard ? t('obGoCard') : t('obGo'))}<i data-lucide="arrow-right"></i></button>`;
+        }
+        el.innerHTML = `<div class="ob-wrap">${top}<div class="ob-body" key="${s}">${body}</div></div>`;
+        if (window.lucide) lucide.createIcons();
+        if (s === 1) setTimeout(() => { const i = $('ob-income'); if (i && !OB.income) i.focus(); }, 80);
+    }
+    // Remote data arrived (another device) while the guide is open: the user already has a budget.
+    function obCheckRemote() { if (OB.open && OB.step < 4 && (state.income > 0 || state.items.length)) { state.onboarded = true; obClose(); } }
+
+    // ---------- zoom: double-tap zoom is turned off with CSS (touch-action: manipulation) and 16px inputs ----------
+    // iOS standalone apps also honor the viewport limit; block the pinch gesture there only.
+    if (window.navigator.standalone === true) ['gesturestart', 'gesturechange'].forEach(ev => document.addEventListener(ev, e => e.preventDefault(), { passive: false }));
+
     // ================= Web version: account login (Supabase) + 6-digit device PIN =================
     // Security model: email + password identify you to the server. The 6-digit PIN never leaves the device:
     // it derives (PBKDF2) an AES-GCM key that encrypts this device's saved session, so the PIN unlocks the
@@ -4545,7 +4957,7 @@
             } catch (e) { sync.on = false; }
             renderSyncStatus();
         };
-        pullRemote(true);
+        pullRemote(true).finally(() => setTimeout(maybeOnboard, 300));
         try {
             if (AUTH.channel) sb.removeChannel(AUTH.channel);
             AUTH.channel = sb.channel('app_state_' + uid)
@@ -4572,12 +4984,8 @@
     // ---------- profile: account section ----------
     function webAccountHTML() {
         const email = AUTH.user ? AUTH.user.email : '';
-        return `<div class="note plain small full">👤 ${esc(t('aSignedAs', { email }))}</div>
-            <button class="btn btn-ghost" onclick="webChangePin()"><i data-lucide="lock"></i>${esc(t('aChangePin'))}</button>
-            <button class="btn btn-ghost" onclick="webLockNow()">${esc(t('aLockNow'))}</button>
-            <button class="btn btn-ghost danger full" onclick="webLogout()">${esc(t('aLogout'))}</button>
-            ${remindersHTML()}
-            <div class="full row wrap mt-2" style="gap:14px; justify-content:space-between">${legalLinkHTML()}<button class="btn-link small danger" onclick="webDeleteAccount()">${esc(t('delBtn'))}</button></div>`;
+        void email;
+        return setRow('lock', t('aChangePin'), 'webChangePin()') + setRow('shield-check', t('aLockNow'), 'webLockNow()') + setRow('log-out', t('aLogout'), 'webLogout()', 'danger');
     }
     function webChangePin() { closeModal('config-modal'); showAuth('pinset', { change: true }); }
     function webLockNow() { closeModal('config-modal'); showAuth('pin', { relock: true }); }
@@ -4707,8 +5115,7 @@
         const granted = 'Notification' in window && Notification.permission === 'granted';
         const on = p.on && granted;
         const chip = (d, k) => `<button class="toggle-chip ${p.days.includes(d) ? 'on' : ''}" onclick="toggleNotifyDay(${d})">${p.days.includes(d) ? '✓ ' : ''}${esc(t(k))}</button>`;
-        return `<p class="label full mt-2">🔔 ${esc(t('nTitle'))}</p>
-            <p class="tiny muted full">${esc(t('nDesc'))}</p>
+        return `<p class="small muted full">${esc(t('nDesc'))}</p>
             <div class="note ${on ? 'ok' : 'plain'} small full">${esc(on ? t('nActive') : t('nInactive'))}</div>
             ${on ? `<button class="btn btn-ghost" onclick="testReminder()">${esc(t('nTest'))}</button><button class="btn btn-ghost" onclick="disableReminders()">${esc(t('nOff'))}</button>`
                  : `<button class="btn btn-primary full" onclick="enableReminders()">${esc(t('nOn'))}</button>`}
