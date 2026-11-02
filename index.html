@@ -553,6 +553,11 @@
         .inc-check { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--surface-3); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .inc-type.on .inc-check { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
         .inc-check svg.lucide { width: 14px; height: 14px; stroke-width: 3; }
+        .plan-nums { display: block; margin-top: 6px; font-weight: 700; color: var(--text); }
+        .tax-box { margin-top: 10px; }
+        .tax-box .tax-line { display: flex; justify-content: space-between; gap: 12px; font-size: 13.5px; }
+        .tax-box .tax-line + .tax-line { margin-top: 4px; }
+        .tax-box .tax-total { border-top: 1px solid color-mix(in srgb, currentColor 25%, transparent); margin-top: 8px; padding-top: 8px; font-weight: 700; }
         .seg-wide.three { grid-template-columns: repeat(3, 1fr); }
         .seg-wide.four { grid-template-columns: repeat(2, 1fr); }
         @media (min-width: 520px) { .seg-wide.four { grid-template-columns: repeat(4, 1fr); } }
@@ -1004,11 +1009,14 @@
                             <option value="HNL">HNL (L)</option><option value="CRC">CRC (₡)</option><option value="COP">COP ($)</option><option value="GBP">GBP (£)</option>
                         </select>
                     </div>
-                    <div class="form-grid">
-                        <div><label class="label" for="c-buffer" data-i18n="bufferPctLabel"></label><input type="number" id="c-buffer" min="0" max="100" inputmode="numeric" class="input"></div>
-                        <div><label class="label" for="c-surplus" data-i18n="surplusPctLabel"></label><input type="number" id="c-surplus" min="0" max="100" inputmode="numeric" class="input"></div>
+                    <div id="plan-picker"></div>
+                    <div id="plan-custom" class="hidden">
+                        <div class="form-grid">
+                            <div><label class="label" for="c-buffer" data-i18n="bufferPctLabel"></label><input type="number" id="c-buffer" min="0" max="100" inputmode="numeric" class="input" oninput="renderPlanPicker()"></div>
+                            <div><label class="label" for="c-surplus" data-i18n="surplusPctLabel"></label><input type="number" id="c-surplus" min="0" max="100" inputmode="numeric" class="input" oninput="renderPlanPicker()"></div>
+                        </div>
+                        <p class="tiny muted mt-2" data-i18n="pctHelp"></p>
                     </div>
-                    <details class="tuck-details"><summary><i data-lucide="info"></i><span data-i18n="whatIsThis"></span></summary><p class="tiny muted mt-2" data-i18n="pctHelp"></p></details>
                     <button class="btn btn-primary btn-block" onclick="saveProfile()" data-i18n="save"></button>
                 </div>
             </section>
@@ -2148,12 +2156,13 @@
 
         // All of this month's commitments stay locked in, so paying a bill never moves the daily limit.
         // Flexible income that is invoiced: the tax reserve is set aside like a fixed bill.
-        const taxes = state.incomeType === 'flex' ? round2(income * (state.taxPct || 0) / 100) : 0;
+        const taxes = monthlyTaxes();
         const fixed = state.items.reduce((a, i) => a + i.amount, 0) + taxes;
         const afterFixed = Math.max(0, income - fixed);
-        const baseBuffer = Math.min(income * state.bufferPct / 100, afterFixed);
+        const plan = effectivePlan(income, fixed);
+        const baseBuffer = Math.min(income * plan.b / 100, afterFixed);
         const remainder = afterFixed - baseBuffer;
-        const baseSurplus = remainder * state.surplusPct / 100;
+        const baseSurplus = remainder * plan.s / 100;
         const buffer = baseBuffer + ex.spend;
         const surplus = baseSurplus + ex.debt;
         const savings = remainder - baseSurplus + ex.save;
@@ -2185,7 +2194,7 @@
 
         return { income, fixed, baseBuffer, buffer, surplus, savings, extraPaid, surplusLeft, extraFromBuffer, spent, spentToday,
                  bufferLeft, dailyBudget, todayLeft, dsl, daysRemaining, monthExp, ex, biw, inQ1, periodEnd, periodDaysLeft,
-                 allocated, periodLeft, goalSavedMonth, taxes, sch };
+                 allocated, periodLeft, goalSavedMonth, taxes, sch, plan };
     }
 
     // ================= Streak =================
@@ -2768,7 +2777,7 @@
             : P && !P.plan.stuck ? `🏁 <span style="text-transform:none">${esc(t('debtFreeBy', { date: monthLabel(P.plan.months, 'long') }))}</span>`
             : `<span class="warn">${esc(t('debtFreeNever'))}</span>`;
 
-        $('surplus-title').textContent = t('surplusTitle', { pct: state.surplusPct });
+        $('surplus-title').textContent = t('surplusTitle', { pct: c.plan.s });
         countTo($('surplus-val'), c.surplusLeft, v => fmt(v, 0));
         $('surplus-sub').textContent = t('surplusSub', { total: fmt(c.surplus, 0), used: fmt(c.extraPaid, 0) });
         $('tip-debts').innerHTML = agentHTML(c);
@@ -2989,7 +2998,7 @@
 
         // Allocation donut
         const data = [c.fixed, c.buffer, c.surplus, c.savings];
-        const labels = [t('legendBills'), t('legendBuffer', { pct: state.bufferPct }), t('legendSurplus'), t('legendSavings')];
+        const labels = [t('legendBills'), t('legendBuffer', { pct: c.plan.b }), t('legendSurplus'), t('legendSavings')];
         const colors = ['--c-bills', '--c-buffer', '--c-surplus', '--c-savings'].map(cssVar);
         countTo($('donut-total'), c.income, v => fmt(v, 0));
         const total = data.reduce((a, b) => a + b, 0) || 1;
@@ -3054,6 +3063,7 @@
         $('c-lang').value = state.lang;
         $('c-buffer').value = state.bufferPct;
         $('c-surplus').value = state.surplusPct;
+        planDraft = null; renderPlanPicker();
         applyTheme();
         renderProfileExtras();
         openModal('config-modal');
@@ -3065,8 +3075,11 @@
         ieApply(d);
         state.currencyCode = $('c-currency').value || 'USD';
         state.lang = $('c-lang').value;
-        state.bufferPct = clampInt($('c-buffer').value, 0, 100, 30);
-        state.surplusPct = clampInt($('c-surplus').value, 0, 100, 10);
+        state.planMode = planDraft || state.planMode || 'rec';
+        if (state.planMode === 'custom') {
+            state.bufferPct = clampInt($('c-buffer').value, 0, 100, 30);
+            state.surplusPct = clampInt($('c-surplus').value, 0, 100, 10);
+        }
         resetCharts(); render(); closeModal('config-modal');
     }
 
@@ -4374,6 +4387,12 @@
         if (out.incomeType !== 'fixed' && out.payFreq === 'days') out.payFreq = 'monthly';
         out.payWeekday = clampInt(s.payWeekday, 0, 6, 5);
         out.taxPct = Math.min(50, Math.max(0, +s.taxPct || 0));
+        out.taxMode = ['net', 'auto', 'manual'].includes(s.taxMode) ? s.taxMode : (out.incomeType === 'flex' && out.taxPct > 0 ? 'manual' : 'net');
+        if (out.incomeType === 'remit') out.taxMode = 'net';
+        out.taxRegime = s.taxRegime === 'simple' ? 'simple' : 'peq';
+        // Earlier versions only had manual percentages: untouched defaults move to the plan that adjusts by itself.
+        out.planMode = ['rec', 'fast', 'easy', 'custom'].includes(s.planMode) ? s.planMode
+            : ((s.bufferPct === undefined || +s.bufferPct === 30) && (s.surplusPct === undefined || +s.surplusPct === 10)) ? 'rec' : 'custom';
         let days = Array.isArray(s.payDays) ? s.payDays.map(d => clampInt(d, 1, 31, 0)).filter(d => d > 0) : [];
         let split = Array.isArray(s.paySplit) ? s.paySplit.map(p => Math.max(0, +p || 0)) : [];
         const n = out.payFreq === 'monthly' ? 1 : out.payFreq === 'biweekly' ? 2 : out.payFreq === 'days' ? Math.min(4, Math.max(2, days.length)) : 0;
@@ -4455,7 +4474,8 @@
             amount: state.income > 0 ? String(weekly ? round2(state.income / WEEKS_PER_MONTH) : state.income) : '',
             days: state.payDays && state.payDays.length && !(state.payFreq === 'monthly' && state.payDays[0] === 1 && !state.payDaysSet) ? [...state.payDays] : null,
             split: state.paySplit && state.paySplit.length ? [...state.paySplit] : null,
-            weekday: state.payWeekday ?? 5, tax: state.taxPct || 0, splitOther: false, taxOther: false
+            weekday: state.payWeekday ?? 5, tax: state.taxPct || 0, splitOther: false,
+            taxMode: state.taxMode || 'net', regime: state.taxRegime || 'peq'
         };
     }
     function ieNorm(d) {
@@ -4480,14 +4500,16 @@
             const sum = d.split.reduce((a, b) => a + (parseFloat(b) || 0), 0);
             if (Math.abs(sum - 100) > 0.01 || d.split.some(p => !(parseFloat(p) > 0))) return t('eIncSplit', { n: Math.round(sum * 10) / 10 });
         }
-        if (d.type === 'flex' && !(d.tax >= 0 && d.tax <= 50)) return t('eIncTax');
+        if (d.type !== 'remit' && d.taxMode === 'manual' && !(parseFloat(d.tax) >= 0 && parseFloat(d.tax) <= 50)) return t('eIncTax');
         return '';
     }
     function ieApply(d) {
         state.incomeType = d.type;
         state.payFreq = d.type !== 'fixed' && d.freq === 'days' ? 'monthly' : d.freq;
         state.income = round2(ieMonthly(d));
-        state.taxPct = d.type === 'flex' ? Math.min(50, Math.max(0, +d.tax || 0)) : 0;
+        state.taxMode = d.type === 'remit' ? 'net' : (d.taxMode || 'net');
+        state.taxRegime = d.regime === 'simple' ? 'simple' : 'peq';
+        state.taxPct = state.taxMode === 'manual' ? Math.min(50, Math.max(0, parseFloat(d.tax) || 0)) : 0;
         state.payWeekday = clampInt(d.weekday, 0, 6, 5);
         if (d.type === 'fixed' && d.freq !== 'weekly') {
             const pairs = d.days.map((x, k) => [parseInt(x, 10), parseFloat(d.split[k])]).sort((a, b) => a[0] - b[0]);
@@ -4501,6 +4523,7 @@
         const el = $('income-editor'); if (!el) return;
         el.innerHTML = ieHTML(key);
         if (window.lucide) lucide.createIcons();
+        ieRefresh(key);
     }
     function ieSet(key, field, value, rerender = true) {
         const d = IE[key];
@@ -4525,26 +4548,35 @@
     function ieSplitOther(key) { IE[key].splitOther = true; ieRender(key); }
     function ieAddDay(key) { const d = IE[key]; if (d.days.length >= 4) return; d.days.push(''); d.split = evenSplit(d.days.length); ieRender(key); }
     function ieDelDay(key, k) { const d = IE[key]; if (d.days.length <= 2) return; d.days.splice(k, 1); d.split = evenSplit(d.days.length); ieRender(key); }
-    function ieTax(key, v) { const d = IE[key]; d.tax = v; d.taxOther = false; ieRender(key); }
-    function ieTaxOther(key) { IE[key].taxOther = true; ieRender(key); }
+    function ieTaxMode(key, m) { IE[key].taxMode = m; ieRender(key); }
+    function ieRegime(key, r) { IE[key].regime = r; ieRender(key); }
+    function ieTaxes(d) { return taxBreakdown(d.type, d.taxMode, d.regime, d.tax, ieMonthly(d)); }
+    function ieTaxBox(d) {
+        const gross = ieMonthly(d), br = ieTaxes(d);
+        if (d.type === 'remit' || !['auto', 'manual'].includes(d.taxMode) || !(gross > 0)) return '';
+        const lines = br.parts.map(([k, v]) => `<div class="tax-line"><span>${esc(t(k, { p: Math.round((parseFloat(d.tax) || 0) * 100) / 100 }))}</span><b class="num">− ${fmt(v, 0)}</b></div>`).join('');
+        const noIsr = d.type === 'fixed' && d.taxMode === 'auto' && br.parts[1] && br.parts[1][1] === 0;
+        return `<div class="note ok small">${lines}<div class="tax-line tax-total"><span>${esc(t('taxLeft', { x: fmt(gross - br.total, 0) }))}</span></div>${noIsr ? `<p class="tiny mt-1">${esc(t('taxNone'))}</p>` : ''}</div>`;
+    }
 
     function iePreviewText(d) {
         const a = parseFloat(d.amount) || 0;
         if (!(a > 0)) return '';
+        const br = ieTaxes(d), monthly = ieMonthly(d), keep = monthly > 0 ? Math.max(0, (monthly - br.total) / monthly) : 1, after = br.total > 0 ? t('incAfterTax') : '';
         if (d.type !== 'fixed') {
             const f = { weekly: 'incFlexFreqW', biweekly: 'incFlexFreqB', monthly: 'incFlexFreqM' }[d.freq] || 'incFlexFreqM';
-            let s = t('incPreviewFlex', { x: fmt(a, 0), freq: t(f) });
-            if (d.type === 'flex' && d.tax > 0) s += ' ' + t('incTaxLine', { x: fmt(a * d.tax / 100, 0) });
-            return s;
+            return t('incPreviewFlex', { x: fmt(a * keep, 0) + after, freq: t(f) });
         }
-        if (d.freq === 'weekly') return t('incPreviewWeek', { x: fmt(a, 0), day: weekdayName(d.weekday) }) + ' ' + t('incPerMonth', { x: fmt(a * WEEKS_PER_MONTH, 0) }) + '.';
-        const list = d.days.map((day, k) => t('incOn', { x: fmt(a * (parseFloat(d.split[k]) || 0) / 100, 0), d: day || '—' }));
+        if (d.freq === 'weekly') return t('incPreviewWeek', { x: fmt(a * keep, 0) + after, day: weekdayName(d.weekday) }) + ' ' + t('incPerMonth', { x: fmt(a * keep * WEEKS_PER_MONTH, 0) }) + '.';
+        const list = d.days.map((day, k) => t('incOn', { x: fmt(a * keep * (parseFloat(d.split[k]) || 0) / 100, 0), d: day || '—' }));
         const joined = list.length > 1 ? list.slice(0, -1).join(', ') + t('incAnd') + list[list.length - 1] : list[0];
-        return t('incPreview', { list: joined });
+        return t('incPreview', { list: joined + after });
     }
     function ieRefresh(key) {
         const d = IE[key], p = $(`ie-${key}-preview`), e = $(`ie-${key}-err`);
         if (p) { const txt = iePreviewText(d); p.textContent = txt; p.classList.toggle('hidden', !txt); }
+        const tb = $(`ie-${key}-tax`); if (tb) tb.innerHTML = ieTaxBox(d);
+        if (key === 'cfg' && $('plan-picker') && $('config-modal').classList.contains('open')) renderPlanPicker();
         if (e) { const msg = d.touched ? ieValidate(d) : ''; e.textContent = msg; e.classList.toggle('hidden', !msg); }
         const sum = $(`ie-${key}-sum`);
         if (sum && d.split) { const s = d.split.reduce((a, b) => a + (parseFloat(b) || 0), 0); sum.textContent = Math.round(s * 10) / 10 + '%'; sum.classList.toggle('danger', Math.abs(s - 100) > 0.01); }
@@ -4557,7 +4589,18 @@
             <span class="set-ic"><i data-lucide="${icon}"></i></span><span class="grow"><b>${esc(t(title))}</b><span class="tiny muted">${esc(t(sub))}</span></span><span class="inc-check">${d.type === type ? '<i data-lucide="check"></i>' : ''}</span></button>`;
         const freqs = d.type !== 'fixed' ? ['weekly', 'biweekly', 'monthly'] : ['monthly', 'biweekly', 'weekly', 'days'];
         const freqBtns = freqs.map(f => `<button type="button" class="${d.freq === f ? 'active' : ''}" onclick="ieSet(${K}, 'freq', '${f}')">${esc(freqLabel(f))}</button>`).join('');
-        const amountLabel = d.type === 'remit' ? 'incAmountRemit' : d.type === 'flex' ? 'incAmountFlex' : d.freq === 'weekly' ? 'incAmountWeek' : 'incAmountMonth';
+        const gross = d.type !== 'remit' && d.taxMode !== 'net';
+        const amountLabel = d.type === 'remit' ? 'incAmountRemit' : d.type === 'flex' ? (gross ? 'incAmountFlexGross' : 'incAmountFlex')
+            : d.freq === 'weekly' ? (gross ? 'incAmountGrossWeek' : 'incAmountWeek') : (gross ? 'incAmountGross' : 'incAmountMonth');
+        const chip = (on, onclick, label) => `<button type="button" class="toggle-chip ${on ? 'on' : ''}" onclick="${onclick}">${esc(label)}</button>`;
+        const taxSection = d.type === 'remit' ? '' : `<div>
+            <p class="label">${esc(t('taxQ'))}</p>
+            <div class="row wrap" style="gap:6px">${chip(d.taxMode === 'net', `ieTaxMode(${K}, 'net')`, t('taxNet'))}${chip(d.taxMode === 'auto', `ieTaxMode(${K}, 'auto')`, t('taxAuto'))}${chip(d.taxMode === 'manual', `ieTaxMode(${K}, 'manual')`, t('taxManual'))}</div>
+            ${d.taxMode === 'auto' && d.type === 'flex' ? `<p class="label mt-3">${esc(t('taxRegimeQ'))}</p><div class="row wrap" style="gap:6px">${chip(d.regime !== 'simple', `ieRegime(${K}, 'peq')`, t('taxPeq'))}${chip(d.regime === 'simple', `ieRegime(${K}, 'simple')`, t('taxSimple'))}</div>` : ''}
+            ${d.taxMode === 'manual' ? `<label class="label mt-3" for="ie-${key}-taxpct">${esc(t('taxPctLabel'))}</label><div class="row" style="gap:8px"><input id="ie-${key}-taxpct" class="input" type="number" inputmode="decimal" min="0" max="50" step="0.1" value="${esc(String(d.tax || ''))}" placeholder="0" oninput="ieSet(${K}, 'tax', this.value, false)" style="width:110px"><span class="muted">%</span></div>` : ''}
+            <div id="ie-${key}-tax" class="tax-box">${ieTaxBox(d)}</div>
+            ${d.taxMode === 'auto' ? `<p class="tiny muted mt-2">${esc(t(d.type === 'fixed' ? 'taxHintFixed' : d.regime === 'simple' ? 'taxHintSimple' : 'taxHintPeq'))} ${esc(t('taxHintAll'))}</p>` : ''}
+        </div>`;
         let detail = '';
         if (d.type === 'fixed') {
             if (d.freq === 'weekly') {
@@ -4586,16 +4629,7 @@
             detail = `<div class="note plain small">💸 ${esc(t('incRemitTip'))}</div>
                 <div class="note plain small mt-2">🛡️ ${esc(t('incVarEf'))}</div>`;
         } else {
-            const tv = +d.tax || 0, preset = [0, 5].includes(tv) && !d.taxOther;
-            detail = `<p class="label">${esc(t('incTax'))}</p>
-                <div class="row wrap" style="gap:6px">
-                    <button type="button" class="toggle-chip ${preset && tv === 0 ? 'on' : ''}" onclick="ieTax(${K}, 0)">${esc(t('incTaxNo'))}</button>
-                    <button type="button" class="toggle-chip ${preset && tv === 5 ? 'on' : ''}" onclick="ieTax(${K}, 5)">5%</button>
-                    <button type="button" class="toggle-chip ${!preset ? 'on' : ''}" onclick="ieTaxOther(${K})">${esc(t('incTaxOther'))}</button>
-                    ${!preset ? `<input class="input" type="number" inputmode="decimal" min="0" max="50" step="0.5" value="${esc(String(tv))}" oninput="ieSet(${K}, 'tax', parseFloat(this.value) || 0, false)" style="width:90px" aria-label="%">` : ''}
-                </div>
-                <p class="tiny muted mt-2">${esc(t('incTaxHint'))}</p>
-                <div class="note plain small mt-3">🛡️ ${esc(t('incVarEf'))}</div>`;
+            detail = `<div class="note plain small">🛡️ ${esc(t('incVarEf'))}</div>`;
         }
         return `<div class="inc-editor stack" style="gap:16px">
             <div><p class="label">${esc(t('incType'))}</p><div class="stack" style="gap:8px">${card('fixed', 'wallet', 'incFixedT', 'incFixedS')}${card('flex', 'sparkles', 'incFlexT', 'incFlexS')}${card('remit', 'send', 'incRemitT', 'incRemitS')}</div></div>
@@ -4606,10 +4640,154 @@
             </div>
             <div><p class="label">${esc(t({ flex: 'incFreqFlex', remit: 'incFreqRemit' }[d.type] || 'incFreqFixed'))}</p><div class="seg-wide ${freqs.length === 4 ? 'four' : 'three'}">${freqBtns}</div></div>
             <div>${detail}</div>
+            ${taxSection}
             <p id="ie-${key}-preview" class="note ok small ${iePreviewText(d) ? '' : 'hidden'}" aria-live="polite">${esc(iePreviewText(d))}</p>
             <p id="ie-${key}-err" class="small danger hidden" role="alert"></p>
         </div>`;
     }
+
+    // ================= Taxes (Guatemala estimates) and suggested budget plans =================
+    Object.assign(I18N.es, {
+        taxQ: '¿El monto ya tiene descontados los impuestos?', taxNet: 'Sí, es lo que me cae', taxAuto: 'No, que Valiu los calcule', taxManual: 'No, yo pongo mi %',
+        taxRegimeQ: '¿En qué régimen estás inscrito?', taxPeq: 'Pequeño contribuyente (5%)', taxSimple: 'Régimen simplificado (ISR 5–7% + IVA)',
+        taxPctLabel: '¿Qué % de tus ingresos se va en impuestos?',
+        taxIgss: 'IGSS (4.83%)', taxIsr: 'ISR estimado', taxIva: 'IVA', taxIvaPeq: 'Impuesto pequeño contribuyente (5%)', taxYours: 'Impuestos ({p}%)',
+        taxLeft: 'Te quedan ≈ {x} al mes.', taxNone: 'Con este sueldo no pagas ISR; solo IGSS.',
+        taxHintFixed: 'Cálculo estimado con las reglas del ISR para asalariados (deducción de Q48,000 al año, 5% hasta Q300,000 y 7% arriba). No incluye la bonificación incentivo. El Bono 14 y el aguinaldo no pagan ISR hasta un sueldo.',
+        taxHintPeq: 'Pagas 5% de todo lo que facturas cada mes y no pagas ISR aparte.',
+        taxHintSimple: 'ISR de 5% sobre lo que facturas sin IVA (7% arriba de Q30,000 al mes) y el IVA de 12% que viene incluido en tus precios, sin restar el crédito de tus compras.',
+        taxHintAll: 'Es un estimado. Confírmalo con tu contador o en tu recibo de pago.',
+        incAmountGross: 'Sueldo al mes, antes de descuentos', incAmountGrossWeek: 'Sueldo por semana, antes de descuentos', incAmountFlexGross: '¿Cuánto facturas en un mes normal?',
+        incAfterTax: ' (ya sin impuestos)',
+        planQ: '¿Cómo repartimos lo que te queda después de tus pagos fijos?',
+        planRecT: 'Recomendado para ti', planRecHigh: 'Tienes deudas con interés alto: la mayor parte de lo que sobra va a pagarlas, sin dejar de ahorrar un poco.',
+        planRecDebt: 'Repartimos lo que sobra entre tus deudas y tu ahorro.', planRecNone: 'No tienes deudas: lo que sobra va a tu ahorro.',
+        planFastT: 'Salir de deudas más rápido', planFastS: 'Gastas un poco menos cada día y casi todo lo que sobra va a tus deudas.',
+        planSaveT: 'Ahorrar más', planSaveS: 'Gastas un poco menos cada día y ahorras más.',
+        planEasyT: 'Más margen para el día a día', planEasyS: 'Más para gastar cada día; tus deudas y tu ahorro avanzan más lento.',
+        planCustomT: 'Personalizado', planCustomS: 'Tú eliges los porcentajes.',
+        planNums: '{daily} al día para gastar · {debt} al mes a deudas · {save} a ahorro',
+        planNumsNoDebt: '{daily} al día para gastar · {save} al mes a ahorro',
+        planAuto: 'Se ajusta solo cuando cambian tu ingreso, tus pagos fijos o tus deudas.',
+        planTight: 'Tus pagos fijos se llevan casi todo tu ingreso. Revisa si puedes bajar alguno o consolidar deudas.',
+        planNoIncome: 'Guarda tu ingreso para ver cuánto te tocaría en cada opción.'
+    });
+    Object.assign(I18N.en, {
+        taxQ: 'Are taxes already taken out of that amount?', taxNet: 'Yes, it\'s what I receive', taxAuto: 'No, let Valiu work them out', taxManual: 'No, I\'ll enter my %',
+        taxRegimeQ: 'Which tax regime are you registered in?', taxPeq: 'Small taxpayer (5%)', taxSimple: 'Simplified regime (ISR 5–7% + VAT)',
+        taxPctLabel: 'What % of your income goes to taxes?',
+        taxIgss: 'IGSS (4.83%)', taxIsr: 'Estimated ISR', taxIva: 'VAT', taxIvaPeq: 'Small-taxpayer tax (5%)', taxYours: 'Taxes ({p}%)',
+        taxLeft: 'You keep ≈ {x} a month.', taxNone: 'At this salary you pay no ISR; only IGSS.',
+        taxHintFixed: 'Estimate using Guatemala\'s salaried ISR rules (Q48,000 yearly deduction, 5% up to Q300,000 and 7% above). Excludes the incentive bonus. Bono 14 and aguinaldo are ISR-free up to one salary.',
+        taxHintPeq: 'You pay 5% of everything you invoice each month and no separate ISR.',
+        taxHintSimple: '5% ISR on what you invoice before VAT (7% above Q30,000 a month) plus the 12% VAT included in your prices, without subtracting credit from your purchases.',
+        taxHintAll: 'It\'s an estimate. Confirm with your accountant or your pay slip.',
+        incAmountGross: 'Monthly salary, before deductions', incAmountGrossWeek: 'Weekly salary, before deductions', incAmountFlexGross: 'How much do you invoice in a typical month?',
+        incAfterTax: ' (after taxes)',
+        planQ: 'How should we split what\'s left after your fixed bills?',
+        planRecT: 'Recommended for you', planRecHigh: 'You have high-interest debt: most of what\'s left goes to paying it, while still saving a little.',
+        planRecDebt: 'We split what\'s left between your debts and your savings.', planRecNone: 'You have no debt: what\'s left goes to savings.',
+        planFastT: 'Get out of debt faster', planFastS: 'You spend a bit less each day and almost everything left goes to your debts.',
+        planSaveT: 'Save more', planSaveS: 'You spend a bit less each day and save more.',
+        planEasyT: 'More room day to day', planEasyS: 'More to spend each day; your debts and savings move slower.',
+        planCustomT: 'Custom', planCustomS: 'You choose the percentages.',
+        planNums: '{daily} a day to spend · {debt} a month to debt · {save} to savings',
+        planNumsNoDebt: '{daily} a day to spend · {save} a month to savings',
+        planAuto: 'It adjusts by itself when your income, fixed bills or debts change.',
+        planTight: 'Your fixed bills take almost all your income. See if you can lower one or consolidate debts.',
+        planNoIncome: 'Save your income to see what each option gives you.'
+    });
+
+    // ---------- taxes ----------
+    const IGSS_RATE = 0.0483, ISR_DEDUCTION = 48000;
+    function salaryTaxes(gross) {
+        const igss = gross * IGSS_RATE;
+        const base = gross * 12 - igss * 12 - ISR_DEDUCTION;
+        const isrYear = base <= 0 ? 0 : base <= 300000 ? base * 0.05 : 15000 + (base - 300000) * 0.07;
+        return { igss: round2(igss), isr: round2(isrYear / 12) };
+    }
+    function selfTaxes(gross, regime) {
+        if (regime === 'peq') return { peq: round2(gross * 0.05) };
+        const base = gross / 1.12;
+        const isr = base <= 30000 ? base * 0.05 : 1500 + (base - 30000) * 0.07;
+        return { isr: round2(isr), iva: round2(gross - base) };
+    }
+    // Returns { parts: [[labelKey, amount]], total } for a monthly gross amount.
+    function taxBreakdown(type, mode, regime, pct, gross) {
+        if (type === 'remit' || !['auto', 'manual'].includes(mode) || !(gross > 0)) return { parts: [], total: 0 };
+        if (mode === 'manual') { const v = round2(gross * Math.min(50, Math.max(0, +pct || 0)) / 100); return { parts: [['taxYours', v]], total: v }; }
+        if (type === 'fixed') { const s = salaryTaxes(gross); return { parts: [['taxIgss', s.igss], ['taxIsr', s.isr]], total: round2(s.igss + s.isr) }; }
+        const s = selfTaxes(gross, regime);
+        return regime === 'peq' ? { parts: [['taxIvaPeq', s.peq]], total: s.peq } : { parts: [['taxIsr', s.isr], ['taxIva', s.iva]], total: round2(s.isr + s.iva) };
+    }
+    function monthlyTaxes() { return taxBreakdown(state.incomeType, state.taxMode, state.taxRegime, state.taxPct, state.income).total; }
+
+    // ---------- suggested plans ----------
+    const PLAN_MODES = ['rec', 'fast', 'easy', 'custom'];
+    function planContext(income, fixed) {
+        const debts = activeDebts();
+        const efG = typeof emergencyGoal === 'function' ? emergencyGoal() : null;
+        const basics = Math.max(0, fixed);
+        return {
+            avail: income > 0 ? Math.max(0, (income - fixed) / income) : 0,
+            hasDebt: debts.length > 0,
+            hasHigh: debts.some(d => d.apr >= 20) || state.items.some(i => i.type === 'debt' && i.subtype === 'cc' && !i.completed && i.balance > 0),
+            efOk: !!efG && efG.saved >= basics && basics > 0
+        };
+    }
+    // b = % of income for daily spending, s = % of what's left that goes to debt (rest is savings).
+    function planFor(mode, ctx) {
+        const share = { rec: ctx.hasHigh ? 0.55 : 0.6, fast: 0.42, easy: 0.75 }[mode] || 0.6;
+        const cap = mode === 'easy' ? 45 : 35;
+        const b = Math.round(Math.min(cap, Math.max(5, ctx.avail * 100 * share)));
+        let s = 0;
+        if (ctx.hasDebt) s = mode === 'fast' ? 90 : ctx.hasHigh ? (ctx.efOk ? 80 : 60) : 40;
+        return { b, s };
+    }
+    function effectivePlan(income, fixed) {
+        if (state.planMode === 'custom' || !PLAN_MODES.includes(state.planMode)) return { b: state.bufferPct, s: state.surplusPct };
+        return planFor(state.planMode, planContext(income, fixed));
+    }
+
+    // ---------- plan picker in Perfil ----------
+    let planDraft = null;
+    // Use what's typed in the income editor (not yet saved) so the options match it.
+    function planBase() {
+        const d = IE.cfg, items = state.items.reduce((a, i) => a + i.amount, 0);
+        if (d && parseFloat(d.amount) > 0) return { income: ieMonthly(d), fixed: items + ieTaxes(d).total };
+        const c = compute(); return { income: c.income, fixed: c.fixed };
+    }
+    function planNumbers(p) {
+        const { income, fixed } = planBase();
+        const afterFixed = Math.max(0, income - fixed);
+        const buffer = Math.min(income * p.b / 100, afterFixed);
+        const rem = afterFixed - buffer, debt = rem * p.s / 100;
+        return { daily: buffer / daysInMonth(new Date()), debt, save: rem - debt };
+    }
+    function renderPlanPicker() {
+        const el = $('plan-picker'); if (!el) return;
+        if (!planDraft) planDraft = PLAN_MODES.includes(state.planMode) ? state.planMode : 'custom';
+        const c = planBase(), ctx = planContext(c.income, c.fixed);
+        const opt = (mode, title, sub) => {
+            const p = mode === 'custom' ? { b: clampInt($('c-buffer').value, 0, 100, state.bufferPct), s: clampInt($('c-surplus').value, 0, 100, state.surplusPct) } : planFor(mode, ctx);
+            const n = planNumbers(p);
+            const nums = c.income > 0 ? `<span class="tiny plan-nums num">${esc(t(ctx.hasDebt || p.s > 0 ? 'planNums' : 'planNumsNoDebt', { daily: fmt(n.daily, 0), debt: fmt(n.debt, 0), save: fmt(n.save, 0) }))}</span>` : '';
+            return `<button type="button" class="inc-type ${planDraft === mode ? 'on' : ''}" onclick="pickPlan('${mode}')" aria-pressed="${planDraft === mode}">
+                <span class="grow"><b>${esc(t(title))}</b><span class="tiny muted">${esc(sub)}</span>${nums}</span><span class="inc-check">${planDraft === mode ? '<i data-lucide="check"></i>' : ''}</span></button>`;
+        };
+        const recWhy = ctx.hasHigh ? t('planRecHigh') : ctx.hasDebt ? t('planRecDebt') : t('planRecNone');
+        el.innerHTML = `<p class="label">${esc(t('planQ'))}</p><div class="stack" style="gap:8px">
+            ${opt('rec', 'planRecT', recWhy)}
+            ${ctx.hasDebt ? opt('fast', 'planFastT', t('planFastS')) : opt('fast', 'planSaveT', t('planSaveS'))}
+            ${opt('easy', 'planEasyT', t('planEasyS'))}
+            ${opt('custom', 'planCustomT', t('planCustomS'))}
+        </div>
+        ${c.income > 0 && ctx.avail < 0.15 ? `<div class="note warn small mt-2">${esc(t('planTight'))}</div>` : ''}
+        ${!(c.income > 0) ? `<p class="tiny muted mt-2">${esc(t('planNoIncome'))}</p>` : planDraft !== 'custom' ? `<p class="tiny muted mt-2">${esc(t('planAuto'))}</p>` : ''}`;
+        $('plan-custom').classList.toggle('hidden', planDraft !== 'custom');
+        if (window.lucide) lucide.createIcons();
+    }
+    function pickPlan(mode) { planDraft = mode; renderPlanPicker(); }
 
     // ================= Repeat expenses, ant spending, real rate comparator, "What's new" =================
     Object.assign(I18N.es, {
@@ -4796,6 +4974,12 @@
 
     // ---------- What's new ----------
     const NEWS = [{
+        id: '2026-11-01-2',
+        items: [
+            { icon: 'sliders-horizontal', es: ['Tu plan se ajusta solo', 'En Perfil eliges cómo repartir lo que te queda después de tus pagos fijos: Recomendado, Salir de deudas más rápido o Más margen. Valiu calcula los porcentajes según lo que ganas y tus deudas, y te muestra cuánto te toca al día.'], en: ['Your plan adjusts by itself', 'In Profile, choose how to split what\'s left after your fixed bills: Recommended, Get out of debt faster or More room. Valiu works out the percentages from your income and debts and shows what you get per day.'] },
+            { icon: 'scale', es: ['Impuestos calculados por ti', 'Si escribes tu sueldo antes de descuentos, Valiu estima el IGSS y el ISR (o tu régimen si facturas), o puedes poner tu propio porcentaje.'], en: ['Taxes worked out for you', 'If you enter your salary before deductions, Valiu estimates IGSS and ISR (or your regime if you invoice), or you can enter your own percentage.'] }
+        ]
+    }, {
         id: '2026-11-01',
         items: [
             { icon: 'wallet', es: ['Tu ingreso, a tu manera', 'Sueldo fijo, ingreso flexible o remesas. Elige tus días de pago (mensual, quincenal, semanal o días específicos) y cómo se reparte: 50-50, 70-30 o el que quieras. Tu límite diario ahora sigue tus pagos reales.'], en: ['Your income, your way', 'Fixed salary, flexible income or remittances. Pick your paydays (monthly, twice a month, weekly or specific days) and the split: 50-50, 70-30 or your own. Your daily limit now follows your real paydays.'] },
@@ -4805,6 +4989,10 @@
         ]
     }];
     function latestNews() { return NEWS[0]; }
+    function unseenNews(all) {
+        const k = NEWS.findIndex(n => n.id === state.seenNews);
+        return all || k === -1 ? NEWS.slice(0, 2) : NEWS.slice(0, k);
+    }
     function maybeNews() {
         const n = latestNews();
         if (!n || state.seenNews === n.id) return;
@@ -4815,6 +5003,7 @@
     }
     function showNews(manual) {
         const n = latestNews(); if (!n) return;
+        const items = unseenNews(manual).flatMap(e => e.items);
         let el = $('news-modal');
         if (!el) {
             el = document.createElement('div'); el.id = 'news-modal'; el.className = 'modal';
@@ -4825,8 +5014,8 @@
         el.innerHTML = `<div class="sheet" role="dialog" aria-modal="true" aria-labelledby="news-title" style="max-width:480px">
             <div class="grab"></div>
             <div class="news-hero"><div class="ob-icon"><i data-lucide="megaphone"></i></div><h2 id="news-title" class="ob-h" style="font-size:24px">${esc(t('newsTitle'))}</h2>
-                <p class="tiny muted mt-1">${esc(new Date(n.id + 'T12:00:00').toLocaleDateString(LOCALES[state.lang], { day: 'numeric', month: 'long', year: 'numeric' }))}</p></div>
-            ${n.items.map(it => `<div class="news-item"><span class="set-ic"><i data-lucide="${it.icon}"></i></span><div><b>${esc(it[lang][0])}</b><p class="small muted mt-1">${esc(it[lang][1])}</p></div></div>`).join('')}
+                <p class="tiny muted mt-1">${esc(new Date(n.id.slice(0, 10) + 'T12:00:00').toLocaleDateString(LOCALES[state.lang], { day: 'numeric', month: 'long', year: 'numeric' }))}</p></div>
+            ${items.map(it => `<div class="news-item"><span class="set-ic"><i data-lucide="${it.icon}"></i></span><div><b>${esc(it[lang][0])}</b><p class="small muted mt-1">${esc(it[lang][1])}</p></div></div>`).join('')}
             <button class="btn btn-primary btn-block mt-5" onclick="closeNews()">${esc(t('newsOk'))}</button>
         </div>`;
         openModal('news-modal');
@@ -4835,7 +5024,7 @@
     }
     function closeNews() {
         const n = latestNews();
-        closeModal('news-modal');
+        if ($('news-modal')) closeModal('news-modal');
         if (n && state.seenNews !== n.id) { state.seenNews = n.id; render(); }
     }
 
@@ -4996,7 +5185,7 @@
         // A bill whose day already passed this month was most likely paid already.
         OB.bills.forEach(b => state.items.push({ id: uid(), type: 'fixed', subtype: null, name: b.name, amount: b.amount, date: b.date, balance: 0, startBalance: 0, apr: 0,
             totalMonths: 0, monthsPaid: 0, paid: b.date < today, completed: false, extraPaid: 0, lastPay: null, history: [] }));
-        state.onboarded = true; state.seenNews = latestNews().id;
+        state.onboarded = true; state.seenNews = latestNews().id; state.planMode = 'rec';
         OB.step = 4;
         resetCharts(); render(); obRender();
         const el = $('ob-reveal'), c = compute();
