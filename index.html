@@ -543,6 +543,25 @@
         .ob-reveal ~ .ob-s, .ob-icon.party ~ .ob-s { text-align: center; }
         :root[data-theme="light"] .ob-reveal { background: linear-gradient(135deg, var(--accent), var(--info)); -webkit-background-clip: text; background-clip: text; }
         @media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) .ob-reveal { background: linear-gradient(135deg, var(--accent), var(--info)); -webkit-background-clip: text; background-clip: text; } }
+
+        /* ---------- Income editor ---------- */
+        .inc-type { width: 100%; display: flex; align-items: center; gap: 12px; text-align: left; padding: 12px 14px; border-radius: 16px; background: var(--surface-2); border: 1.5px solid transparent; transition: border-color .2s, background .2s, transform .1s; }
+        .inc-type:active { transform: scale(.99); }
+        .inc-type b { display: block; font-size: 15px; }
+        .inc-type .tiny { display: block; margin-top: 2px; line-height: 1.4; }
+        .inc-type.on { border-color: var(--accent); background: var(--accent-soft); }
+        .inc-check { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--surface-3); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .inc-type.on .inc-check { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+        .inc-check svg.lucide { width: 14px; height: 14px; stroke-width: 3; }
+        .seg-wide.three { grid-template-columns: repeat(3, 1fr); }
+        .seg-wide.four { grid-template-columns: repeat(2, 1fr); }
+        @media (min-width: 520px) { .seg-wide.four { grid-template-columns: repeat(4, 1fr); } }
+        .wd-pick { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+        .wd-pick button { padding: 10px 0; border-radius: 12px; background: var(--surface-2); font-weight: 700; font-size: 13px; color: var(--muted); text-transform: capitalize; border: 1.5px solid transparent; }
+        .wd-pick button.on { background: var(--accent); color: var(--accent-ink); }
+        .inc-custom { display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr) auto auto; align-items: center; gap: 8px; }
+        .inc-editor .btn-link svg.lucide { width: 16px; height: 16px; }
+        .ob-body .inc-editor { margin-top: 18px; }
         /* ---------- Login (web version) ---------- */
         .auth { position: fixed; inset: 0; z-index: 420; background: var(--bg); display: none; overflow-y: auto; }
         .auth.open { display: block; }
@@ -945,14 +964,7 @@
             <section class="set-group">
                 <p class="set-head"><i data-lucide="wallet"></i><span data-i18n="setBudget"></span></p>
                 <div class="set-card stack" style="gap:14px">
-                    <div><label class="label" for="c-income" data-i18n="incomeLabel"></label><input type="number" id="c-income" min="0" step="0.01" inputmode="decimal" class="input amount-in"></div>
-                    <div>
-                        <p class="label" data-i18n="payFreqLabel"></p>
-                        <div class="seg-wide" id="c-freq">
-                            <button data-freq="monthly" onclick="pickFreq('monthly')" data-i18n="freqMonthly"></button>
-                            <button data-freq="biweekly" onclick="pickFreq('biweekly')" data-i18n="freqBiweekly"></button>
-                        </div>
-                    </div>
+                    <div id="income-editor"></div>
                     <div>
                         <label class="label" for="c-currency" data-i18n="currencyLabel"></label>
                         <select id="c-currency" class="input">
@@ -2037,7 +2049,7 @@
 
     function moneyDefaults() {
         return {
-            payFreq: 'monthly', incomes: [], goals: [], catLimits: {},
+            payFreq: 'monthly', incomeType: 'fixed', payDays: [], paySplit: [], payWeekday: 5, taxPct: 0, incomes: [], goals: [], catLimits: {},
             bonus: { b14: null, agui: null, split: { debt: 50, save: 30, fun: 20 } },
             months: [], startedAt: Date.now(), streakCarry: 0, bestStreak: 0,
             pinHash: null, pinSalt: null, pinLen: 0, pendingRecap: null,
@@ -2047,7 +2059,7 @@
 
     function migrateMoney(s, out) {
         const d = moneyDefaults();
-        out.payFreq = s.payFreq === 'biweekly' ? 'biweekly' : 'monthly';
+        migrateIncome(s, out);
         out.incomes = (Array.isArray(s.incomes) ? s.incomes : []).filter(x => x && +x.amount > 0).map(x => ({
             id: sid(x.id), amount: +x.amount, note: String(x.note || '').slice(0, 120), ts: +x.ts || Date.now(),
             period: okPeriod(x.period) ? x.period : periodKey(new Date(+x.ts || Date.now())), dest: /^(spend|debt|savings|goal:[A-Za-z0-9_-]{1,40})$/.test(String(x.dest)) ? String(x.dest) : 'spend', bonus: x.bonus || null
@@ -2098,7 +2110,9 @@
         const ex = extraIncomeFor(state.period);
 
         // All of this month's commitments stay locked in, so paying a bill never moves the daily limit.
-        const fixed = state.items.reduce((a, i) => a + i.amount, 0);
+        // Flexible income that is invoiced: the tax reserve is set aside like a fixed bill.
+        const taxes = state.incomeType === 'flex' ? round2(income * (state.taxPct || 0) / 100) : 0;
+        const fixed = state.items.reduce((a, i) => a + i.amount, 0) + taxes;
         const afterFixed = Math.max(0, income - fixed);
         const baseBuffer = Math.min(income * state.bufferPct / 100, afterFixed);
         const remainder = afterFixed - baseBuffer;
@@ -2115,11 +2129,12 @@
         const spentToday = monthExp.filter(e => sameDay(new Date(e.ts), now)).reduce((a, e) => a + e.amount, 0);
         const bufferLeft = buffer - spent - extraFromBuffer;
 
-        // Pay period: whole month, or two halves (1–15 and 16–end) when paid twice a month.
-        const biw = state.payFreq === 'biweekly';
-        const inQ1 = biw && day <= 15;
-        const periodEnd = biw ? (inQ1 ? 15 : dim) : dim;
-        const allocated = biw ? (inQ1 ? buffer / 2 : buffer) : buffer;
+        // Pay periods follow the user's paydays (see paySchedule); unspent money carries into the next one.
+        const sch = paySchedule(now), seg = sch.at(day);
+        const biw = !(seg.start === 1 && seg.end === dim);
+        const inQ1 = biw && seg.end < dim;
+        const periodEnd = seg.end;
+        const allocated = buffer * seg.cum;
         const periodDaysLeft = periodEnd - day + 1;
         const periodLeft = allocated - spent - extraFromBuffer;
 
@@ -2133,7 +2148,7 @@
 
         return { income, fixed, baseBuffer, buffer, surplus, savings, extraPaid, surplusLeft, extraFromBuffer, spent, spentToday,
                  bufferLeft, dailyBudget, todayLeft, dsl, daysRemaining, monthExp, ex, biw, inQ1, periodEnd, periodDaysLeft,
-                 allocated, periodLeft, goalSavedMonth };
+                 allocated, periodLeft, goalSavedMonth, taxes, sch };
     }
 
     // ================= Streak =================
@@ -2149,9 +2164,9 @@
         if (startedLater) return 0;
         const firstDay = startedHere ? started.getDate() : 1;
         const within = d => {
-            const q1 = c.biw && d <= 15;
-            const pEnd = c.biw ? (q1 ? 15 : dim) : dim;
-            const alloc = c.biw ? (q1 ? c.buffer / 2 : c.buffer) : c.buffer;
+            const sg = (c.sch || paySchedule(ref)).at(d);
+            const pEnd = sg.end;
+            const alloc = c.buffer * sg.cum;
             let before = 0; for (let k = 1; k < d; k++) before += byDay[k] || 0;
             const budget = Math.max(0, (alloc - before) / (pEnd - d + 1));
             return (byDay[d] || 0) <= budget + 0.005;
@@ -2203,7 +2218,7 @@
         const monthDiff = (d.getFullYear() - now.getFullYear()) * 12 + d.getMonth() - now.getMonth();
         return { date: d, days, thisMonth, monthDiff };
     }
-    function bonusAmount(kind) { const v = state.bonus[kind]; return v === null ? state.income : v; }
+    function bonusAmount(kind) { const v = state.bonus[kind]; return v === null ? (state.incomeType === 'flex' ? 0 : state.income) : v; }
     function bonusImpact(kind, c) {
         const P = getPlan(c);
         if (!P) return null;
@@ -2220,7 +2235,7 @@
     function emergencyGoal() { return state.goals.find(g => g.kind === 'emergency'); }
     function emergencyTarget() {
         const c = compute();
-        return Math.round(3 * (c.fixed + c.baseBuffer) / 100) * 100;
+        return Math.round((state.incomeType === 'flex' ? 6 : 3) * (c.fixed - c.taxes + c.baseBuffer) / 100) * 100;
     }
     function goalMonthly(g) {
         if (!g.due || g.saved >= g.target) return null;
@@ -2619,8 +2634,9 @@
         $('hero-msg').textContent = msg;
 
         const usedPct = c.allocated > 0 ? ((c.spent + c.extraFromBuffer) / c.allocated) * 100 : 0;
+        const flexP = state.incomeType === 'flex';
         $('hero-month').textContent = c.biw
-            ? (c.periodLeft < 0 ? t('heroQuincenaOver', { over: fmt(-c.periodLeft) }) : t('heroQuincena', { left: fmt(c.periodLeft), days: c.periodDaysLeft }))
+            ? (c.periodLeft < 0 ? t(flexP ? 'heroPeriodFlexOver' : 'heroPeriodOver', { over: fmt(-c.periodLeft) }) : t(flexP ? 'heroPeriodFlex' : 'heroPeriod', { left: fmt(c.periodLeft), days: c.periodDaysLeft }))
             : (c.bufferLeft < 0 ? t('heroMonthOver', { over: fmt(-c.bufferLeft) }) : t('heroMonth', { left: fmt(c.bufferLeft), days: c.daysRemaining }));
         $('hero-month-pct').textContent = Math.round(usedPct) + '%';
         setBar($('hero-month-bar'), usedPct, usedPct > 100 ? 'var(--danger)' : usedPct > 80 ? 'var(--warn)' : 'linear-gradient(90deg, var(--brand-1), var(--brand-2))');
@@ -2993,7 +3009,7 @@
     function selectDay(d) { selectedDay = d; render(); }
 
     function openConfigModal() {
-        $('c-income').value = state.income || '';
+        IE.cfg = ieNorm(ieFromState()); ieRender('cfg'); ieRefresh('cfg');
         $('c-currency').value = state.currencyCode;
         $('c-lang').value = state.lang;
         $('c-buffer').value = state.bufferPct;
@@ -3003,7 +3019,10 @@
         openModal('config-modal');
     }
     function saveProfile() {
-        state.income = Math.max(0, parseFloat($('c-income').value) || 0);
+        const d = IE.cfg; d.touched = true;
+        const err = d ? ieValidate(d) : '';
+        if (err) { ieRefresh('cfg'); $('income-editor').scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+        ieApply(d);
         state.currencyCode = $('c-currency').value || 'USD';
         state.lang = $('c-lang').value;
         state.bufferPct = clampInt($('c-buffer').value, 0, 100, 30);
@@ -4256,6 +4275,303 @@
         return s.full === 0 ? { big: true, msg: t('ccPaidFullToast') } : null;
     }
 
+    // ================= Income profile: fixed salary vs flexible income, paydays and split =================
+    Object.assign(I18N.es, {
+        incType: '¿Cómo recibes tu dinero?',
+        incFixedT: 'Sueldo fijo', incFixedS: 'Recibes lo mismo en fechas fijas.',
+        incFlexT: 'Ingreso flexible', incFlexS: 'Por proyectos, ventas, comisiones o facturas: cambia de mes a mes.',
+        incAmountMonth: 'Ingreso total al mes', incAmountWeek: '¿Cuánto recibes cada semana?', incAmountFlex: '¿Cuánto recibes en un mes normal?',
+        incAmountFlexHint: 'Usa un monto prudente, como el de un mes flojo. Cuando te vaya mejor, regístralo como ingreso extra.',
+        incPerMonth: '≈ {x} al mes',
+        incFreqFixed: '¿Cada cuánto te pagan?', incFreqFlex: '¿Cada cuánto te suelen pagar?',
+        freqMonthly: 'Mensual', freqBiweekly: 'Quincenal', freqWeekly: 'Semanal', freqDays: 'Días específicos',
+        incDayMonthly: '¿Qué día te pagan?', incDaysBi: '¿Qué días te pagan?', incDayN: 'Pago {n}', incDayLbl: 'Día', incWeekday: '¿Qué día de la semana te pagan?',
+        incSplit: '¿Cómo se reparte tu sueldo?', incSplitOther: 'Otro', incSplitFirst: '% del primer pago',
+        incDaysCustom: 'Tus días de pago y cuánto recibes cada uno', incAddDay: 'Agregar otro día', incPct: '%',
+        incPreview: 'Recibirás {list}.', incPreviewWeek: 'Recibirás {x} cada {day}.', incPreviewFlex: 'Planeamos con {x} al mes, repartidos {freq}.',
+        incFlexFreqW: 'por semana', incFlexFreqB: 'por quincena', incFlexFreqM: 'en el mes',
+        incOn: '{x} el {d}', incAnd: ' y ',
+        incTax: '¿Facturas? Aparta para impuestos', incTaxNo: 'No', incTaxOther: 'Otro',
+        incTaxHint: 'En Guatemala, como pequeño contribuyente pagas 5% de lo que facturas. Confírmalo con tu contador.',
+        incTaxLine: 'Apartamos {x} al mes para impuestos.',
+        incFlexEf: 'Con ingreso flexible te conviene un fondo de emergencia más grande: 6 meses de gastos básicos.',
+        eIncAmount: 'Escribe cuánto recibes para continuar.', eIncDays: 'Revisa los días de pago: del 1 al 31 y sin repetir.',
+        eIncSplit: 'Los porcentajes deben sumar 100% (ahora suman {n}%).', eIncTax: 'El porcentaje de impuestos debe estar entre 0 y 50.',
+        heroPeriod: 'Quedan {left} para {days} días, hasta tu próximo pago', heroPeriodOver: 'Hasta tu próximo pago te pasaste por {over}',
+        heroPeriodFlex: 'Quedan {left} para {days} días de este periodo', heroPeriodFlexOver: 'En este periodo te pasaste por {over}',
+        efDesc: 'Tu red de seguridad para imprevistos. Lo ideal: 3 meses de tus gastos básicos (6 si tu ingreso es flexible).',
+        incSummaryFixed: 'Sueldo fijo · {f}', incSummaryFlex: 'Ingreso flexible · {f}'
+    });
+    Object.assign(I18N.en, {
+        incType: 'How do you get paid?',
+        incFixedT: 'Fixed salary', incFixedS: 'The same amount on set dates.',
+        incFlexT: 'Flexible income', incFlexS: 'Projects, sales, commissions or invoices: it changes month to month.',
+        incAmountMonth: 'Total income per month', incAmountWeek: 'How much do you get each week?', incAmountFlex: 'How much do you get in a typical month?',
+        incAmountFlexHint: 'Use a cautious amount, like a slow month. When a month goes better, log it as extra income.',
+        incPerMonth: '≈ {x} per month',
+        incFreqFixed: 'How often are you paid?', incFreqFlex: 'How often do you usually get paid?',
+        freqMonthly: 'Monthly', freqBiweekly: 'Twice a month', freqWeekly: 'Weekly', freqDays: 'Specific days',
+        incDayMonthly: 'Which day are you paid?', incDaysBi: 'Which days are you paid?', incDayN: 'Payment {n}', incDayLbl: 'Day', incWeekday: 'Which weekday are you paid?',
+        incSplit: 'How is your salary split?', incSplitOther: 'Other', incSplitFirst: '% of the first payment',
+        incDaysCustom: 'Your paydays and how much you get on each', incAddDay: 'Add another day', incPct: '%',
+        incPreview: 'You\'ll get {list}.', incPreviewWeek: 'You\'ll get {x} every {day}.', incPreviewFlex: 'We plan with {x} a month, spread {freq}.',
+        incFlexFreqW: 'by week', incFlexFreqB: 'by half-month', incFlexFreqM: 'over the month',
+        incOn: '{x} on the {d}', incAnd: ' and ',
+        incTax: 'Do you invoice? Set aside for taxes', incTaxNo: 'No', incTaxOther: 'Other',
+        incTaxHint: 'In Guatemala, small taxpayers (pequeño contribuyente) pay 5% of what they invoice. Check with your accountant.',
+        incTaxLine: 'We set aside {x} a month for taxes.',
+        incFlexEf: 'With flexible income a bigger emergency fund helps: 6 months of basic expenses.',
+        eIncAmount: 'Enter how much you get to continue.', eIncDays: 'Check your paydays: 1 to 31, no repeats.',
+        eIncSplit: 'Percentages must add up to 100% (now {n}%).', eIncTax: 'The tax percentage must be between 0 and 50.',
+        heroPeriod: '{left} left for {days} days, until your next payday', heroPeriodOver: 'Over by {over} until your next payday',
+        heroPeriodFlex: '{left} left for {days} days this period', heroPeriodFlexOver: 'Over by {over} this period',
+        efDesc: 'Your safety net for surprises. Ideal: 3 months of your basic expenses (6 if your income is flexible).',
+        incSummaryFixed: 'Fixed salary · {f}', incSummaryFlex: 'Flexible income · {f}'
+    });
+
+    const PAY_FREQS = ['monthly', 'biweekly', 'weekly', 'days'];
+    const WEEKS_PER_MONTH = 52 / 12;
+
+    // Clean the income settings that come from storage, a backup or the server.
+    function migrateIncome(s, out) {
+        out.incomeType = s.incomeType === 'flex' ? 'flex' : 'fixed';
+        out.payFreq = PAY_FREQS.includes(s.payFreq) ? s.payFreq : 'monthly';
+        if (out.incomeType === 'flex' && out.payFreq === 'days') out.payFreq = 'monthly';
+        out.payWeekday = clampInt(s.payWeekday, 0, 6, 5);
+        out.taxPct = Math.min(50, Math.max(0, +s.taxPct || 0));
+        let days = Array.isArray(s.payDays) ? s.payDays.map(d => clampInt(d, 1, 31, 0)).filter(d => d > 0) : [];
+        let split = Array.isArray(s.paySplit) ? s.paySplit.map(p => Math.max(0, +p || 0)) : [];
+        const n = out.payFreq === 'monthly' ? 1 : out.payFreq === 'biweekly' ? 2 : out.payFreq === 'days' ? Math.min(4, Math.max(2, days.length)) : 0;
+        if (n) {
+            const dflt = n === 1 ? [30] : [15, 30, 10, 25].slice(0, n);
+            days = dflt.map((d, k) => days[k] || d);
+            const okSplit = split.length === n && Math.abs(split.reduce((a, b) => a + b, 0) - 100) < 0.01 && split.every(p => p > 0);
+            split = okSplit ? split.slice(0, n) : evenSplit(n);
+            const order = days.map((d, k) => [d, split[k]]).sort((a, b) => a[0] - b[0]);
+            if (new Set(days).size !== days.length) { days = dflt; split = evenSplit(n); }
+            else { days = order.map(x => x[0]); split = order.map(x => x[1]); }
+        } else { days = []; split = []; }
+        out.payDays = days; out.paySplit = split;
+        // Earlier versions: "monthly" spread over the whole month (payday on the 1st) — keep their numbers the same.
+        if (!Array.isArray(s.payDays) && out.payFreq === 'monthly') out.payDays = [1];
+    }
+    function evenSplit(n) { const base = Math.floor(100 / n), arr = Array(n).fill(base); arr[n - 1] += 100 - base * n; return arr; }
+
+    // ---------- pay schedule: how this month's spending money is spread across pay periods ----------
+    // Money received on a payday pays for the days until the next payday. Each day gets the share of the
+    // payment that covers it; a period's budget is the sum of its days. Periods carry over unspent money.
+    function payDatesFor(year, month) {
+        const out = [];
+        const freq = state.payFreq, flex = state.incomeType === 'flex';
+        for (let dm = -1; dm <= 1; dm++) {
+            const y = new Date(year, month + dm, 1).getFullYear(), m = new Date(year, month + dm, 1).getMonth();
+            const dim = new Date(y, m + 1, 0).getDate();
+            if (freq === 'weekly') {
+                const wd = flex ? 1 : state.payWeekday;
+                for (let d = 1; d <= dim; d++) if (new Date(y, m, d).getDay() === wd) out.push({ date: new Date(y, m, d), pct: 1 });
+            } else {
+                const days = flex ? (freq === 'biweekly' ? [1, 16] : [1]) : (state.payDays.length ? state.payDays : [1]);
+                const split = flex ? evenSplit(days.length) : state.paySplit.length === days.length ? state.paySplit : evenSplit(days.length);
+                days.forEach((d, k) => out.push({ date: new Date(y, m, Math.min(d, dim)), pct: split[k] / 100 }));
+            }
+        }
+        out.sort((a, b) => a.date - b.date);
+        return out.filter((p, k) => k === 0 || +p.date !== +out[k - 1].date);
+    }
+    function paySchedule(ref = new Date()) {
+        const y = ref.getFullYear(), m = ref.getMonth(), dim = daysInMonth(ref);
+        const pays = payDatesFor(y, m);
+        const dayMs = 86400000, w = [], seg = [];
+        for (let d = 1; d <= dim; d++) {
+            const date = new Date(y, m, d);
+            let k = pays.length - 1;
+            while (k > 0 && pays[k].date > date) k--;
+            const p = pays[k], next = pays[k + 1];
+            const cover = next ? Math.round((next.date - p.date) / dayMs) : 30;
+            w[d] = p.pct / Math.max(1, cover);
+            seg[d] = k;
+        }
+        const W = w.reduce((a, b) => a + (b || 0), 0) || 1;
+        const segments = [];
+        let cum = 0;
+        for (let d = 1; d <= dim; d++) {
+            cum += w[d] / W;
+            const last = segments[segments.length - 1];
+            if (last && last.k === seg[d]) { last.end = d; last.cum = cum; }
+            else segments.push({ k: seg[d], start: d, end: d, cum });
+        }
+        segments[segments.length - 1].cum = 1;
+        return { segments, at: day => segments.find(s => day >= s.start && day <= s.end) };
+    }
+
+    // ---------- text helpers ----------
+    const WEEKDAYS = { es: ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'], en: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] };
+    function weekdayName(k) { return (WEEKDAYS[state.lang] || WEEKDAYS.es)[k]; }
+    function freqLabel(f) { return t({ monthly: 'freqMonthly', biweekly: 'freqBiweekly', weekly: 'freqWeekly', days: 'freqDays' }[f] || 'freqMonthly'); }
+    function incomeSummary() { return t(state.incomeType === 'flex' ? 'incSummaryFlex' : 'incSummaryFixed', { f: freqLabel(state.payFreq).toLowerCase() }); }
+
+    // ---------- shared editor (welcome guide + profile) ----------
+    const IE = {};
+    function ieFromState() {
+        const weekly = state.payFreq === 'weekly' && state.incomeType === 'fixed';
+        return {
+            type: state.incomeType || 'fixed', freq: state.payFreq || 'monthly',
+            amount: state.income > 0 ? String(weekly ? round2(state.income / WEEKS_PER_MONTH) : state.income) : '',
+            days: state.payDays && state.payDays.length && !(state.payFreq === 'monthly' && state.payDays[0] === 1 && !state.payDaysSet) ? [...state.payDays] : null,
+            split: state.paySplit && state.paySplit.length ? [...state.paySplit] : null,
+            weekday: state.payWeekday ?? 5, tax: state.taxPct || 0, splitOther: false, taxOther: false
+        };
+    }
+    function ieNorm(d) {
+        // Make days/split match the chosen frequency.
+        const n = d.type === 'flex' ? 0 : d.freq === 'monthly' ? 1 : d.freq === 'biweekly' ? 2 : d.freq === 'days' ? Math.min(4, Math.max(2, (d.days || []).length)) : 0;
+        if (!n) return d;
+        const dflt = n === 1 ? [30] : [15, 30, 10, 25].slice(0, n);
+        const days = d.days || [];
+        d.days = dflt.map((x, k) => days[k] || x);
+        if (!d.split || d.split.length !== n) d.split = evenSplit(n);
+        return d;
+    }
+    function ieMonthly(d) {
+        const a = parseFloat(d.amount) || 0;
+        return d.type === 'fixed' && d.freq === 'weekly' ? round2(a * WEEKS_PER_MONTH) : a;
+    }
+    function ieValidate(d) {
+        if (!(parseFloat(d.amount) > 0)) return t('eIncAmount');
+        if (d.type === 'fixed' && ['monthly', 'biweekly', 'days'].includes(d.freq)) {
+            const days = d.days.map(x => parseInt(x, 10));
+            if (days.some(x => !(x >= 1 && x <= 31)) || new Set(days).size !== days.length) return t('eIncDays');
+            const sum = d.split.reduce((a, b) => a + (parseFloat(b) || 0), 0);
+            if (Math.abs(sum - 100) > 0.01 || d.split.some(p => !(parseFloat(p) > 0))) return t('eIncSplit', { n: Math.round(sum * 10) / 10 });
+        }
+        if (d.type === 'flex' && !(d.tax >= 0 && d.tax <= 50)) return t('eIncTax');
+        return '';
+    }
+    function ieApply(d) {
+        state.incomeType = d.type;
+        state.payFreq = d.type === 'flex' && d.freq === 'days' ? 'monthly' : d.freq;
+        state.income = round2(ieMonthly(d));
+        state.taxPct = d.type === 'flex' ? Math.min(50, Math.max(0, +d.tax || 0)) : 0;
+        state.payWeekday = clampInt(d.weekday, 0, 6, 5);
+        if (d.type === 'fixed' && d.freq !== 'weekly') {
+            const pairs = d.days.map((x, k) => [parseInt(x, 10), parseFloat(d.split[k])]).sort((a, b) => a[0] - b[0]);
+            state.payDays = pairs.map(p => p[0]); state.paySplit = pairs.map(p => p[1]);
+        } else { state.payDays = []; state.paySplit = []; }
+        state.payDaysSet = true;
+    }
+
+    function ieRender(key) {
+        if (key === 'ob') { obRender(); return; }
+        const el = $('income-editor'); if (!el) return;
+        el.innerHTML = ieHTML(key);
+        if (window.lucide) lucide.createIcons();
+    }
+    function ieSet(key, field, value, rerender = true) {
+        const d = IE[key];
+        // Keep the amount meaning the same when moving to/from "per week".
+        const wasWeek = d.type === 'fixed' && d.freq === 'weekly';
+        d[field] = value;
+        const isWeek = d.type === 'fixed' && d.freq === 'weekly';
+        const a = parseFloat(d.amount);
+        if (a > 0 && wasWeek !== isWeek) { const x = isWeek ? a / WEEKS_PER_MONTH : a * WEEKS_PER_MONTH; d.amount = String(Math.abs(x - Math.round(x)) < 0.05 ? Math.round(x) : round2(x)); }
+        if (field === 'type' && value === 'flex' && d.freq === 'days') d.freq = 'monthly';
+        if (field === 'freq') { d.days = null; d.split = null; d.splitOther = false; }
+        if (field === 'type' || field === 'freq') ieNorm(d);
+        if (rerender) ieRender(key); else ieRefresh(key);
+    }
+    function ieDay(key, k, v) { IE[key].days[k] = v; ieRefresh(key); }
+    function iePct(key, k, v) {
+        const d = IE[key]; d.split[k] = v;
+        if (d.split.length === 2 && d.freq === 'biweekly') { const a = parseFloat(v); if (a > 0 && a < 100) d.split[1 - k] = Math.round((100 - a) * 100) / 100; const o = $(`ie-${key}-pct-${1 - k}`); if (o) o.value = d.split[1 - k]; }
+        ieRefresh(key);
+    }
+    function iePreset(key, a) { const d = IE[key]; d.split = [a, 100 - a]; d.splitOther = false; ieRender(key); }
+    function ieSplitOther(key) { IE[key].splitOther = true; ieRender(key); }
+    function ieAddDay(key) { const d = IE[key]; if (d.days.length >= 4) return; d.days.push(''); d.split = evenSplit(d.days.length); ieRender(key); }
+    function ieDelDay(key, k) { const d = IE[key]; if (d.days.length <= 2) return; d.days.splice(k, 1); d.split = evenSplit(d.days.length); ieRender(key); }
+    function ieTax(key, v) { const d = IE[key]; d.tax = v; d.taxOther = false; ieRender(key); }
+    function ieTaxOther(key) { IE[key].taxOther = true; ieRender(key); }
+
+    function iePreviewText(d) {
+        const a = parseFloat(d.amount) || 0;
+        if (!(a > 0)) return '';
+        if (d.type === 'flex') {
+            const f = { weekly: 'incFlexFreqW', biweekly: 'incFlexFreqB', monthly: 'incFlexFreqM' }[d.freq] || 'incFlexFreqM';
+            let s = t('incPreviewFlex', { x: fmt(a, 0), freq: t(f) });
+            if (d.tax > 0) s += ' ' + t('incTaxLine', { x: fmt(a * d.tax / 100, 0) });
+            return s;
+        }
+        if (d.freq === 'weekly') return t('incPreviewWeek', { x: fmt(a, 0), day: weekdayName(d.weekday) }) + ' ' + t('incPerMonth', { x: fmt(a * WEEKS_PER_MONTH, 0) }) + '.';
+        const list = d.days.map((day, k) => t('incOn', { x: fmt(a * (parseFloat(d.split[k]) || 0) / 100, 0), d: day || '—' }));
+        const joined = list.length > 1 ? list.slice(0, -1).join(', ') + t('incAnd') + list[list.length - 1] : list[0];
+        return t('incPreview', { list: joined });
+    }
+    function ieRefresh(key) {
+        const d = IE[key], p = $(`ie-${key}-preview`), e = $(`ie-${key}-err`);
+        if (p) { const txt = iePreviewText(d); p.textContent = txt; p.classList.toggle('hidden', !txt); }
+        if (e) { const msg = d.touched ? ieValidate(d) : ''; e.textContent = msg; e.classList.toggle('hidden', !msg); }
+        const sum = $(`ie-${key}-sum`);
+        if (sum && d.split) { const s = d.split.reduce((a, b) => a + (parseFloat(b) || 0), 0); sum.textContent = Math.round(s * 10) / 10 + '%'; sum.classList.toggle('danger', Math.abs(s - 100) > 0.01); }
+    }
+
+    function ieHTML(key) {
+        const d = IE[key];
+        const K = `'${key}'`;
+        const card = (type, icon, title, sub) => `<button type="button" class="inc-type ${d.type === type ? 'on' : ''}" onclick="ieSet(${K}, 'type', '${type}')" aria-pressed="${d.type === type}">
+            <span class="set-ic"><i data-lucide="${icon}"></i></span><span class="grow"><b>${esc(t(title))}</b><span class="tiny muted">${esc(t(sub))}</span></span><span class="inc-check">${d.type === type ? '<i data-lucide="check"></i>' : ''}</span></button>`;
+        const freqs = d.type === 'flex' ? ['weekly', 'biweekly', 'monthly'] : ['monthly', 'biweekly', 'weekly', 'days'];
+        const freqBtns = freqs.map(f => `<button type="button" class="${d.freq === f ? 'active' : ''}" onclick="ieSet(${K}, 'freq', '${f}')">${esc(freqLabel(f))}</button>`).join('');
+        const amountLabel = d.type === 'flex' ? 'incAmountFlex' : d.freq === 'weekly' ? 'incAmountWeek' : 'incAmountMonth';
+        let detail = '';
+        if (d.type === 'fixed') {
+            if (d.freq === 'weekly') {
+                detail = `<p class="label">${esc(t('incWeekday'))}</p><div class="wd-pick">${[1, 2, 3, 4, 5, 6, 0].map(k => `<button type="button" class="${+d.weekday === k ? 'on' : ''}" onclick="ieSet(${K}, 'weekday', ${k})" aria-label="${esc(weekdayName(k))}">${esc(weekdayName(k).slice(0, 2))}</button>`).join('')}</div>`;
+            } else if (d.freq === 'monthly') {
+                detail = `<div class="inc-dayrow"><label class="label" for="ie-${key}-day-0">${esc(t('incDayMonthly'))}</label><input id="ie-${key}-day-0" class="input" type="number" inputmode="numeric" min="1" max="31" value="${esc(String(d.days[0]))}" oninput="ieDay(${K}, 0, this.value)" style="max-width:110px"></div>`;
+            } else if (d.freq === 'biweekly') {
+                const a = parseFloat(d.split[0]) || 50;
+                const presets = [50, 60, 70].map(p => `<button type="button" class="toggle-chip ${!d.splitOther && Math.abs(a - p) < 0.01 ? 'on' : ''}" onclick="iePreset(${K}, ${p})">${p}-${100 - p}</button>`).join('');
+                const isPreset = [50, 60, 70].some(p => Math.abs(a - p) < 0.01);
+                detail = `<p class="label">${esc(t('incDaysBi'))}</p>
+                    <div class="form-grid">${d.days.map((day, k) => `<div><label class="tiny muted" for="ie-${key}-day-${k}">${esc(t('incDayN', { n: k + 1 }))}</label><input id="ie-${key}-day-${k}" class="input" type="number" inputmode="numeric" min="1" max="31" value="${esc(String(day))}" oninput="ieDay(${K}, ${k}, this.value)"></div>`).join('')}</div>
+                    <p class="label mt-3">${esc(t('incSplit'))}</p>
+                    <div class="row wrap" style="gap:6px">${presets}<button type="button" class="toggle-chip ${d.splitOther || !isPreset ? 'on' : ''}" onclick="ieSplitOther(${K})">${esc(t('incSplitOther'))}</button></div>
+                    ${d.splitOther || !isPreset ? `<div class="form-grid mt-2">${d.split.map((p, k) => `<div><label class="tiny muted" for="ie-${key}-pct-${k}">${esc(t('incDayLbl'))} ${esc(String(d.days[k]))} · %</label><input id="ie-${key}-pct-${k}" class="input" type="number" inputmode="decimal" min="1" max="99" step="1" value="${esc(String(p))}" oninput="iePct(${K}, ${k}, this.value)"></div>`).join('')}</div>` : ''}`;
+            } else {
+                detail = `<p class="label">${esc(t('incDaysCustom'))}</p>
+                    <div class="stack" style="gap:8px">${d.days.map((day, k) => `<div class="inc-custom">
+                        <label class="tiny muted" for="ie-${key}-day-${k}">${esc(t('incDayLbl'))}</label><input id="ie-${key}-day-${k}" class="input" type="number" inputmode="numeric" min="1" max="31" value="${esc(String(day))}" oninput="ieDay(${K}, ${k}, this.value)">
+                        <input id="ie-${key}-pct-${k}" class="input" type="number" inputmode="decimal" min="1" max="99" value="${esc(String(d.split[k]))}" oninput="iePct(${K}, ${k}, this.value)" aria-label="%"><span class="muted small">%</span>
+                        ${d.days.length > 2 ? `<button type="button" class="icon-btn sm del" onclick="ieDelDay(${K}, ${k})" aria-label="${esc(t('deleteBtn'))}"><i data-lucide="x"></i></button>` : '<span style="width:32px"></span>'}
+                    </div>`).join('')}</div>
+                    <div class="between mt-2">${d.days.length < 4 ? `<button type="button" class="btn-link small" onclick="ieAddDay(${K})"><i data-lucide="plus"></i>${esc(t('incAddDay'))}</button>` : '<span></span>'}<span class="small muted">Σ <b id="ie-${key}-sum">100%</b></span></div>`;
+            }
+        } else {
+            const tv = +d.tax || 0, preset = [0, 5].includes(tv) && !d.taxOther;
+            detail = `<p class="label">${esc(t('incTax'))}</p>
+                <div class="row wrap" style="gap:6px">
+                    <button type="button" class="toggle-chip ${preset && tv === 0 ? 'on' : ''}" onclick="ieTax(${K}, 0)">${esc(t('incTaxNo'))}</button>
+                    <button type="button" class="toggle-chip ${preset && tv === 5 ? 'on' : ''}" onclick="ieTax(${K}, 5)">5%</button>
+                    <button type="button" class="toggle-chip ${!preset ? 'on' : ''}" onclick="ieTaxOther(${K})">${esc(t('incTaxOther'))}</button>
+                    ${!preset ? `<input class="input" type="number" inputmode="decimal" min="0" max="50" step="0.5" value="${esc(String(tv))}" oninput="ieSet(${K}, 'tax', parseFloat(this.value) || 0, false)" style="width:90px" aria-label="%">` : ''}
+                </div>
+                <p class="tiny muted mt-2">${esc(t('incTaxHint'))}</p>
+                <div class="note plain small mt-3">🛡️ ${esc(t('incFlexEf'))}</div>`;
+        }
+        return `<div class="inc-editor stack" style="gap:16px">
+            <div><p class="label">${esc(t('incType'))}</p><div class="stack" style="gap:8px">${card('fixed', 'wallet', 'incFixedT', 'incFixedS')}${card('flex', 'sparkles', 'incFlexT', 'incFlexS')}</div></div>
+            <div>
+                <label class="label" for="ie-${key}-amount">${esc(t(amountLabel))}</label>
+                <input id="ie-${key}-amount" class="input amount-in" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0.00" value="${esc(String(d.amount))}" oninput="ieSet(${K}, 'amount', this.value, false)">
+                ${d.type === 'flex' ? `<p class="tiny muted mt-2">${esc(t('incAmountFlexHint'))}</p>` : ''}
+            </div>
+            <div><p class="label">${esc(t(d.type === 'flex' ? 'incFreqFlex' : 'incFreqFixed'))}</p><div class="seg-wide ${freqs.length === 4 ? 'four' : 'three'}">${freqBtns}</div></div>
+            <div>${detail}</div>
+            <p id="ie-${key}-preview" class="note ok small ${iePreviewText(d) ? '' : 'hidden'}" aria-live="polite">${esc(iePreviewText(d))}</p>
+            <p id="ie-${key}-err" class="small danger hidden" role="alert"></p>
+        </div>`;
+    }
+
     // ================= UX layer: profile rows, empty states, next payment, tucked explanations, welcome guide, zoom guard =================
     Object.assign(I18N.es, {
         heroCan: 'Hoy puedes gastar', heroCanOver: 'Hoy te pasaste por', heroPctLeft: 'disponible',
@@ -4269,7 +4585,7 @@
         obSkip: 'Saltar', obBack: 'Atrás', obNext: 'Continuar', obStart: 'Empezar',
         obWelcomeT: 'Bienvenido a Valiu', obWelcomeS: 'En un minuto calculamos cuánto puedes gastar cada día sin descuidar tus pagos.',
         obB1: 'Tu límite diario, siempre claro', obB2: 'Recordatorios antes de cada fecha límite', obB3: 'Un plan para salir de deudas',
-        obIncomeT: '¿Cuánto ganas al mes?', obIncomeS: 'Tu ingreso neto: lo que te cae en la cuenta después de descuentos.', obIncomeErr: 'Escribe tu ingreso para continuar.',
+        obIncomeT: 'Tu ingreso', obIncomeS: 'Lo que te cae en la cuenta, después de descuentos. Así calculamos cuánto puedes gastar entre cada pago.', obIncomeErr: 'Escribe tu ingreso para continuar.',
         obBillsT: 'Tus pagos fijos', obBillsS: 'Lo que pagas todos los meses: alquiler, luz, internet, colegiatura… Puedes agregar más después.',
         obBillName: 'Nombre', obBillAmount: 'Monto', obBillDay: 'Día', obBillAdd: 'Agregar', obBillsNone: 'Todavía no agregaste ninguno.',
         obBillErr: 'Completa nombre, monto y un día del 1 al 31.',
@@ -4292,7 +4608,7 @@
         obSkip: 'Skip', obBack: 'Back', obNext: 'Continue', obStart: 'Get started',
         obWelcomeT: 'Welcome to Valiu', obWelcomeS: 'In one minute we\'ll work out how much you can spend each day without missing a payment.',
         obB1: 'Your daily limit, always clear', obB2: 'Reminders before every due date', obB3: 'A plan to get out of debt',
-        obIncomeT: 'How much do you earn a month?', obIncomeS: 'Your net income: what lands in your account after deductions.', obIncomeErr: 'Enter your income to continue.',
+        obIncomeT: 'Your income', obIncomeS: 'What lands in your account after deductions. We use it to work out what you can spend between paydays.', obIncomeErr: 'Enter your income to continue.',
         obBillsT: 'Your fixed bills', obBillsS: 'What you pay every month: rent, power, internet, tuition… You can add more later.',
         obBillName: 'Name', obBillAmount: 'Amount', obBillDay: 'Day', obBillAdd: 'Add', obBillsNone: 'None added yet.',
         obBillErr: 'Fill in a name, an amount and a day from 1 to 31.',
@@ -4371,7 +4687,8 @@
         if ((auth && auth.classList.contains('open')) || (lock && lock.classList.contains('open'))) { setTimeout(maybeOnboard, 900); return; }
         OB.open = true; OB.step = 0; OB.err = '';
         OB.currency = state.currencyCode && state.currencyCode !== 'USD' ? state.currencyCode : (state.lang === 'es' ? 'GTQ' : 'USD');
-        OB.freq = state.payFreq || 'monthly';
+        state.currencyCode = OB.currency;
+        IE.ob = ieNorm(ieFromState());
         let el = $('onboard');
         if (!el) { el = document.createElement('div'); el.id = 'onboard'; el.className = 'onboard'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); document.body.appendChild(el); }
         el.classList.add('open'); document.body.style.overflow = 'hidden';
@@ -4386,8 +4703,9 @@
     function obGo(step) { OB.err = ''; OB.step = Math.max(0, Math.min(OB_STEPS - 1, step)); obRender(); }
     function obNext() {
         if (OB.step === 1) {
-            const v = parseFloat(OB.income);
-            if (!(v > 0)) { OB.err = t('obIncomeErr'); obRender(); return; }
+            IE.ob.touched = true;
+            const e = ieValidate(IE.ob);
+            if (e) { OB.err = e; obRender(); return; }
         }
         if (OB.step === 2 && $('ob-name') && $('ob-name').value.trim() && $('ob-amount').value) { if (!obAddBill()) return; }
         obGo(OB.step + 1);
@@ -4404,8 +4722,7 @@
     function obSugg(name) { const n = $('ob-name'); if (n) { n.value = name; $('ob-amount').focus(); } }
     function obCard(yes) { OB.wantCard = yes; obFinish(); }
     function obFinish() {
-        state.income = round2(parseFloat(OB.income) || 0);
-        state.payFreq = OB.freq;
+        ieApply(IE.ob);
         state.currencyCode = OB.currency || state.currencyCode;
         const today = new Date().getDate();
         // A bill whose day already passed this month was most likely paid already.
@@ -4448,16 +4765,9 @@
             body = `<div class="ob-icon"><i data-lucide="hand-coins"></i></div>
                 <h2 class="ob-h">${esc(t('obIncomeT'))}</h2>
                 <p class="ob-s">${esc(t('obIncomeS'))}</p>
-                <div class="ob-money mt-4">
-                    <select class="input" style="width:104px" onchange="OB.currency=this.value" aria-label="${esc(t('currencyLabel'))}">${opts}</select>
-                    <input id="ob-income" class="input amount-in grow" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0.00" value="${esc(String(OB.income))}" oninput="OB.income=this.value" onkeydown="if(event.key==='Enter')obNext()">
-                </div>
-                <p class="label mt-4">${esc(t('payFreqLabel'))}</p>
-                <div class="seg-wide">
-                    <button class="${OB.freq === 'monthly' ? 'active' : ''}" onclick="OB.freq='monthly'; obRender()">${esc(t('freqMonthly'))}</button>
-                    <button class="${OB.freq === 'biweekly' ? 'active' : ''}" onclick="OB.freq='biweekly'; obRender()">${esc(t('freqBiweekly'))}</button>
-                </div>
-                ${err}
+                <div class="row mt-4" style="gap:10px"><label class="label" for="ob-cur" style="margin:0">${esc(t('currencyLabel'))}</label>
+                    <select id="ob-cur" class="input" style="width:120px" onchange="OB.currency=this.value; state.currencyCode=this.value; ieRefresh('ob')">${opts}</select></div>
+                ${ieHTML('ob')}
                 <button class="btn btn-primary btn-block ob-cta" onclick="obNext()">${esc(t('obNext'))}<i data-lucide="arrow-right"></i></button>`;
         } else if (s === 2) {
             const sugg = t('obSugg').split(',').filter(n => !OB.bills.some(b => b.name === n)).map(n => `<button class="chip" onclick="obSugg('${esc(n)}')">${esc(n)}</button>`).join('');
@@ -4496,7 +4806,7 @@
         }
         el.innerHTML = `<div class="ob-wrap">${top}<div class="ob-body" key="${s}">${body}</div></div>`;
         if (window.lucide) lucide.createIcons();
-        if (s === 1) setTimeout(() => { const i = $('ob-income'); if (i && !OB.income) i.focus(); }, 80);
+        if (s === 1) { ieRefresh('ob'); setTimeout(() => { const i = $('ie-ob-amount'); if (i && !IE.ob.amount && document.activeElement === document.body) i.focus(); }, 80); }
     }
     // Remote data arrived (another device) while the guide is open: the user already has a budget.
     function obCheckRemote() { if (OB.open && OB.step < 4 && (state.income > 0 || state.items.length)) { state.onboarded = true; obClose(); } }
