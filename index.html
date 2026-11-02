@@ -562,6 +562,35 @@
         .inc-custom { display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr) auto auto; align-items: center; gap: 8px; }
         .inc-editor .btn-link svg.lucide { width: 16px; height: 16px; }
         .ob-body .inc-editor { margin-top: 18px; }
+
+        /* ---------- Quick repeat, ant spending, rates, news ---------- */
+        .quick-spend { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+        .quick-spend::-webkit-scrollbar { display: none; }
+        .quick-chip { display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0; padding: 7px 12px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-size: 13px; font-weight: 600; border: 1.5px solid transparent; transition: transform .1s, border-color .2s; }
+        .quick-chip:active { transform: scale(.96); }
+        .quick-chip b { color: var(--text); font-weight: 700; }
+        .quick-label { flex-shrink: 0; align-self: center; font-size: 12px; font-weight: 700; color: var(--muted); display: inline-flex; align-items: center; gap: 4px; }
+        .quick-label svg.lucide { width: 14px; height: 14px; }
+        .icon-btn.sm.rep:hover { background: var(--accent-soft); color: var(--accent); }
+        .ant { display: flex; gap: 12px; align-items: flex-start; margin-top: 14px; padding: 12px 14px; border-radius: 14px; background: var(--warn-soft); color: var(--text); font-size: 14px; line-height: 1.5; }
+        .ant .e { font-size: 22px; line-height: 1; }
+        .ant b { color: var(--warn); }
+        .rate-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: center; padding: 10px 2px; border-bottom: 1px solid var(--border); }
+        .rate-row:last-child { border-bottom: 0; }
+        .rate-row .nm { font-weight: 600; font-size: 14px; min-width: 0; }
+        .rate-row .vals { text-align: right; font-size: 13px; }
+        .rate-row .vals b { display: block; font-size: 14px; }
+        .rate-bar { grid-column: 1 / -1; position: relative; height: 6px; border-radius: 999px; background: var(--surface-2); }
+        .rate-bar span { position: absolute; top: 0; bottom: 0; border-radius: 999px; }
+        .rate-bar i { position: absolute; top: -3px; width: 2px; height: 12px; background: var(--danger); border-radius: 2px; }
+        .loan-ref { padding: 12px 14px; border-radius: 14px; background: var(--surface-2); }
+        .loan-ref + .loan-ref { margin-top: 8px; }
+        .news-item { display: flex; gap: 12px; align-items: flex-start; }
+        .news-item + .news-item { margin-top: 14px; }
+        .news-item .set-ic { width: 38px; height: 38px; border-radius: 12px; }
+        .news-item b { display: block; font-size: 15px; }
+        .news-hero { text-align: center; margin-bottom: 18px; }
+        .news-hero .ob-icon { margin: 0 auto 12px; }
         /* ---------- Login (web version) ---------- */
         .auth { position: fixed; inset: 0; z-index: 420; background: var(--bg); display: none; overflow-y: auto; }
         .auth.open { display: block; }
@@ -654,6 +683,7 @@
                     <div class="card anim">
                         <h2 class="card-title"><i data-lucide="receipt"></i><span data-i18n="spendTitle"></span></h2>
                         <div id="cat-chips" class="chips mt-4"></div>
+                        <div id="quick-spend" class="quick-spend mt-3 hidden"></div>
                         <div class="spend-form mt-3">
                             <input type="number" id="x-amount" inputmode="decimal" min="0" step="0.01" class="input amount-in" data-i18n-ph="spendAmountPh" onkeydown="if(event.key==='Enter')addExpense()">
                             <input type="text" id="x-note" maxlength="60" class="input note-in" data-i18n-ph="spendNotePh" onkeydown="if(event.key==='Enter')addExpense()">
@@ -661,6 +691,7 @@
                         </div>
                         <p class="eyebrow mt-5 mb-2" data-i18n="spendRecent"></p>
                         <div id="expense-list"></div>
+                        <div id="ant-insight"></div>
                     </div>
                 </div>
 
@@ -811,8 +842,9 @@
                     <h2 class="card-title"><i data-lucide="building-2"></i><span data-i18n="dirTitle"></span></h2>
                     <p class="card-sub" data-i18n="dirDesc"></p>
                     <div id="dir-yours" class="mt-4"></div>
+                    <div id="dir-tabs" class="seg-wide mt-4"></div>
                     <div id="dir-list" class="mt-3"></div>
-                    <p class="tiny faint mt-3" data-i18n="dirSource"></p>
+                    <p id="dir-source" class="tiny faint mt-3"></p>
                 </div>
 
                 <div class="card anim">
@@ -1032,6 +1064,10 @@
                         <button id="transfer-apply" class="btn btn-primary hidden" onclick="applyTransfer()" data-i18n="transferApply"></button>
                     </div>
                 </details>
+            </section>
+
+            <section class="set-group">
+                <div class="set-card rows"><button class="set-row" onclick="closeModal('config-modal'); showNews(true)"><span class="set-ic"><i data-lucide="megaphone"></i></span><span class="grow" data-i18n="newsRow"></span><i data-lucide="chevron-right" class="faint"></i></button></div>
             </section>
 
             <section class="set-group">
@@ -1292,7 +1328,7 @@
 
     <script>
     // ================= Icons (inlined from Lucide, ISC license) — no external download needed =================
-    const ICONS = {"building-2":"<path d=\"M10 12h4\"/><path d=\"M10 8h4\"/><path d=\"M14 21v-3a2 2 0 0 0-4 0v3\"/><path d=\"M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2\"/><path d=\"M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16\"/>","calendar-arrow-down":"<path d=\"m14 17 4 4 4-4\"/><path d=\"M16 2v3\"/><path d=\"M18 13v8\"/><path d=\"M21 10.354V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h7.343\"/><path d=\"M3 9h18\"/><path d=\"M8 2v3\"/>","calendar-days":"<path d=\"M8 2v3\"/><path d=\"M16 2v3\"/><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\"/><path d=\"M3 9h18\"/><path d=\"M8 13h.01\"/><path d=\"M12 13h.01\"/><path d=\"M16 13h.01\"/><path d=\"M8 17h.01\"/><path d=\"M12 17h.01\"/><path d=\"M16 17h.01\"/>","chart-pie":"<path d=\"M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z\"/><path d=\"M21.21 15.89A10 10 0 1 1 8 2.83\"/>","chevron-right":"<path d=\"m9 18 6-6-6-6\"/>","combine":"<path d=\"M14 3a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1\"/><path d=\"M19 3a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1\"/><path d=\"m7 15 3 3\"/><path d=\"m7 21 3-3H5a2 2 0 0 1-2-2v-2\"/><rect x=\"14\" y=\"14\" width=\"7\" height=\"7\" rx=\"1\"/><rect x=\"3\" y=\"3\" width=\"7\" height=\"7\" rx=\"1\"/>","credit-card":"<rect width=\"20\" height=\"14\" x=\"2\" y=\"5\" rx=\"2\"/><line x1=\"2\" x2=\"22\" y1=\"10\" y2=\"10\"/>","download":"<path d=\"M12 15V3\"/><path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"/><path d=\"m7 10 5 5 5-5\"/>","file-text":"<path d=\"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z\"/><path d=\"M14 2v5a1 1 0 0 0 1 1h5\"/><path d=\"M10 9H8\"/><path d=\"M16 13H8\"/><path d=\"M16 17H8\"/>","gift":"<path d=\"M12 7v14\"/><path d=\"M20 11v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8\"/><path d=\"M7.5 7a1 1 0 0 1 0-5A4.8 8 0 0 1 12 7a4.8 8 0 0 1 4.5-5 1 1 0 0 1 0 5\"/><rect x=\"3\" y=\"7\" width=\"18\" height=\"4\" rx=\"1\"/>","hand-coins":"<path d=\"M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17\"/><path d=\"m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9\"/><path d=\"m2 16 6 6\"/><circle cx=\"16\" cy=\"9\" r=\"2.9\"/><circle cx=\"6\" cy=\"5\" r=\"3\"/>","heart-pulse":"<path d=\"M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5\"/><path d=\"M3.22 13H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27\"/>","history":"<path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"/><path d=\"M3 3v5h5\"/><path d=\"M12 7v5l4 2\"/>","house":"<path d=\"M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8\"/><path d=\"M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/>","landmark":"<path d=\"M10 18v-7\"/><path d=\"M11.119 2.205a2 2 0 0 1 1.762 0l7.84 3.846A.5.5 0 0 1 20.5 7h-17a.5.5 0 0 1-.22-.949z\"/><path d=\"M14 18v-7\"/><path d=\"M18 18v-7\"/><path d=\"M3 22h18\"/><path d=\"M6 18v-7\"/>","lightbulb":"<path d=\"M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5\"/><path d=\"M9 18h6\"/><path d=\"M10 22h4\"/>","list-checks":"<path d=\"M13 5h8\"/><path d=\"M13 12h8\"/><path d=\"M13 19h8\"/><path d=\"m3 17 2 2 4-4\"/><path d=\"m3 7 2 2 4-4\"/>","lock":"<rect width=\"18\" height=\"11\" x=\"3\" y=\"11\" rx=\"2\" ry=\"2\"/><path d=\"M7 11V7a5 5 0 0 1 10 0v4\"/>","piggy-bank":"<path d=\"M11 17h3v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a3.16 3.16 0 0 0 2-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1a5 5 0 0 0-2-4V3a4 4 0 0 0-3.2 1.6l-.3.4H11a6 6 0 0 0-6 6v1a5 5 0 0 0 2 4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z\"/><path d=\"M16 10h.01\"/><path d=\"M2 8v1a2 2 0 0 0 2 2h1\"/>","plus":"<path d=\"M5 12h14\"/><path d=\"M12 5v14\"/>","receipt":"<path d=\"M12 17V7\"/><path d=\"M16 8h-6a2 2 0 0 0 0 4h4a2 2 0 0 1 0 4H8\"/><path d=\"M4 3a1 1 0 0 1 1-1 1.3 1.3 0 0 1 .7.2l.933.6a1.3 1.3 0 0 0 1.4 0l.934-.6a1.3 1.3 0 0 1 1.4 0l.933.6a1.3 1.3 0 0 0 1.4 0l.933-.6a1.3 1.3 0 0 1 1.4 0l.934.6a1.3 1.3 0 0 0 1.4 0l.933-.6A1.3 1.3 0 0 1 19 2a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1 1.3 1.3 0 0 1-.7-.2l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.934.6a1.3 1.3 0 0 1-1.4 0l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-1.4 0l-.934-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-.7.2 1 1 0 0 1-1-1z\"/>","shield-check":"<path d=\"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z\"/><path d=\"m9 12 2 2 4-4\"/>","smartphone":"<rect width=\"14\" height=\"20\" x=\"5\" y=\"2\" rx=\"2\" ry=\"2\"/><path d=\"M12 18h.01\"/>","sparkles":"<path d=\"M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z\"/><path d=\"M20 2v4\"/><path d=\"M22 4h-4\"/><circle cx=\"4\" cy=\"20\" r=\"2\"/>","target":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><circle cx=\"12\" cy=\"12\" r=\"6\"/><circle cx=\"12\" cy=\"12\" r=\"2\"/>","trending-down":"<path d=\"M16 17h6v-6\"/><path d=\"m22 17-8.5-8.5-5 5L2 7\"/>","trophy":"<path d=\"M10 14.66V17a1 1 0 0 1-1 1 2 2 0 0 0-2 2v2\"/><path d=\"M14 14.66V17a1 1 0 0 0 1 1 2 2 0 0 1 2 2v2\"/><path d=\"M17.916 10H19.5A2.5 2.5 0 0 0 22 7.5V5a1 1 0 0 0-1-1h-3\"/><path d=\"M4 22h16\"/><path d=\"M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z\"/><path d=\"M6.084 10H4.5A2.5 2.5 0 0 1 2 7.5V5a1 1 0 0 1 1-1h3\"/>","upload":"<path d=\"M12 3v12\"/><path d=\"m17 8-5-5-5 5\"/><path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"/>","user-cog":"<path d=\"M10 15H6a4 4 0 0 0-4 4v2\"/><path d=\"m14.305 16.53.923-.382\"/><path d=\"m15.228 13.852-.923-.383\"/><path d=\"m16.852 12.228-.383-.923\"/><path d=\"m16.852 17.772-.383.924\"/><path d=\"m19.148 12.228.383-.923\"/><path d=\"m19.53 18.696-.382-.924\"/><path d=\"m20.772 13.852.924-.383\"/><path d=\"m20.772 16.148.924.383\"/><circle cx=\"18\" cy=\"15\" r=\"3\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/>","wallet":"<path d=\"M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1\"/><path d=\"M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4\"/>","sun":"<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2\"/><path d=\"M12 20v2\"/><path d=\"m4.93 4.93 1.41 1.41\"/><path d=\"m17.66 17.66 1.41 1.41\"/><path d=\"M2 12h2\"/><path d=\"M20 12h2\"/><path d=\"m6.34 17.66-1.41 1.41\"/><path d=\"m19.07 4.93-1.41 1.41\"/>","moon":"<path d=\"M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401\"/>","sun-moon":"<path d=\"M12 2v2\"/><path d=\"M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715\"/><path d=\"M16 12a4 4 0 0 0-4-4\"/><path d=\"m19 5-1.256 1.256\"/><path d=\"M20 12h2\"/>","info":"<circle cx=\"12\" cy=\"12\" r=\"10\" /><path d=\"M12 16v-4\" /><path d=\"M12 8h.01\" />","bell":"<path d=\"M10.268 21a2 2 0 0 0 3.464 0\" /><path d=\"M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326\" />","user":"<path d=\"M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2\" /><circle cx=\"12\" cy=\"7\" r=\"4\" />","palette":"<path d=\"M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z\" /><circle cx=\"13.5\" cy=\"6.5\" r=\".5\" fill=\"currentColor\" /><circle cx=\"17.5\" cy=\"10.5\" r=\".5\" fill=\"currentColor\" /><circle cx=\"6.5\" cy=\"12.5\" r=\".5\" fill=\"currentColor\" /><circle cx=\"8.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\" />","database":"<ellipse cx=\"12\" cy=\"5\" rx=\"9\" ry=\"3\" /><path d=\"M3 5V19A9 3 0 0 0 21 19V5\" /><path d=\"M3 12A9 3 0 0 0 21 12\" />","settings-2":"<path d=\"M14 17H5\" /><path d=\"M19 7h-9\" /><circle cx=\"17\" cy=\"17\" r=\"3\" /><circle cx=\"7\" cy=\"7\" r=\"3\" />","log-out":"<path d=\"m16 17 5-5-5-5\" /><path d=\"M21 12H9\" /><path d=\"M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4\" />","trash-2":"<path d=\"M10 11v6\" /><path d=\"M14 11v6\" /><path d=\"M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6\" /><path d=\"M3 6h18\" /><path d=\"M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2\" />","scale":"<path d=\"M12 3v18\" /><path d=\"m19 8 3 8a5 5 0 0 1-6 0zV7\" /><path d=\"M3 7h1a17 17 0 0 0 8-2 17 17 0 0 0 8 2h1\" /><path d=\"m5 8 3 8a5 5 0 0 1-6 0zV7\" /><path d=\"M7 21h10\" />","circle-help":"<circle cx=\"12\" cy=\"12\" r=\"10\" /><path d=\"M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3\" /><path d=\"M12 17h.01\" />","arrow-right":"<path d=\"M5 12h14\" /><path d=\"m12 5 7 7-7 7\" />","check":"<path d=\"M20 6 9 17l-5-5\" />","party-popper":"<path d=\"M5.8 11.3 2 22l10.7-3.79\" /><path d=\"M4 3h.01\" /><path d=\"M22 8h.01\" /><path d=\"M15 2h.01\" /><path d=\"M22 20h.01\" /><path d=\"m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10\" /><path d=\"m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17\" /><path d=\"m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7\" /><path d=\"M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z\" />","wand-sparkles":"<path d=\"m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72\" /><path d=\"m14 7 3 3\" /><path d=\"M5 6v4\" /><path d=\"M19 14v4\" /><path d=\"M10 2v2\" /><path d=\"M7 8H3\" /><path d=\"M21 16h-4\" /><path d=\"M11 3H9\" />","chevron-left":"<path d=\"m15 18-6-6 6-6\" />","x":"<path d=\"M18 6 6 18\" /><path d=\"m6 6 12 12\" />","calendar-clock":"<path d=\"M16 14v2.2l1.6 1\" /><path d=\"M16 2v3\" /><path d=\"M21 7.338V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h2.338\" /><path d=\"M3 9h5.859\" /><path d=\"M8 2v3\" /><circle cx=\"16\" cy=\"16\" r=\"6\" />","wallet-cards":"<path d=\"M3 11h3.75a2 2 0 0 1 1.6.8l.45.6a4 4 0 0 0 6.4 0l.45-.6a2 2 0 0 1 1.6-.8H21\" /><path d=\"M3 7h18\" /><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\" />","sliders-horizontal":"<path d=\"M10 5H3\" /><path d=\"M12 19H3\" /><path d=\"M14 3v4\" /><path d=\"M16 17v4\" /><path d=\"M21 12h-9\" /><path d=\"M21 19h-5\" /><path d=\"M21 5h-7\" /><path d=\"M8 10v4\" /><path d=\"M8 12H3\" />"};
+    const ICONS = {"building-2":"<path d=\"M10 12h4\"/><path d=\"M10 8h4\"/><path d=\"M14 21v-3a2 2 0 0 0-4 0v3\"/><path d=\"M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2\"/><path d=\"M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16\"/>","calendar-arrow-down":"<path d=\"m14 17 4 4 4-4\"/><path d=\"M16 2v3\"/><path d=\"M18 13v8\"/><path d=\"M21 10.354V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h7.343\"/><path d=\"M3 9h18\"/><path d=\"M8 2v3\"/>","calendar-days":"<path d=\"M8 2v3\"/><path d=\"M16 2v3\"/><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\"/><path d=\"M3 9h18\"/><path d=\"M8 13h.01\"/><path d=\"M12 13h.01\"/><path d=\"M16 13h.01\"/><path d=\"M8 17h.01\"/><path d=\"M12 17h.01\"/><path d=\"M16 17h.01\"/>","chart-pie":"<path d=\"M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z\"/><path d=\"M21.21 15.89A10 10 0 1 1 8 2.83\"/>","chevron-right":"<path d=\"m9 18 6-6-6-6\"/>","combine":"<path d=\"M14 3a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1\"/><path d=\"M19 3a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1\"/><path d=\"m7 15 3 3\"/><path d=\"m7 21 3-3H5a2 2 0 0 1-2-2v-2\"/><rect x=\"14\" y=\"14\" width=\"7\" height=\"7\" rx=\"1\"/><rect x=\"3\" y=\"3\" width=\"7\" height=\"7\" rx=\"1\"/>","credit-card":"<rect width=\"20\" height=\"14\" x=\"2\" y=\"5\" rx=\"2\"/><line x1=\"2\" x2=\"22\" y1=\"10\" y2=\"10\"/>","download":"<path d=\"M12 15V3\"/><path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"/><path d=\"m7 10 5 5 5-5\"/>","file-text":"<path d=\"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z\"/><path d=\"M14 2v5a1 1 0 0 0 1 1h5\"/><path d=\"M10 9H8\"/><path d=\"M16 13H8\"/><path d=\"M16 17H8\"/>","gift":"<path d=\"M12 7v14\"/><path d=\"M20 11v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8\"/><path d=\"M7.5 7a1 1 0 0 1 0-5A4.8 8 0 0 1 12 7a4.8 8 0 0 1 4.5-5 1 1 0 0 1 0 5\"/><rect x=\"3\" y=\"7\" width=\"18\" height=\"4\" rx=\"1\"/>","hand-coins":"<path d=\"M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17\"/><path d=\"m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9\"/><path d=\"m2 16 6 6\"/><circle cx=\"16\" cy=\"9\" r=\"2.9\"/><circle cx=\"6\" cy=\"5\" r=\"3\"/>","heart-pulse":"<path d=\"M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5\"/><path d=\"M3.22 13H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27\"/>","history":"<path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"/><path d=\"M3 3v5h5\"/><path d=\"M12 7v5l4 2\"/>","house":"<path d=\"M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8\"/><path d=\"M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/>","landmark":"<path d=\"M10 18v-7\"/><path d=\"M11.119 2.205a2 2 0 0 1 1.762 0l7.84 3.846A.5.5 0 0 1 20.5 7h-17a.5.5 0 0 1-.22-.949z\"/><path d=\"M14 18v-7\"/><path d=\"M18 18v-7\"/><path d=\"M3 22h18\"/><path d=\"M6 18v-7\"/>","lightbulb":"<path d=\"M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5\"/><path d=\"M9 18h6\"/><path d=\"M10 22h4\"/>","list-checks":"<path d=\"M13 5h8\"/><path d=\"M13 12h8\"/><path d=\"M13 19h8\"/><path d=\"m3 17 2 2 4-4\"/><path d=\"m3 7 2 2 4-4\"/>","lock":"<rect width=\"18\" height=\"11\" x=\"3\" y=\"11\" rx=\"2\" ry=\"2\"/><path d=\"M7 11V7a5 5 0 0 1 10 0v4\"/>","piggy-bank":"<path d=\"M11 17h3v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a3.16 3.16 0 0 0 2-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1a5 5 0 0 0-2-4V3a4 4 0 0 0-3.2 1.6l-.3.4H11a6 6 0 0 0-6 6v1a5 5 0 0 0 2 4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z\"/><path d=\"M16 10h.01\"/><path d=\"M2 8v1a2 2 0 0 0 2 2h1\"/>","plus":"<path d=\"M5 12h14\"/><path d=\"M12 5v14\"/>","receipt":"<path d=\"M12 17V7\"/><path d=\"M16 8h-6a2 2 0 0 0 0 4h4a2 2 0 0 1 0 4H8\"/><path d=\"M4 3a1 1 0 0 1 1-1 1.3 1.3 0 0 1 .7.2l.933.6a1.3 1.3 0 0 0 1.4 0l.934-.6a1.3 1.3 0 0 1 1.4 0l.933.6a1.3 1.3 0 0 0 1.4 0l.933-.6a1.3 1.3 0 0 1 1.4 0l.934.6a1.3 1.3 0 0 0 1.4 0l.933-.6A1.3 1.3 0 0 1 19 2a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1 1.3 1.3 0 0 1-.7-.2l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.934.6a1.3 1.3 0 0 1-1.4 0l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-1.4 0l-.934-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-.7.2 1 1 0 0 1-1-1z\"/>","shield-check":"<path d=\"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z\"/><path d=\"m9 12 2 2 4-4\"/>","smartphone":"<rect width=\"14\" height=\"20\" x=\"5\" y=\"2\" rx=\"2\" ry=\"2\"/><path d=\"M12 18h.01\"/>","sparkles":"<path d=\"M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z\"/><path d=\"M20 2v4\"/><path d=\"M22 4h-4\"/><circle cx=\"4\" cy=\"20\" r=\"2\"/>","target":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><circle cx=\"12\" cy=\"12\" r=\"6\"/><circle cx=\"12\" cy=\"12\" r=\"2\"/>","trending-down":"<path d=\"M16 17h6v-6\"/><path d=\"m22 17-8.5-8.5-5 5L2 7\"/>","trophy":"<path d=\"M10 14.66V17a1 1 0 0 1-1 1 2 2 0 0 0-2 2v2\"/><path d=\"M14 14.66V17a1 1 0 0 0 1 1 2 2 0 0 1 2 2v2\"/><path d=\"M17.916 10H19.5A2.5 2.5 0 0 0 22 7.5V5a1 1 0 0 0-1-1h-3\"/><path d=\"M4 22h16\"/><path d=\"M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z\"/><path d=\"M6.084 10H4.5A2.5 2.5 0 0 1 2 7.5V5a1 1 0 0 1 1-1h3\"/>","upload":"<path d=\"M12 3v12\"/><path d=\"m17 8-5-5-5 5\"/><path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"/>","user-cog":"<path d=\"M10 15H6a4 4 0 0 0-4 4v2\"/><path d=\"m14.305 16.53.923-.382\"/><path d=\"m15.228 13.852-.923-.383\"/><path d=\"m16.852 12.228-.383-.923\"/><path d=\"m16.852 17.772-.383.924\"/><path d=\"m19.148 12.228.383-.923\"/><path d=\"m19.53 18.696-.382-.924\"/><path d=\"m20.772 13.852.924-.383\"/><path d=\"m20.772 16.148.924.383\"/><circle cx=\"18\" cy=\"15\" r=\"3\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/>","wallet":"<path d=\"M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1\"/><path d=\"M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4\"/>","sun":"<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2\"/><path d=\"M12 20v2\"/><path d=\"m4.93 4.93 1.41 1.41\"/><path d=\"m17.66 17.66 1.41 1.41\"/><path d=\"M2 12h2\"/><path d=\"M20 12h2\"/><path d=\"m6.34 17.66-1.41 1.41\"/><path d=\"m19.07 4.93-1.41 1.41\"/>","moon":"<path d=\"M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401\"/>","sun-moon":"<path d=\"M12 2v2\"/><path d=\"M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715\"/><path d=\"M16 12a4 4 0 0 0-4-4\"/><path d=\"m19 5-1.256 1.256\"/><path d=\"M20 12h2\"/>","info":"<circle cx=\"12\" cy=\"12\" r=\"10\" /><path d=\"M12 16v-4\" /><path d=\"M12 8h.01\" />","bell":"<path d=\"M10.268 21a2 2 0 0 0 3.464 0\" /><path d=\"M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326\" />","user":"<path d=\"M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2\" /><circle cx=\"12\" cy=\"7\" r=\"4\" />","palette":"<path d=\"M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z\" /><circle cx=\"13.5\" cy=\"6.5\" r=\".5\" fill=\"currentColor\" /><circle cx=\"17.5\" cy=\"10.5\" r=\".5\" fill=\"currentColor\" /><circle cx=\"6.5\" cy=\"12.5\" r=\".5\" fill=\"currentColor\" /><circle cx=\"8.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\" />","database":"<ellipse cx=\"12\" cy=\"5\" rx=\"9\" ry=\"3\" /><path d=\"M3 5V19A9 3 0 0 0 21 19V5\" /><path d=\"M3 12A9 3 0 0 0 21 12\" />","settings-2":"<path d=\"M14 17H5\" /><path d=\"M19 7h-9\" /><circle cx=\"17\" cy=\"17\" r=\"3\" /><circle cx=\"7\" cy=\"7\" r=\"3\" />","log-out":"<path d=\"m16 17 5-5-5-5\" /><path d=\"M21 12H9\" /><path d=\"M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4\" />","trash-2":"<path d=\"M10 11v6\" /><path d=\"M14 11v6\" /><path d=\"M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6\" /><path d=\"M3 6h18\" /><path d=\"M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2\" />","scale":"<path d=\"M12 3v18\" /><path d=\"m19 8 3 8a5 5 0 0 1-6 0zV7\" /><path d=\"M3 7h1a17 17 0 0 0 8-2 17 17 0 0 0 8 2h1\" /><path d=\"m5 8 3 8a5 5 0 0 1-6 0zV7\" /><path d=\"M7 21h10\" />","circle-help":"<circle cx=\"12\" cy=\"12\" r=\"10\" /><path d=\"M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3\" /><path d=\"M12 17h.01\" />","arrow-right":"<path d=\"M5 12h14\" /><path d=\"m12 5 7 7-7 7\" />","check":"<path d=\"M20 6 9 17l-5-5\" />","party-popper":"<path d=\"M5.8 11.3 2 22l10.7-3.79\" /><path d=\"M4 3h.01\" /><path d=\"M22 8h.01\" /><path d=\"M15 2h.01\" /><path d=\"M22 20h.01\" /><path d=\"m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10\" /><path d=\"m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17\" /><path d=\"m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7\" /><path d=\"M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z\" />","wand-sparkles":"<path d=\"m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72\" /><path d=\"m14 7 3 3\" /><path d=\"M5 6v4\" /><path d=\"M19 14v4\" /><path d=\"M10 2v2\" /><path d=\"M7 8H3\" /><path d=\"M21 16h-4\" /><path d=\"M11 3H9\" />","chevron-left":"<path d=\"m15 18-6-6 6-6\" />","x":"<path d=\"M18 6 6 18\" /><path d=\"m6 6 12 12\" />","calendar-clock":"<path d=\"M16 14v2.2l1.6 1\" /><path d=\"M16 2v3\" /><path d=\"M21 7.338V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h2.338\" /><path d=\"M3 9h5.859\" /><path d=\"M8 2v3\" /><circle cx=\"16\" cy=\"16\" r=\"6\" />","wallet-cards":"<path d=\"M3 11h3.75a2 2 0 0 1 1.6.8l.45.6a4 4 0 0 0 6.4 0l.45-.6a2 2 0 0 1 1.6-.8H21\" /><path d=\"M3 7h18\" /><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\" />","sliders-horizontal":"<path d=\"M10 5H3\" /><path d=\"M12 19H3\" /><path d=\"M14 3v4\" /><path d=\"M16 17v4\" /><path d=\"M21 12h-9\" /><path d=\"M21 19h-5\" /><path d=\"M21 5h-7\" /><path d=\"M8 10v4\" /><path d=\"M8 12H3\" />","send":"<path d=\"M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z\" /><path d=\"m21.854 2.147-10.94 10.939\" />","repeat":"<path d=\"m17 2 4 4-4 4\" /><path d=\"M3 11v-1a4 4 0 0 1 4-4h14\" /><path d=\"m7 22-4-4 4-4\" /><path d=\"M21 13v1a4 4 0 0 1-4 4H3\" />","megaphone":"<path d=\"M11 6a13 13 0 0 0 8.4-2.8A1 1 0 0 1 21 4v12a1 1 0 0 1-1.6.8A13 13 0 0 0 11 14H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z\" /><path d=\"M6 14a12 12 0 0 0 2.4 7.2 2 2 0 0 0 3.2-2.4A8 8 0 0 1 10 14\" /><path d=\"M8 6v8\" />","badge-percent":"<path d=\"M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z\" /><path d=\"m15 9-6 6\" /><path d=\"M9 9h.01\" /><path d=\"M15 15h.01\" />","external-link":"<path d=\"M15 3h6v6\" /><path d=\"M10 14 21 3\" /><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\" />"};
     window.lucide = { createIcons() {
         document.querySelectorAll("i[data-lucide]").forEach(el => {
             const name = el.getAttribute("data-lucide"), body = ICONS[name];
@@ -1796,6 +1832,7 @@
         }));
         if (!okPeriod(out.period) && out.period !== '0000-00') out.period = periodKey();
         if (!/^[A-Z]{3}$/.test(String(out.currencyCode))) out.currencyCode = 'USD';
+        out.seenNews = typeof s.seenNews === 'string' && /^[0-9-]{4,20}$/.test(s.seenNews) ? s.seenNews : null;
         if (!LOCALES[out.lang]) out.lang = d.lang;
         if (!['system', 'light', 'dark'].includes(out.theme)) out.theme = 'system';
         if (!TABS.includes(out.tab)) out.tab = 'today';
@@ -2218,7 +2255,7 @@
         const monthDiff = (d.getFullYear() - now.getFullYear()) * 12 + d.getMonth() - now.getMonth();
         return { date: d, days, thisMonth, monthDiff };
     }
-    function bonusAmount(kind) { const v = state.bonus[kind]; return v === null ? (state.incomeType === 'flex' ? 0 : state.income) : v; }
+    function bonusAmount(kind) { const v = state.bonus[kind]; return v === null ? (state.incomeType !== 'fixed' ? 0 : state.income) : v; }
     function bonusImpact(kind, c) {
         const P = getPlan(c);
         if (!P) return null;
@@ -2235,7 +2272,7 @@
     function emergencyGoal() { return state.goals.find(g => g.kind === 'emergency'); }
     function emergencyTarget() {
         const c = compute();
-        return Math.round((state.incomeType === 'flex' ? 6 : 3) * (c.fixed - c.taxes + c.baseBuffer) / 100) * 100;
+        return Math.round((state.incomeType !== 'fixed' ? 6 : 3) * (c.fixed - c.taxes + c.baseBuffer) / 100) * 100;
     }
     function goalMonthly(g) {
         if (!g.due || g.saved >= g.target) return null;
@@ -2634,7 +2671,7 @@
         $('hero-msg').textContent = msg;
 
         const usedPct = c.allocated > 0 ? ((c.spent + c.extraFromBuffer) / c.allocated) * 100 : 0;
-        const flexP = state.incomeType === 'flex';
+        const flexP = state.incomeType !== 'fixed';
         $('hero-month').textContent = c.biw
             ? (c.periodLeft < 0 ? t(flexP ? 'heroPeriodFlexOver' : 'heroPeriodOver', { over: fmt(-c.periodLeft) }) : t(flexP ? 'heroPeriodFlex' : 'heroPeriod', { left: fmt(c.periodLeft), days: c.periodDaysLeft }))
             : (c.bufferLeft < 0 ? t('heroMonthOver', { over: fmt(-c.bufferLeft) }) : t('heroMonth', { left: fmt(c.bufferLeft), days: c.daysRemaining }));
@@ -2655,6 +2692,7 @@
                 <span class="emoji-badge">${cat.emoji}</span>
                 <div class="grow"><p class="truncate" style="font-weight:600">${esc(e.note || t('cat_' + cat.id))}</p><p class="tiny muted">${esc(when)} · ${esc(t('cat_' + cat.id))}</p></div>
                 <b class="num shrink-0">${fmt(e.amount)}</b>
+                <button class="icon-btn sm rep" onclick="repeatExpense('${e.id}')" title="${esc(t('repeatBtn'))}" aria-label="${esc(t('repeatBtn'))}"><i data-lucide="repeat"></i></button>
                 <button class="icon-btn sm del" onclick="removeExpense('${e.id}')" title="${esc(t('deleteExpense'))}" aria-label="${esc(t('deleteExpense'))}">${X_ICON}</button>
             </div>`;
         }).join('') : emptyHTML('receipt', t('emptySpendTitle'), t('spendEmpty'));
@@ -2664,6 +2702,8 @@
             : state.items.length ? emptyHTML('party-popper', t('emptyAllPaidTitle'), t('upcomingEmpty'))
             : emptyHTML('calendar-clock', t('emptyBillsTitle'), t('emptySchedule'), t('addObligation'), 'openEntryModal()');
         $('tip-today').innerHTML = ccTip() + agentHTML(c);
+        renderQuickSpend();
+        $('ant-insight').innerHTML = antInsight(c);
     }
 
     // ================= PAYMENTS =================
@@ -3411,21 +3451,6 @@
     }
 
     // ================= Directory =================
-    function renderDirectory() {
-        const max = 45;
-        $('dir-list').innerHTML = LENDERS.map(l => `<div class="dir-row">
-                <div><p style="font-weight:600">${esc(l.name)}</p><span class="pill ${l.type === 'coop' ? 'ok' : ''}">${esc(t(l.type === 'coop' ? 'dirCoop' : 'dirBank'))}</span>
-                    <div class="range"><span style="left:${l.lo / max * 100}%; width:${(l.hi - l.lo) / max * 100}%; background:${l.type === 'coop' ? 'var(--c-surplus)' : 'var(--c-buffer)'}"></span></div></div>
-                <b class="num">${l.lo}–${l.hi}%</b>
-            </div>`).join('');
-        const cards = state.items.filter(i => i.type === 'debt' && i.subtype === 'cc' && !i.completed && i.apr > 0);
-        $('dir-yours').innerHTML = cards.length ? `<p class="eyebrow mb-2">${esc(t('dirYoursTitle'))}</p>` + cards.map(i => {
-            const key = i.apr > BANK_HI ? 'dirYoursHigh' : i.apr > COOP_HI ? 'dirYoursMid' : 'dirYoursLow';
-            const tone = key === 'dirYoursHigh' ? 'danger' : key === 'dirYoursMid' ? 'warn' : 'ok';
-            return `<div class="note ${tone} small mb-2">${t(key, { name: `<b>${esc(i.name)}</b>`, apr: i.apr, lo: BANK_LO, hi: BANK_HI, clo: COOP_LO, chi: COOP_HI })}</div>`;
-        }).join('') : '';
-    }
-
     // ================= History =================
     function renderHistory(c) {
         const months = state.months;
@@ -4299,8 +4324,13 @@
         eIncSplit: 'Los porcentajes deben sumar 100% (ahora suman {n}%).', eIncTax: 'El porcentaje de impuestos debe estar entre 0 y 50.',
         heroPeriod: 'Quedan {left} para {days} días, hasta tu próximo pago', heroPeriodOver: 'Hasta tu próximo pago te pasaste por {over}',
         heroPeriodFlex: 'Quedan {left} para {days} días de este periodo', heroPeriodFlexOver: 'En este periodo te pasaste por {over}',
-        efDesc: 'Tu red de seguridad para imprevistos. Lo ideal: 3 meses de tus gastos básicos (6 si tu ingreso es flexible).',
-        incSummaryFixed: 'Sueldo fijo · {f}', incSummaryFlex: 'Ingreso flexible · {f}'
+        efDesc: 'Tu red de seguridad para imprevistos. Lo ideal: 3 meses de tus gastos básicos (6 si tu ingreso varía).',
+        incSummaryFixed: 'Sueldo fijo · {f}', incSummaryFlex: 'Ingreso flexible · {f}', incSummaryRemit: 'Remesas · {f}',
+        incRemitT: 'Remesas', incRemitS: 'Dinero que te envía tu familia desde otro país.',
+        incAmountRemit: '¿Cuánto te llega al mes?', incAmountRemitHint: 'Escribe lo que recibes ya cambiado a tu moneda. Si varía, usa lo que te llega seguro.',
+        incFreqRemit: '¿Cada cuánto te llega?',
+        incRemitTip: 'Las remesas pueden cambiar de un mes a otro. Planea con lo seguro y, cuando te llegue de más, regístralo como ingreso extra y guarda una parte.',
+        incVarEf: 'Como tu ingreso puede variar, te conviene un fondo de emergencia más grande: 6 meses de gastos básicos.'
     });
     Object.assign(I18N.en, {
         incType: 'How do you get paid?',
@@ -4325,8 +4355,13 @@
         eIncSplit: 'Percentages must add up to 100% (now {n}%).', eIncTax: 'The tax percentage must be between 0 and 50.',
         heroPeriod: '{left} left for {days} days, until your next payday', heroPeriodOver: 'Over by {over} until your next payday',
         heroPeriodFlex: '{left} left for {days} days this period', heroPeriodFlexOver: 'Over by {over} this period',
-        efDesc: 'Your safety net for surprises. Ideal: 3 months of your basic expenses (6 if your income is flexible).',
-        incSummaryFixed: 'Fixed salary · {f}', incSummaryFlex: 'Flexible income · {f}'
+        efDesc: 'Your safety net for surprises. Ideal: 3 months of your basic expenses (6 if your income varies).',
+        incSummaryFixed: 'Fixed salary · {f}', incSummaryFlex: 'Flexible income · {f}', incSummaryRemit: 'Remittances · {f}',
+        incRemitT: 'Remittances', incRemitS: 'Money your family sends you from another country.',
+        incAmountRemit: 'How much do you get a month?', incAmountRemitHint: 'Enter what you receive already converted to your currency. If it varies, use what you can count on.',
+        incFreqRemit: 'How often does it arrive?',
+        incRemitTip: 'Remittances can change from month to month. Plan with what\'s certain and, when more arrives, log it as extra income and save part of it.',
+        incVarEf: 'Since your income can vary, a bigger emergency fund helps: 6 months of basic expenses.'
     });
 
     const PAY_FREQS = ['monthly', 'biweekly', 'weekly', 'days'];
@@ -4334,9 +4369,9 @@
 
     // Clean the income settings that come from storage, a backup or the server.
     function migrateIncome(s, out) {
-        out.incomeType = s.incomeType === 'flex' ? 'flex' : 'fixed';
+        out.incomeType = ['flex', 'remit'].includes(s.incomeType) ? s.incomeType : 'fixed';
         out.payFreq = PAY_FREQS.includes(s.payFreq) ? s.payFreq : 'monthly';
-        if (out.incomeType === 'flex' && out.payFreq === 'days') out.payFreq = 'monthly';
+        if (out.incomeType !== 'fixed' && out.payFreq === 'days') out.payFreq = 'monthly';
         out.payWeekday = clampInt(s.payWeekday, 0, 6, 5);
         out.taxPct = Math.min(50, Math.max(0, +s.taxPct || 0));
         let days = Array.isArray(s.payDays) ? s.payDays.map(d => clampInt(d, 1, 31, 0)).filter(d => d > 0) : [];
@@ -4362,7 +4397,7 @@
     // payment that covers it; a period's budget is the sum of its days. Periods carry over unspent money.
     function payDatesFor(year, month) {
         const out = [];
-        const freq = state.payFreq, flex = state.incomeType === 'flex';
+        const freq = state.payFreq, flex = state.incomeType !== 'fixed';
         for (let dm = -1; dm <= 1; dm++) {
             const y = new Date(year, month + dm, 1).getFullYear(), m = new Date(year, month + dm, 1).getMonth();
             const dim = new Date(y, m + 1, 0).getDate();
@@ -4408,7 +4443,8 @@
     const WEEKDAYS = { es: ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'], en: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] };
     function weekdayName(k) { return (WEEKDAYS[state.lang] || WEEKDAYS.es)[k]; }
     function freqLabel(f) { return t({ monthly: 'freqMonthly', biweekly: 'freqBiweekly', weekly: 'freqWeekly', days: 'freqDays' }[f] || 'freqMonthly'); }
-    function incomeSummary() { return t(state.incomeType === 'flex' ? 'incSummaryFlex' : 'incSummaryFixed', { f: freqLabel(state.payFreq).toLowerCase() }); }
+    function incomeSummary() { return t({ flex: 'incSummaryFlex', remit: 'incSummaryRemit' }[state.incomeType] || 'incSummaryFixed', { f: freqLabel(state.payFreq).toLowerCase() }); }
+    function variableIncome() { return state.incomeType !== 'fixed'; }
 
     // ---------- shared editor (welcome guide + profile) ----------
     const IE = {};
@@ -4424,7 +4460,7 @@
     }
     function ieNorm(d) {
         // Make days/split match the chosen frequency.
-        const n = d.type === 'flex' ? 0 : d.freq === 'monthly' ? 1 : d.freq === 'biweekly' ? 2 : d.freq === 'days' ? Math.min(4, Math.max(2, (d.days || []).length)) : 0;
+        const n = d.type !== 'fixed' ? 0 : d.freq === 'monthly' ? 1 : d.freq === 'biweekly' ? 2 : d.freq === 'days' ? Math.min(4, Math.max(2, (d.days || []).length)) : 0;
         if (!n) return d;
         const dflt = n === 1 ? [30] : [15, 30, 10, 25].slice(0, n);
         const days = d.days || [];
@@ -4449,7 +4485,7 @@
     }
     function ieApply(d) {
         state.incomeType = d.type;
-        state.payFreq = d.type === 'flex' && d.freq === 'days' ? 'monthly' : d.freq;
+        state.payFreq = d.type !== 'fixed' && d.freq === 'days' ? 'monthly' : d.freq;
         state.income = round2(ieMonthly(d));
         state.taxPct = d.type === 'flex' ? Math.min(50, Math.max(0, +d.tax || 0)) : 0;
         state.payWeekday = clampInt(d.weekday, 0, 6, 5);
@@ -4474,7 +4510,7 @@
         const isWeek = d.type === 'fixed' && d.freq === 'weekly';
         const a = parseFloat(d.amount);
         if (a > 0 && wasWeek !== isWeek) { const x = isWeek ? a / WEEKS_PER_MONTH : a * WEEKS_PER_MONTH; d.amount = String(Math.abs(x - Math.round(x)) < 0.05 ? Math.round(x) : round2(x)); }
-        if (field === 'type' && value === 'flex' && d.freq === 'days') d.freq = 'monthly';
+        if (field === 'type' && value !== 'fixed' && d.freq === 'days') d.freq = 'monthly';
         if (field === 'freq') { d.days = null; d.split = null; d.splitOther = false; }
         if (field === 'type' || field === 'freq') ieNorm(d);
         if (rerender) ieRender(key); else ieRefresh(key);
@@ -4495,10 +4531,10 @@
     function iePreviewText(d) {
         const a = parseFloat(d.amount) || 0;
         if (!(a > 0)) return '';
-        if (d.type === 'flex') {
+        if (d.type !== 'fixed') {
             const f = { weekly: 'incFlexFreqW', biweekly: 'incFlexFreqB', monthly: 'incFlexFreqM' }[d.freq] || 'incFlexFreqM';
             let s = t('incPreviewFlex', { x: fmt(a, 0), freq: t(f) });
-            if (d.tax > 0) s += ' ' + t('incTaxLine', { x: fmt(a * d.tax / 100, 0) });
+            if (d.type === 'flex' && d.tax > 0) s += ' ' + t('incTaxLine', { x: fmt(a * d.tax / 100, 0) });
             return s;
         }
         if (d.freq === 'weekly') return t('incPreviewWeek', { x: fmt(a, 0), day: weekdayName(d.weekday) }) + ' ' + t('incPerMonth', { x: fmt(a * WEEKS_PER_MONTH, 0) }) + '.';
@@ -4519,9 +4555,9 @@
         const K = `'${key}'`;
         const card = (type, icon, title, sub) => `<button type="button" class="inc-type ${d.type === type ? 'on' : ''}" onclick="ieSet(${K}, 'type', '${type}')" aria-pressed="${d.type === type}">
             <span class="set-ic"><i data-lucide="${icon}"></i></span><span class="grow"><b>${esc(t(title))}</b><span class="tiny muted">${esc(t(sub))}</span></span><span class="inc-check">${d.type === type ? '<i data-lucide="check"></i>' : ''}</span></button>`;
-        const freqs = d.type === 'flex' ? ['weekly', 'biweekly', 'monthly'] : ['monthly', 'biweekly', 'weekly', 'days'];
+        const freqs = d.type !== 'fixed' ? ['weekly', 'biweekly', 'monthly'] : ['monthly', 'biweekly', 'weekly', 'days'];
         const freqBtns = freqs.map(f => `<button type="button" class="${d.freq === f ? 'active' : ''}" onclick="ieSet(${K}, 'freq', '${f}')">${esc(freqLabel(f))}</button>`).join('');
-        const amountLabel = d.type === 'flex' ? 'incAmountFlex' : d.freq === 'weekly' ? 'incAmountWeek' : 'incAmountMonth';
+        const amountLabel = d.type === 'remit' ? 'incAmountRemit' : d.type === 'flex' ? 'incAmountFlex' : d.freq === 'weekly' ? 'incAmountWeek' : 'incAmountMonth';
         let detail = '';
         if (d.type === 'fixed') {
             if (d.freq === 'weekly') {
@@ -4546,6 +4582,9 @@
                     </div>`).join('')}</div>
                     <div class="between mt-2">${d.days.length < 4 ? `<button type="button" class="btn-link small" onclick="ieAddDay(${K})"><i data-lucide="plus"></i>${esc(t('incAddDay'))}</button>` : '<span></span>'}<span class="small muted">Σ <b id="ie-${key}-sum">100%</b></span></div>`;
             }
+        } else if (d.type === 'remit') {
+            detail = `<div class="note plain small">💸 ${esc(t('incRemitTip'))}</div>
+                <div class="note plain small mt-2">🛡️ ${esc(t('incVarEf'))}</div>`;
         } else {
             const tv = +d.tax || 0, preset = [0, 5].includes(tv) && !d.taxOther;
             detail = `<p class="label">${esc(t('incTax'))}</p>
@@ -4556,20 +4595,248 @@
                     ${!preset ? `<input class="input" type="number" inputmode="decimal" min="0" max="50" step="0.5" value="${esc(String(tv))}" oninput="ieSet(${K}, 'tax', parseFloat(this.value) || 0, false)" style="width:90px" aria-label="%">` : ''}
                 </div>
                 <p class="tiny muted mt-2">${esc(t('incTaxHint'))}</p>
-                <div class="note plain small mt-3">🛡️ ${esc(t('incFlexEf'))}</div>`;
+                <div class="note plain small mt-3">🛡️ ${esc(t('incVarEf'))}</div>`;
         }
         return `<div class="inc-editor stack" style="gap:16px">
-            <div><p class="label">${esc(t('incType'))}</p><div class="stack" style="gap:8px">${card('fixed', 'wallet', 'incFixedT', 'incFixedS')}${card('flex', 'sparkles', 'incFlexT', 'incFlexS')}</div></div>
+            <div><p class="label">${esc(t('incType'))}</p><div class="stack" style="gap:8px">${card('fixed', 'wallet', 'incFixedT', 'incFixedS')}${card('flex', 'sparkles', 'incFlexT', 'incFlexS')}${card('remit', 'send', 'incRemitT', 'incRemitS')}</div></div>
             <div>
                 <label class="label" for="ie-${key}-amount">${esc(t(amountLabel))}</label>
                 <input id="ie-${key}-amount" class="input amount-in" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0.00" value="${esc(String(d.amount))}" oninput="ieSet(${K}, 'amount', this.value, false)">
-                ${d.type === 'flex' ? `<p class="tiny muted mt-2">${esc(t('incAmountFlexHint'))}</p>` : ''}
+                ${d.type !== 'fixed' ? `<p class="tiny muted mt-2">${esc(t(d.type === 'remit' ? 'incAmountRemitHint' : 'incAmountFlexHint'))}</p>` : ''}
             </div>
-            <div><p class="label">${esc(t(d.type === 'flex' ? 'incFreqFlex' : 'incFreqFixed'))}</p><div class="seg-wide ${freqs.length === 4 ? 'four' : 'three'}">${freqBtns}</div></div>
+            <div><p class="label">${esc(t({ flex: 'incFreqFlex', remit: 'incFreqRemit' }[d.type] || 'incFreqFixed'))}</p><div class="seg-wide ${freqs.length === 4 ? 'four' : 'three'}">${freqBtns}</div></div>
             <div>${detail}</div>
             <p id="ie-${key}-preview" class="note ok small ${iePreviewText(d) ? '' : 'hidden'}" aria-live="polite">${esc(iePreviewText(d))}</p>
             <p id="ie-${key}-err" class="small danger hidden" role="alert"></p>
         </div>`;
+    }
+
+    // ================= Repeat expenses, ant spending, real rate comparator, "What's new" =================
+    Object.assign(I18N.es, {
+        quickTitle: 'Frecuentes', repeatBtn: 'Agregar otra vez', repeatToast: 'Agregado otra vez: {x}',
+        antMsg: 'Gastos hormiga: este mes llevas <b>{total}</b> en «{name}» ({n} veces).', antProj: 'A este ritmo serían {proj} al mes.',
+        antTip: 'Si lo bajas a la mitad, te quedan {half} más cada mes.',
+        dirTitle: 'Compara tasas reales', dirDesc: 'Tasas oficiales de las tarjetas de crédito de cada banco y cooperativa (DIACO), y referencias para un préstamo que junte tus deudas.',
+        dirTabCards: 'Tarjetas de crédito', dirTabLoans: 'Préstamos para consolidar',
+        dirBank: 'Banco', dirCoop: 'Cooperativa', dirIssuer: 'Emisora',
+        dirMonthly: '{lo}–{hi}% al mes', dirMonthlyOne: '{x}% al mes', dirAnnual: '{lo}–{hi}% al año', dirAnnualOne: '{x}% al año',
+        dirAvg: 'Promedio del mercado: {m}% al mes ({a}% al año).',
+        dirShowAll: 'Ver las {n} entidades', dirShowLess: 'Ver menos',
+        dirYoursTitle: 'Tus tarjetas vs. el mercado',
+        dirYoursHigh: '{name} te cobra {m}% al mes ({a}% al año): más que el promedio del mercado ({avg}% al mes). Vale la pena cotizar.',
+        dirYoursMid: '{name} te cobra {m}% al mes ({a}% al año): cerca del promedio. Hay tarjetas de cooperativas desde 1.75% al mes (21% al año).',
+        dirYoursLow: '{name} te cobra {m}% al mes ({a}% al año): por debajo del promedio del mercado. 👍',
+        dirYoursNoApr: 'Agrega la tasa de tus tarjetas (en Deudas → editar) para compararlas con el mercado.',
+        dirCoopGroup: '25 cooperativas federadas (red MICOOPE)', dirCoopGroupNote: 'Unión Progresista Amatitlaneca, Guadalupana, Cobán, Salcajá, Tonantel y 20 más.',
+        loanSystem: 'Promedio de préstamos del sistema bancario', loanSystemNote: '12.98% al año en julio de 2026 (Banguat). No incluye tarjetas; los préstamos personales sin garantía suelen costar más.',
+        loanCoop: 'Ejemplo de cooperativa: Don Arturo (Grupo Pentandra)', loanCoopNote: 'Crédito de consumo de 13% a 15% al año; dice que puedes usarlo para pagar tarjetas.',
+        loanB2B: 'Ejemplo con garantía: G&T Continental «Back to Back»', loanB2BNote: 'Desde 5.25% al año, pero necesitas un depósito a plazo como garantía.',
+        loanHow: 'Los bancos casi no publican la tasa de sus préstamos personales: depende de tu perfil. Pide cotización en 2 o 3 lugares y pruébala en el simulador de consolidación.',
+        loanTry: 'Probar en el simulador', loanTryToast: 'Listo: revisa el plazo y agrega la oferta.',
+        dirSourceCards: 'Fuente: DIACO, «Información de las tasas de interés por producto y segmento en tarjetas de crédito», al 31 de marzo de 2026. Tasas de interés mensuales en quetzales; la anual es la mensual × 12. Los mínimos suelen ser tarjetas empresariales o premium. Confirma con tu banco.',
+        dirSourceLoans: 'Fuentes: Banguat (vía IberoNews), sitio de Cooperativa Don Arturo y de G&T Continental, consultados en noviembre de 2026. Son referencias, no ofertas.',
+        dirLinkDiaco: 'Ver tabla de la DIACO', dirLinkSource: 'Ver fuente',
+        newsTitle: 'Novedades en Valiu', newsRow: 'Novedades', newsOk: '¡Entendido!'
+    });
+    Object.assign(I18N.en, {
+        quickTitle: 'Frequent', repeatBtn: 'Add again', repeatToast: 'Added again: {x}',
+        antMsg: 'Small leaks: this month you\'ve spent <b>{total}</b> on “{name}” ({n} times).', antProj: 'At this pace that\'s {proj} a month.',
+        antTip: 'Cut it in half and you keep {half} more every month.',
+        dirTitle: 'Compare real rates', dirDesc: 'Official credit card rates for each bank and credit union (DIACO), plus references for a loan that combines your debts.',
+        dirTabCards: 'Credit cards', dirTabLoans: 'Consolidation loans',
+        dirBank: 'Bank', dirCoop: 'Credit union', dirIssuer: 'Issuer',
+        dirMonthly: '{lo}–{hi}% a month', dirMonthlyOne: '{x}% a month', dirAnnual: '{lo}–{hi}% a year', dirAnnualOne: '{x}% a year',
+        dirAvg: 'Market average: {m}% a month ({a}% a year).',
+        dirShowAll: 'See all {n} lenders', dirShowLess: 'See less',
+        dirYoursTitle: 'Your cards vs. the market',
+        dirYoursHigh: '{name} charges you {m}% a month ({a}% a year): above the market average ({avg}% a month). Worth getting quotes.',
+        dirYoursMid: '{name} charges you {m}% a month ({a}% a year): near the average. Some credit union cards start at 1.75% a month (21% a year).',
+        dirYoursLow: '{name} charges you {m}% a month ({a}% a year): below the market average. 👍',
+        dirYoursNoApr: 'Add your cards\' interest rate (Debts → edit) to compare them with the market.',
+        dirCoopGroup: '25 federated credit unions (MICOOPE network)', dirCoopGroupNote: 'Unión Progresista Amatitlaneca, Guadalupana, Cobán, Salcajá, Tonantel and 20 more.',
+        loanSystem: 'Banking system average loan rate', loanSystemNote: '12.98% a year in July 2026 (Banguat). Excludes credit cards; unsecured personal loans usually cost more.',
+        loanCoop: 'Credit union example: Don Arturo (Grupo Pentandra)', loanCoopNote: 'Consumer loans from 13% to 15% a year; it says you can use them to pay off cards.',
+        loanB2B: 'Secured example: G&T Continental “Back to Back”', loanB2BNote: 'From 5.25% a year, but you need a term deposit as collateral.',
+        loanHow: 'Banks rarely publish personal loan rates: it depends on your profile. Ask 2 or 3 lenders for a quote and try it in the consolidation simulator.',
+        loanTry: 'Try in the simulator', loanTryToast: 'Done: check the term and add the offer.',
+        dirSourceCards: 'Source: DIACO, credit card interest rates by product and segment, as of March 31, 2026. Monthly rates in quetzales; the yearly rate is monthly × 12. The lowest are usually business or premium cards. Confirm with your bank.',
+        dirSourceLoans: 'Sources: Banguat (via IberoNews), Cooperativa Don Arturo and G&T Continental websites, checked November 2026. References, not offers.',
+        dirLinkDiaco: 'See DIACO table', dirLinkSource: 'See source',
+        newsTitle: 'What\'s new in Valiu', newsRow: 'What\'s new', newsOk: 'Got it!'
+    });
+
+    // ---------- repeat expenses ----------
+    function expenseKey(e) { return `${e.cat}|${(e.note || '').trim().toLowerCase()}|${e.amount}`; }
+    function frequentExpenses() {
+        const since = Date.now() - 60 * 86400000, groups = new Map();
+        state.expenses.filter(e => e.ts >= since).forEach(e => {
+            const k = expenseKey(e), g = groups.get(k);
+            if (g) { g.n++; if (e.ts > g.e.ts) g.e = e; } else groups.set(k, { n: 1, e });
+        });
+        return [...groups.values()].filter(g => g.n >= 2).sort((a, b) => b.n - a.n || b.e.ts - a.e.ts).slice(0, 5).map(g => g.e);
+    }
+    function repeatExpense(id) {
+        const e = state.expenses.find(x => x.id === id);
+        if (!e) return;
+        state.expenses.push({ id: uid(), amount: e.amount, note: e.note, ts: Date.now(), period: state.period, cat: e.cat });
+        render();
+        if (!limitToast(e.cat, e.amount)) toast(`${catOf(e.cat).emoji} ${t('repeatToast', { x: (e.note || t('cat_' + e.cat)) + ' · ' + fmt(e.amount) })}`);
+    }
+    function renderQuickSpend() {
+        const el = $('quick-spend'); if (!el) return;
+        const list = frequentExpenses();
+        el.classList.toggle('hidden', !list.length);
+        el.innerHTML = list.length ? `<span class="quick-label"><i data-lucide="repeat"></i>${esc(t('quickTitle'))}</span>` + list.map(e =>
+            `<button class="quick-chip" onclick="repeatExpense('${e.id}')" title="${esc(t('repeatBtn'))}">${catOf(e.cat).emoji} ${esc(e.note || t('cat_' + e.cat))} <b class="num">${fmt(e.amount, 0)}</b></button>`).join('') : '';
+    }
+
+    // ---------- ant spending ("gastos hormiga") ----------
+    function antInsight(c) {
+        const dim = daysInMonth(new Date()), day = new Date().getDate();
+        const small = Math.max(10, (c.buffer / dim) * 0.4);
+        const groups = new Map();
+        c.monthExp.filter(e => e.amount <= small).forEach(e => {
+            const note = (e.note || '').trim();
+            const key = note ? 'n:' + note.toLowerCase() : 'c:' + e.cat;
+            const g = groups.get(key) || { name: note || t('cat_' + e.cat), n: 0, total: 0 };
+            g.n++; g.total += e.amount; groups.set(key, g);
+        });
+        const top = [...groups.values()].filter(g => g.n >= 4).sort((a, b) => b.total - a.total)[0];
+        if (!top) return '';
+        const proj = day >= 7 ? top.total / day * dim : top.total;
+        return `<div class="ant"><span class="e" aria-hidden="true">🐜</span><div>${t('antMsg', { total: esc(fmt(top.total, 0)), name: esc(top.name), n: top.n })}
+            ${day >= 7 && proj > top.total * 1.15 ? ' ' + esc(t('antProj', { proj: fmt(proj, 0) })) : ''} ${esc(t('antTip', { half: fmt(proj / 2, 0) }))}</div></div>`;
+    }
+
+    // ---------- real rates ----------
+    // DIACO, credit card interest by product and segment, as of 2026-03-31. Monthly %, quetzales. min–max across each issuer's cards.
+    const RATES_AVG_GTQ = 3.67;
+    const CARD_RATES = [
+        { n: 'Banco G&T Continental', k: 'bank', lo: 1.50, hi: 5.00 },
+        { n: 'Banco Promerica', k: 'bank', lo: 1.50, hi: 5.00 },
+        { n: 'Tarjetas Promerica', k: 'issuer', lo: 1.67, hi: 5.00 },
+        { n: 'BAM (Banco Agromercantil)', k: 'bank', lo: 1.50, hi: 4.99 },
+        { n: 'Banco Cuscatlán', k: 'bank', lo: 1.75, hi: 4.95 },
+        { n: 'Tarjetas Cuscatlán', k: 'issuer', lo: 4.00, hi: 4.99 },
+        { n: 'Banco Industrial', k: 'bank', lo: 2.00, hi: 5.00 },
+        { n: 'Contecnica (Banco Industrial)', k: 'issuer', lo: 2.00, hi: 5.00 },
+        { n: 'Banrural', k: 'bank', lo: 2.88, hi: 4.95 },
+        { n: 'BAC Credomatic', k: 'issuer', lo: 2.25, hi: 5.40 },
+        { n: 'Credisiman', k: 'issuer', lo: 2.92, hi: 5.42 },
+        { n: 'Banco Internacional', k: 'bank', lo: 4.17, hi: 5.00 },
+        { n: 'Bantrab (Banco de los Trabajadores)', k: 'bank', lo: 4.25, hi: 5.00 },
+        { n: 'Banco Ficohsa', k: 'bank', lo: 4.50, hi: 4.92 },
+        { n: 'Vivibanco', k: 'bank', lo: 4.50, hi: 4.50 },
+        { n: 'Crédito Hipotecario Nacional (CHN)', k: 'bank', lo: 3.00, hi: 4.50 },
+        { n: 'Banco de Antigua', k: 'bank', lo: 6.95, hi: 6.95 },
+        { n: 'GROUP_COOP', k: 'coop', lo: 1.75, hi: 1.75 },
+        { n: 'Cooperativa Santiago de Coatepeque', k: 'coop', lo: 1.67, hi: 1.67 },
+        { n: 'Cooperativa La Inmaculada Concepción', k: 'coop', lo: 1.75, hi: 1.75 },
+        { n: 'Cooperativa para el Desarrollo Comunitario', k: 'coop', lo: 2.75, hi: 2.75 },
+        { n: 'Cooperativa Fondos de América', k: 'coop', lo: 3.50, hi: 3.50 },
+        { n: 'Cooperativa Itzá', k: 'coop', lo: 2.95, hi: 4.95 }
+    ].sort((a, b) => a.hi - b.hi || a.lo - b.lo);
+    const LOAN_REFS = [
+        { key: 'loanSystem', rate: 12.98, url: 'https://iberonewsla.com/tasa-lider-350-credito-bancario-guatemala-2026/', name: 'Banco' },
+        { key: 'loanCoop', rate: 15, url: 'https://copargt.com/creditos/', name: 'Cooperativa Don Arturo' },
+        { key: 'loanB2B', rate: 5.25, url: 'https://www.gtc.com.gt/', name: 'G&T Back to Back' }
+    ];
+    const DIACO_URL = 'https://diaco.gob.gt/media/2026/05/Tasaspdf-marzo-2026.pdf';
+    let dirTab = 'cards', dirAll = false;
+    const pct = x => (Math.round(x * 100) / 100).toLocaleString(LOCALES[state.lang], { maximumFractionDigits: 2 });
+    function setDirTab(tab) { dirTab = tab; renderDirectory(); if (window.lucide) lucide.createIcons(); }
+    function toggleDirAll() { dirAll = !dirAll; renderDirectory(); }
+    function tryLoanRate(k) {
+        const ref = LOAN_REFS[k]; if (!ref) return;
+        const name = $('k-name'), rate = $('k-rate');
+        if (!name || !rate) return;
+        name.value = ref.name; rate.value = ref.rate;
+        if (!$('k-term').value) $('k-term').value = 36;
+        name.closest('.card').scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'start' });
+        toast(t('loanTryToast'));
+    }
+    function renderDirectory() {
+        // Your cards vs. the market
+        const cards = state.items.filter(i => i.type === 'debt' && i.subtype === 'cc' && !i.completed);
+        const withApr = cards.filter(i => i.apr > 0);
+        $('dir-yours').innerHTML = !cards.length ? '' : `<p class="eyebrow mb-2">${esc(t('dirYoursTitle'))}</p>` + (withApr.length ? withApr.map(i => {
+            const m = i.apr / 12;
+            const key = m > RATES_AVG_GTQ + 0.25 ? 'dirYoursHigh' : m > 2.5 ? 'dirYoursMid' : 'dirYoursLow';
+            const tone = key === 'dirYoursHigh' ? 'danger' : key === 'dirYoursMid' ? 'warn' : 'ok';
+            return `<div class="note ${tone} small mb-2">${t(key, { name: `<b>${esc(i.name)}</b>`, m: pct(m), a: pct(i.apr), avg: pct(RATES_AVG_GTQ) })}</div>`;
+        }).join('') : `<div class="note plain small">${esc(t('dirYoursNoApr'))}</div>`);
+
+        $('dir-tabs').innerHTML = `<button class="${dirTab === 'cards' ? 'active' : ''}" onclick="setDirTab('cards')">${esc(t('dirTabCards'))}</button><button class="${dirTab === 'loans' ? 'active' : ''}" onclick="setDirTab('loans')">${esc(t('dirTabLoans'))}</button>`;
+        if (dirTab === 'cards') {
+            const max = 7;
+            const mine = withApr.map(i => i.apr / 12);
+            const rows = (dirAll ? CARD_RATES : CARD_RATES.slice(0, 8)).map(r => {
+                const name = r.n === 'GROUP_COOP' ? t('dirCoopGroup') : r.n;
+                const one = r.lo === r.hi;
+                const color = r.k === 'coop' ? 'var(--c-surplus)' : r.hi > 5 ? 'var(--c-bills)' : 'var(--c-buffer)';
+                return `<div class="rate-row">
+                    <div class="nm"><span class="truncate" style="display:block">${esc(name)}</span><span class="pill ${r.k === 'coop' ? 'ok' : ''}" style="margin-top:3px">${esc(t(r.k === 'coop' ? 'dirCoop' : r.k === 'bank' ? 'dirBank' : 'dirIssuer'))}</span>
+                        ${r.n === 'GROUP_COOP' ? `<span class="tiny muted" style="display:block; margin-top:3px">${esc(t('dirCoopGroupNote'))}</span>` : ''}</div>
+                    <div class="vals num"><b>${esc(one ? t('dirMonthlyOne', { x: pct(r.lo) }) : t('dirMonthly', { lo: pct(r.lo), hi: pct(r.hi) }))}</b><span class="muted">${esc(one ? t('dirAnnualOne', { x: pct(r.lo * 12) }) : t('dirAnnual', { lo: pct(r.lo * 12), hi: pct(r.hi * 12) }))}</span></div>
+                    <div class="rate-bar"><span style="left:${r.lo / max * 100}%; width:${Math.max(1.5, (r.hi - r.lo) / max * 100)}%; background:${color}"></span>${mine.map(m => `<i style="left:${Math.min(99, m / max * 100)}%" title="${esc(pct(m))}%"></i>`).join('')}</div>
+                </div>`;
+            }).join('');
+            $('dir-list').innerHTML = `<p class="small muted mb-2">${esc(t('dirAvg', { m: pct(RATES_AVG_GTQ), a: pct(RATES_AVG_GTQ * 12) }))}</p>${rows}
+                <button class="btn-link small mt-2" onclick="toggleDirAll()">${esc(dirAll ? t('dirShowLess') : t('dirShowAll', { n: CARD_RATES.length }))}</button>`;
+            $('dir-source').innerHTML = `${esc(t('dirSourceCards'))} <a class="btn-link tiny" href="${DIACO_URL}" target="_blank" rel="noopener">${esc(t('dirLinkDiaco'))}</a>`;
+        } else {
+            $('dir-list').innerHTML = LOAN_REFS.map((r, k) => `<div class="loan-ref">
+                    <div class="between" style="align-items:flex-start"><b class="small">${esc(t(r.key))}</b><b class="num accent shrink-0">${esc(t('dirAnnualOne', { x: pct(r.rate) }))}</b></div>
+                    <p class="tiny muted mt-1">${esc(t(r.key + 'Note'))}</p>
+                    <div class="row mt-2" style="gap:14px"><button class="btn btn-soft btn-sm" onclick="tryLoanRate(${k})">${esc(t('loanTry'))}</button><a class="btn-link small" href="${r.url}" target="_blank" rel="noopener">${esc(t('dirLinkSource'))}</a></div>
+                </div>`).join('') + `<div class="note plain small mt-3">${esc(t('loanHow'))}</div>`;
+            $('dir-source').textContent = t('dirSourceLoans');
+        }
+    }
+
+    // ---------- What's new ----------
+    const NEWS = [{
+        id: '2026-11-01',
+        items: [
+            { icon: 'wallet', es: ['Tu ingreso, a tu manera', 'Sueldo fijo, ingreso flexible o remesas. Elige tus días de pago (mensual, quincenal, semanal o días específicos) y cómo se reparte: 50-50, 70-30 o el que quieras. Tu límite diario ahora sigue tus pagos reales.'], en: ['Your income, your way', 'Fixed salary, flexible income or remittances. Pick your paydays (monthly, twice a month, weekly or specific days) and the split: 50-50, 70-30 or your own. Your daily limit now follows your real paydays.'] },
+            { icon: 'send', es: ['Remesas', 'Si vives de lo que te envía tu familia, ahora puedes registrarlo así y recibir consejos pensados para ti.'], en: ['Remittances', 'If you live on money your family sends, you can now set it up that way and get tips made for you.'] },
+            { icon: 'repeat', es: ['Gastos frecuentes en un toque', 'El bus, el almuerzo, el café: aparecen arriba para agregarlos otra vez con un toque. Y te avisamos si un gasto pequeño se está volviendo grande 🐜.'], en: ['Frequent expenses in one tap', 'The bus, lunch, coffee: they show up on top so you can add them again in one tap. And we warn you when a small expense is adding up 🐜.'] },
+            { icon: 'building-2', es: ['Tasas reales para comparar', 'En Deudas: la tasa oficial de las tarjetas de cada banco y cooperativa, y referencias para un préstamo que junte tus deudas.'], en: ['Real rates to compare', 'In Debts: each bank and credit union\'s official card rates, plus references for a loan that combines your debts.'] }
+        ]
+    }];
+    function latestNews() { return NEWS[0]; }
+    function maybeNews() {
+        const n = latestNews();
+        if (!n || state.seenNews === n.id) return;
+        if (!(state.income > 0) && !state.items.length) { state.seenNews = n.id; return; }
+        const busy = ['auth', 'lock', 'onboard'].some(id => { const el = $(id); return el && el.classList.contains('open'); }) || document.querySelector('.modal.open');
+        if (busy) { setTimeout(maybeNews, 1500); return; }
+        showNews(false);
+    }
+    function showNews(manual) {
+        const n = latestNews(); if (!n) return;
+        let el = $('news-modal');
+        if (!el) {
+            el = document.createElement('div'); el.id = 'news-modal'; el.className = 'modal';
+            el.onclick = e => { if (e.target === el) closeNews(); };
+            document.body.appendChild(el);
+        }
+        const lang = state.lang === 'en' ? 'en' : 'es';
+        el.innerHTML = `<div class="sheet" role="dialog" aria-modal="true" aria-labelledby="news-title" style="max-width:480px">
+            <div class="grab"></div>
+            <div class="news-hero"><div class="ob-icon"><i data-lucide="megaphone"></i></div><h2 id="news-title" class="ob-h" style="font-size:24px">${esc(t('newsTitle'))}</h2>
+                <p class="tiny muted mt-1">${esc(new Date(n.id + 'T12:00:00').toLocaleDateString(LOCALES[state.lang], { day: 'numeric', month: 'long', year: 'numeric' }))}</p></div>
+            ${n.items.map(it => `<div class="news-item"><span class="set-ic"><i data-lucide="${it.icon}"></i></span><div><b>${esc(it[lang][0])}</b><p class="small muted mt-1">${esc(it[lang][1])}</p></div></div>`).join('')}
+            <button class="btn btn-primary btn-block mt-5" onclick="closeNews()">${esc(t('newsOk'))}</button>
+        </div>`;
+        openModal('news-modal');
+        if (window.lucide) lucide.createIcons();
+        void manual;
+    }
+    function closeNews() {
+        const n = latestNews();
+        closeModal('news-modal');
+        if (n && state.seenNews !== n.id) { state.seenNews = n.id; render(); }
     }
 
     // ================= UX layer: profile rows, empty states, next payment, tucked explanations, welcome guide, zoom guard =================
@@ -4682,7 +4949,8 @@
         return !state.onboarded && !(state.income > 0) && !state.items.length && !state.expenses.length && !(state.goals || []).length;
     }
     function maybeOnboard() {
-        if (OB.open || !needsOnboarding()) return;
+        if (OB.open) return;
+        if (!needsOnboarding()) { maybeNews(); return; }
         const auth = $('auth'), lock = $('lock');
         if ((auth && auth.classList.contains('open')) || (lock && lock.classList.contains('open'))) { setTimeout(maybeOnboard, 900); return; }
         OB.open = true; OB.step = 0; OB.err = '';
@@ -4699,7 +4967,7 @@
         const el = $('onboard'); if (el) el.classList.remove('open');
         if (!document.querySelector('.modal.open')) document.body.style.overflow = '';
     }
-    function obSkip() { state.onboarded = true; obClose(); render(); }
+    function obSkip() { state.onboarded = true; state.seenNews = latestNews().id; obClose(); render(); }
     function obGo(step) { OB.err = ''; OB.step = Math.max(0, Math.min(OB_STEPS - 1, step)); obRender(); }
     function obNext() {
         if (OB.step === 1) {
@@ -4728,7 +4996,7 @@
         // A bill whose day already passed this month was most likely paid already.
         OB.bills.forEach(b => state.items.push({ id: uid(), type: 'fixed', subtype: null, name: b.name, amount: b.amount, date: b.date, balance: 0, startBalance: 0, apr: 0,
             totalMonths: 0, monthsPaid: 0, paid: b.date < today, completed: false, extraPaid: 0, lastPay: null, history: [] }));
-        state.onboarded = true;
+        state.onboarded = true; state.seenNews = latestNews().id;
         OB.step = 4;
         resetCharts(); render(); obRender();
         const el = $('ob-reveal'), c = compute();
