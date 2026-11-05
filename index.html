@@ -627,6 +627,31 @@
         .w-list li { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.45; }
         .w-n { width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); font-weight: 800; font-size: 12px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
         .news-hero .frog { margin: 0 auto 8px; }
+
+        /* ---------- Illustrated mascot ---------- */
+        img.mascot { display: block; height: auto; object-fit: contain; user-select: none; -webkit-user-drag: none; }
+        .ob-frog img.mascot, .aw-frog img.mascot { margin: 0 auto; animation: frogBob 3.2s ease-in-out infinite; transform-origin: 50% 100%; }
+        .ob-frog.sm img.mascot { margin: 0; animation: none; }
+        .aw-list img.mascot { flex-shrink: 0; width: 52px; }
+        .empty-frog img.mascot { margin: 0 auto; }
+        .news-hero img.mascot { margin: 0 auto 8px; }
+        .w-hero img.mascot { margin: 0 auto; }
+        .hero-talk { display: flex; align-items: center; gap: 12px; }
+        .hero-frog:empty { display: none; }
+        .hero-frog img.mascot { width: 72px; height: auto; flex-shrink: 0; }
+        .hero-talk .hero-msg { margin: 0; }
+        .card.has-mascot { position: relative; }
+        .card-mascot { position: absolute; top: 8px; right: 8px; width: 76px; height: auto; pointer-events: none; filter: drop-shadow(0 6px 10px rgba(15, 43, 38, .18)); }
+        .card.has-mascot .card-title { padding-right: 80px; min-height: 52px; }
+        @media (max-width: 380px) { .card-mascot { width: 64px; top: 8px; } .card.has-mascot .card-title { padding-right: 64px; } }
+        .cheer { position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom)); z-index: 300; display: flex; align-items: center; gap: 12px; width: min(400px, calc(100vw - 32px));
+            padding: 10px 18px 10px 10px; border-radius: 22px; background: var(--surface); color: var(--text); border: 1px solid var(--border); box-shadow: var(--shadow);
+            transform: translate(-50%, 140%); opacity: 0; transition: transform .45s cubic-bezier(.2, 1.3, .4, 1), opacity .25s; pointer-events: none; }
+        .cheer.show { transform: translate(-50%, 0); opacity: 1; pointer-events: auto; }
+        .cheer p { flex: 1; font-weight: 700; font-size: 15px; line-height: 1.35; }
+        .cheer img.mascot { width: 76px; flex-shrink: 0; }
+        @media (min-width: 900px) { .cheer { bottom: 32px; } }
+        @media (prefers-reduced-motion: reduce) { .cheer { transition: opacity .2s; } .ob-frog img.mascot, .aw-frog img.mascot { animation: none; } }
         /* ---------- Login (web version) ---------- */
         .auth { position: fixed; inset: 0; z-index: 420; background: var(--bg); display: none; overflow-y: auto; }
         .auth.open { display: block; }
@@ -702,7 +727,7 @@
                                 <div class="ring-center"><span id="hero-pct" class="serif num" style="font-size:22px; line-height:1"></span><span class="tiny muted" data-i18n="heroPctLeft"></span></div>
                             </div>
                         </div>
-                        <p id="hero-msg" class="hero-msg mt-4"></p>
+                        <div class="hero-talk mt-4"><span id="hero-frog" class="hero-frog" aria-hidden="true"></span><p id="hero-msg" class="hero-msg"></p></div>
                         <span id="streak-chip" class="streak mt-3"></span>
                         <div class="mt-4">
                             <div class="between small mb-2"><span id="hero-month" class="muted"></span><span id="hero-month-pct" class="muted num"></span></div>
@@ -2598,7 +2623,7 @@
 
         const overdue = state.items.some(i => itemStatus(i).k === 'overdue');
         $('nav-badge').classList.toggle('hidden', !overdue);
-        setupInfoToggles(); obCheckRemote();
+        setupInfoToggles(); obCheckRemote(); placeCardMascots();
         if (window.lucide) lucide.createIcons();
         saveState();
         if (state.pendingRecap && !recapShown && !$('lock').classList.contains('open') && state.months.some(m => m.period === state.pendingRecap)) showRecap(state.pendingRecap);
@@ -2714,6 +2739,7 @@
         else if (ratio < 0.3) msg = t('heroWarn', { pct: Math.round((1 - ratio) * 100) });
         else msg = t('heroOk');
         $('hero-msg').textContent = msg;
+        heroMascot(c, tone, over);
 
         const usedPct = c.allocated > 0 ? ((c.spent + c.extraFromBuffer) / c.allocated) * 100 : 0;
         const flexP = state.incomeType !== 'fixed';
@@ -3227,7 +3253,7 @@
             activePaymentId = null;
             closeModal('payment-modal'); render();
             if (r && r.short) toast('⚠️ ' + t('ccShortToast', { x: fmt(r.short) }));
-            else if (r) { confetti(true); toast(r.msg); }
+            else if (r) cheer('celebrando', r.msg, true);
             return;
         }
         if (item && !item.paid) {
@@ -3242,10 +3268,10 @@
                 // Finished, but kept until next month so this month's numbers don't shift
                 if ((item.subtype === 'loan' && item.monthsPaid >= item.totalMonths) || (hadBalance && item.balance === 0)) item.completed = true;
                 const after = itemProgress(item) ?? 0;
-                if (item.completed) celebrate = { big: true, msg: t('paidOffToast', { name: item.name }) };
+                if (item.completed) celebrate = { big: true, msg: t('paidOffToast', { name: item.name }), m: 'se-logro' };
                 else {
                     const hit = MILESTONES.filter(m => before < m && after >= m).pop();
-                    if (hit) celebrate = { big: false, msg: t('milestoneToast', { m: hit, name: item.name }) };
+                    if (hit) celebrate = { big: false, msg: t('milestoneToast', { m: hit, name: item.name }), m: hit >= 75 ? 'en-racha' : 'logro' };
                 }
             }
             item.paid = true;
@@ -3254,7 +3280,7 @@
         }
         activePaymentId = null;
         closeModal('payment-modal'); render();
-        if (celebrate) { confetti(celebrate.big); toast(celebrate.msg); }
+        if (celebrate) cheer(celebrate.m, celebrate.msg, celebrate.big);
     }
 
     function undoPayment(id) {
@@ -3694,7 +3720,7 @@
         $('ct-amount').classList.remove('invalid');
         const hit = goalAdd(g, contribSign * amt);
         closeModal('contrib-modal'); render();
-        if (hit) { confetti(true); toast(t('goalHitToast', { name: g.name })); }
+        if (hit) cheer('logro', t('goalHitToast', { name: g.name }), true);
     }
 
     // ================= Income & bonus actions =================
@@ -3714,7 +3740,7 @@
             const g = state.goals.find(gg => 'goal:' + gg.id === dest);
             if (g) hit = goalAdd(g, amount, { incomeId: x.id }); else x.dest = 'savings';
         }
-        if (hit) { const g = state.goals.find(gg => 'goal:' + gg.id === dest); setTimeout(() => { confetti(true); toast(t('goalHitToast', { name: g.name })); }, 300); }
+        if (hit) { const g = state.goals.find(gg => 'goal:' + gg.id === dest); setTimeout(() => cheer('logro', t('goalHitToast', { name: g.name }), true), 300); }
         return x;
     }
     function removeIncome(id) {
@@ -3749,7 +3775,7 @@
             const d = dest || (ef && ef.saved < ef.target ? 'goal:' + ef.id : 'savings');
             recordIncome(round2(v), d, label, k);
         });
-        render(); confetti(false); toast(t('bonusRegistered', { bonus: label }));
+        render(); cheer('ahorrando', t('bonusRegistered', { bonus: label }));
     }
     function setBond() {
         state.inv = { amount: Math.max(0, parseFloat($('b-amount').value) || 0), rate: $('b-rate').value === '' ? '' : Math.max(0, parseFloat($('b-rate').value) || 0), years: clampInt($('b-years').value, 1, 30, 5) };
@@ -4403,6 +4429,46 @@
         const title = label ? `<title>${esc(label)}</title>` : '';
         return `<svg class="frog frog-${mood}" viewBox="-4 -8 168 146" width="${size}" height="${Math.round(size * 146 / 168)}" role="${label ? 'img' : 'presentation'}" ${label ? '' : 'aria-hidden="true"'}>${title}
             <ellipse cx="80" cy="134" rx="52" ry="5" fill="${F.ink}" opacity=".12"/>${outline}${fill}${cheeks}${eyes}${mouth}${extra}</svg>`;
+    }
+
+    // ---------- the owner's illustrated frog (web version ships /mascot/*.webp) ----------
+    const MASCOTS = ['saludo', 'celebrando', 'durmiendo', 'duda', 'ahorrando', 'pagando', 'triste', 'logro', 'guardando', 'analizando', 'trabajando', 'presupuesto',
+        'trato', 'gastos', 'enviando', 'protegiendo', 'invirtiendo', 'planeando', 'nivel-superior', 'super-ahorrador', 'en-racha', 'equilibrio', 'se-logro',
+        'sin-fondos', 'preocupado', 'en-alerta', 'pensando', 'racha-diaria'];
+    const MASCOT_FALLBACK = { saludo: 'hi', celebrando: 'happy', 'se-logro': 'happy', logro: 'happy', 'super-ahorrador': 'happy', 'nivel-superior': 'happy', 'en-racha': 'happy', 'racha-diaria': 'happy',
+        durmiendo: 'sleep', duda: 'think', pensando: 'think', planeando: 'think', analizando: 'think', preocupado: 'think', 'en-alerta': 'think', 'sin-fondos': 'think', triste: 'sleep',
+        ahorrando: 'coin', guardando: 'coin', invirtiendo: 'coin', protegiendo: 'coin', presupuesto: 'coin', pagando: 'phone', enviando: 'phone' };
+    const mascotFiles = () => !!window.APP_CONFIG;
+    function mascot(name, size = 120, cls = '') {
+        if (!MASCOTS.includes(name)) name = 'saludo';
+        if (!mascotFiles()) return frogSVG(MASCOT_FALLBACK[name] || 'hi', size);
+        return `<img class="mascot ${cls}" src="mascot/${name}.webp" alt="" width="${size}" height="${size}" decoding="async" loading="lazy" draggable="false">`;
+    }
+    // Celebration card: the frog plus a short message, for the moments that matter.
+    function cheer(name, msg, big) {
+        if (window.confetti && !reduceMotion()) confetti(!!big);
+        let el = $('cheer');
+        if (!el) { el = document.createElement('div'); el.id = 'cheer'; el.className = 'cheer'; el.setAttribute('role', 'status'); el.onclick = () => el.classList.remove('show'); document.body.appendChild(el); }
+        el.innerHTML = `${mascot(name, 76)}<p>${esc(msg)}</p>`;
+        el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
+        clearTimeout(cheer._t); cheer._t = setTimeout(() => el.classList.remove('show'), 4200);
+    }
+    // Decorative frog in the corner of the cards it belongs to.
+    function placeCardMascots() {
+        if (!mascotFiles()) return;
+        [['efTitle', 'protegiendo'], ['consTitle', 'trato'], ['dirTitle', 'analizando'], ['investTitle', 'invirtiendo'], ['bondTitle', 'planeando'], ['planTitle', 'pensando']].forEach(([key, name]) => {
+            const span = document.querySelector(`main [data-i18n="${key}"]`); if (!span) return;
+            const card = span.closest('.card'); if (!card || card.querySelector('.card-mascot')) return;
+            card.classList.add('has-mascot');
+            card.insertAdjacentHTML('afterbegin', `<img class="card-mascot" src="mascot/${name}.webp" alt="" width="84" height="84" decoding="async" loading="lazy" draggable="false">`);
+        });
+    }
+    function heroMascot(c, tone, over) {
+        const el = $('hero-frog'); if (!el) return;
+        const streak = typeof currentStreak === 'function' ? currentStreak(c) : 0;
+        const name = over ? 'sin-fondos' : tone === 'danger' ? 'preocupado' : tone === 'warn' ? 'en-alerta' : streak >= 14 ? 'nivel-superior' : streak >= 5 ? 'en-racha' : c.spentToday === 0 ? 'equilibrio' : 'ahorrando';
+        if (el.dataset.m === name) return;
+        el.dataset.m = name; el.innerHTML = mascot(name, 72);
     }
 
     // ================= Income profile: fixed salary vs flexible income, paydays and split =================
@@ -5105,7 +5171,7 @@
         const lang = state.lang === 'en' ? 'en' : 'es';
         el.innerHTML = `<div class="sheet" role="dialog" aria-modal="true" aria-labelledby="news-title" style="max-width:480px">
             <div class="grab"></div>
-            <div class="news-hero">${frogSVG('hi', 110)}<h2 id="news-title" class="ob-h" style="font-size:24px">${esc(t('newsTitle'))}</h2>
+            <div class="news-hero">${mascot('saludo', 120)}<h2 id="news-title" class="ob-h" style="font-size:24px">${esc(t('newsTitle'))}</h2>
                 <p class="tiny muted mt-1">${esc(new Date(n.id.slice(0, 10) + 'T12:00:00').toLocaleDateString(LOCALES[state.lang], { day: 'numeric', month: 'long', year: 'numeric' }))}</p></div>
             ${items.map(it => `<div class="news-item"><span class="set-ic"><i data-lucide="${it.icon}"></i></span><div><b>${esc(it[lang][0])}</b><p class="small muted mt-1">${esc(it[lang][1])}</p></div></div>`).join('')}
             <button class="btn btn-primary btn-block mt-5" onclick="closeNews()">${esc(t('newsOk'))}</button>
@@ -5178,7 +5244,7 @@
     }
     function emptyHTML(icon, title, text, btn, action) {
         return `<div class="empty">
-            <div class="empty-frog">${frogSVG({ 'party-popper': 'happy', 'trending-down': 'happy', 'calendar-clock': 'think', receipt: 'coin', target: 'coin' }[icon] || 'hi', 96)}</div>
+            <div class="empty-frog">${mascot({ 'party-popper': 'celebrando', 'trending-down': 'super-ahorrador', 'calendar-clock': 'presupuesto', receipt: 'ahorrando', target: 'guardando' }[icon] || 'saludo', 110)}</div>
             <p class="empty-t">${esc(title)}</p>
             <p class="small muted">${esc(text)}</p>
             ${btn ? `<button class="btn btn-primary btn-sm mt-3" onclick="${action}"><i data-lucide="plus"></i>${esc(btn)}</button>` : ''}
@@ -5348,7 +5414,7 @@
         const cta = (label, fn = 'obNext()') => `<button class="btn btn-primary btn-block ob-cta" onclick="${fn}">${esc(label)}<i data-lucide="arrow-right"></i></button>`;
         let body = '';
         if (k === 'hi') {
-            body = `<div class="ob-frog">${frogSVG('hi', 150)}</div>
+            body = `<div class="ob-frog">${mascot('saludo', 170)}</div>
                 <h2 class="ob-h center">${esc(t('obHiT'))}</h2>
                 <p class="ob-s center">${esc(t('obHiS'))}</p>
                 <ol class="ob-plan">
@@ -5359,7 +5425,7 @@
                 ${cta(t('obStart'))}`;
         } else if (k === 'income') {
             const opts = ['GTQ', 'USD', 'MXN', 'EUR', 'HNL', 'CRC', 'COP', 'GBP'].map(c => `<option value="${c}" ${c === OB.currency ? 'selected' : ''}>${c}</option>`).join('');
-            body = `<h2 class="ob-h">${esc(t('obIncomeT'))}</h2>
+            body = `<div class="ob-frog sm">${mascot(IE.ob && IE.ob.type === 'remit' ? 'enviando' : 'trabajando', 104)}</div><h2 class="ob-h">${esc(t('obIncomeT'))}</h2>
                 <p class="ob-s">${esc(t('obIncomeS'))}</p>
                 <div class="row mt-4" style="gap:10px"><label class="label" for="ob-cur" style="margin:0">${esc(t('currencyLabel'))}</label>
                     <select id="ob-cur" class="input" style="width:120px" onchange="OB.currency=this.value; state.currencyCode=this.value; ieRefresh('ob')">${opts}</select></div>
@@ -5369,7 +5435,7 @@
             const sugg = t('obSugg').split(',').filter(n => !OB.bills.some(b => b.name === n)).map(n => `<button class="chip" onclick="obSugg('${esc(n)}')">${esc(n)}</button>`).join('');
             const list = OB.bills.length ? OB.bills.map((b, i) => `<div class="list-row"><span class="emoji-badge">🧾</span><div class="grow"><p class="truncate" style="font-weight:600">${esc(b.name)}</p><p class="tiny muted">${esc(t('obBillDay'))} ${b.date}</p></div><b class="num">${fmt(b.amount)}</b><button class="icon-btn sm del" onclick="obDelBill(${i})" aria-label="${esc(t('deleteBtn'))}"><i data-lucide="x"></i></button></div>`).join('')
                 : `<p class="small faint">${esc(t('obBillsNone'))}</p>`;
-            body = `<h2 class="ob-h">${esc(t('obBillsT'))}</h2>
+            body = `<div class="ob-frog sm">${mascot('presupuesto', 104)}</div><h2 class="ob-h">${esc(t('obBillsT'))}</h2>
                 <p class="ob-s">${esc(t('obBillsS'))}</p>
                 <div class="chips mt-4">${sugg}</div>
                 <div class="ob-bill mt-3">
@@ -5384,7 +5450,7 @@
         } else if (k === 'debt') {
             const kinds = [['cc', 'obDebtCard'], ['loan', 'obDebtLoan'], ['other', 'obDebtOther']].map(([v, l]) => `<button type="button" class="${OB.debtKind === v ? 'active' : ''}" onclick="obDebtKind('${v}')">${esc(t(l))}</button>`).join('');
             const list = OB.debts.map((d, i) => `<div class="list-row"><span class="emoji-badge">${d.kind === 'cc' ? '💳' : d.kind === 'loan' ? '🏦' : '📄'}</span><div class="grow"><p class="truncate" style="font-weight:600">${esc(d.name)}</p><p class="tiny muted">${fmt(d.pay)} · ${esc(t('obBillDay'))} ${d.day}${d.apr ? ' · ' + d.apr + '%' : ''}</p></div><b class="num">${fmt(d.bal, 0)}</b><button class="icon-btn sm del" onclick="obDelDebt(${i})" aria-label="${esc(t('deleteBtn'))}"><i data-lucide="x"></i></button></div>`).join('');
-            body = `<div class="ob-frog sm">${frogSVG('think', 96)}</div>
+            body = `<div class="ob-frog sm">${mascot('duda', 104)}</div>
                 <h2 class="ob-h">${esc(t('obDebtT'))}</h2>
                 <p class="ob-s">${esc(t('obDebtS'))}</p>
                 ${list ? `<div class="mt-4">${list}</div>` : ''}
@@ -5408,7 +5474,7 @@
                     ${list ? '' : `<button class="btn btn-ghost btn-block" onclick="obNoDebt()">${esc(t('obDebtNone'))}</button>`}
                 </div>`;
         } else if (k === 'wallet') {
-            body = `<div class="ob-frog">${frogSVG('phone', 150)}</div>
+            body = `<div class="ob-frog">${mascot('pagando', 180)}</div>
                 <h2 class="ob-h center">${esc(t('obWalletT'))}</h2>
                 <p class="ob-s center">${esc(t('obWalletS'))}</p>
                 <div class="stack ob-cta" style="gap:10px">
@@ -5417,7 +5483,7 @@
                 </div>`;
         } else {
             const c = compute();
-            body = `<div class="ob-frog">${frogSVG('happy', 150)}</div>
+            body = `<div class="ob-frog">${mascot('se-logro', 150)}</div>
                 <p class="ob-s center" style="margin-top:6px">${esc(t('obRevealT'))}</p>
                 <p id="ob-reveal" class="ob-reveal serif num">${fmt(0)}</p>
                 <p class="ob-s center">${esc(t('obRevealS'))}</p>
@@ -5654,13 +5720,13 @@
         const el = $('auth'), dev = getDevice();
         let html = '';
         if (view === 'welcome') html = `<div class="auth-welcome">
-                <div class="aw-frog">${frogSVG('hi', 170)}</div>
+                <div class="aw-frog">${mascot('saludo', 190)}</div>
                 <h1 class="aw-h">${esc(t('awTitle'))}</h1>
                 <p class="muted">${esc(t('awBody'))}</p>
                 <ul class="aw-list">
-                    <li>${frogSVG('coin', 44)}<span>${esc(t('awP1'))}</span></li>
-                    <li>${frogSVG('think', 44)}<span>${esc(t('awP2'))}</span></li>
-                    <li>${frogSVG('phone', 44)}<span>${esc(t('awP3'))}</span></li>
+                    <li>${mascot('presupuesto', 52)}<span>${esc(t('awP1'))}</span></li>
+                    <li>${mascot('planeando', 52)}<span>${esc(t('awP2'))}</span></li>
+                    <li>${mascot('pagando', 52)}<span>${esc(t('awP3'))}</span></li>
                 </ul>
                 <button class="btn btn-primary btn-block" onclick="showAuth('signup')">${esc(t('awCreate'))}</button>
                 <button class="btn btn-ghost btn-block" onclick="showAuth('login')">${esc(t('awHave'))}</button>
@@ -6115,7 +6181,7 @@
         } catch (e) { setAuthMsg(t('delFail', { msg: e.message || e })); } finally { busy(false); }
     }
     function deleteViewHTML() {
-        return `<h2 class="auth-h danger">${esc(t('delTitle'))}</h2>
+        return `<div class="aw-frog">${mascot('triste', 120)}</div><h2 class="auth-h danger">${esc(t('delTitle'))}</h2>
             <p class="small muted">${esc(t('delBody'))}</p>
             <div class="note plain small">${esc(t('delExport'))} <button class="btn-link small" onclick="exportBackup()">${esc(t('delExportBtn'))}</button></div>
             <form class="stack" style="gap:12px" onsubmit="event.preventDefault(); doDeleteAccount()">
@@ -6287,7 +6353,7 @@
         el.innerHTML = `<div class="sheet" role="dialog" aria-modal="true" aria-labelledby="w-title" style="max-width:520px">
             <div class="grab"></div>
             <div class="between mb-2"><span></span><button class="icon-btn" onclick="closeModal('wallet-modal')" aria-label="${esc(t('close'))}"><i data-lucide="x"></i></button></div>
-            <div class="w-hero">${frogSVG('phone', 120)}<h2 id="w-title" class="ob-h" style="font-size:24px">${esc(t('wTitle'))}</h2><p class="small muted">${esc(t('wIntro'))}</p><p class="tiny faint mt-1">${esc(t('wOnlyIos'))}</p></div>
+            <div class="w-hero">${mascot('pagando', 140)}<h2 id="w-title" class="ob-h" style="font-size:24px">${esc(t('wTitle'))}</h2><p class="small muted">${esc(t('wIntro'))}</p><p class="tiny faint mt-1">${esc(t('wOnlyIos'))}</p></div>
             <section class="w-step"><h3>1. ${esc(t('wStep1'))}</h3><p class="tiny muted mb-2">${esc(t('wStep1S'))}</p>${step1}</section>
             <section class="w-step"><h3>2. ${esc(t('wStep2'))}</h3><p class="tiny muted mb-2">${esc(t('wStep2S'))}</p><ol class="w-list">${steps}</ol>
                 ${C.shortcutUrl ? `<div class="note plain small mt-3"><p>${t('wShortcutS')}</p><a class="btn btn-soft btn-sm mt-2" href="${esc(C.shortcutUrl)}" target="_blank" rel="noopener">${esc(t('wShortcutBtn'))}</a></div>` : ''}</section>
