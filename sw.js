@@ -1,5 +1,5 @@
 // Valiu service worker: the app opens even without internet.
-const CACHE = 'valiu-c2060f92f4';
+const CACHE = 'valiu-81e64962f6';
 const ASSETS = ['./', './index.html', './config.js', './manifest.webmanifest', './vendor/chart.umd.js', './vendor/supabase.js',
                 './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png', './privacidad.html'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting())); });

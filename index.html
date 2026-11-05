@@ -2829,6 +2829,16 @@
     }
 
     // ================= DEBTS =================
+    // A picture for each debt, so the list isn't only text: by type, refined by the name.
+    function debtEmoji(i) {
+        const n = String(i.name || '').toLowerCase();
+        if (/carro|auto|veh[ií]culo|car\b|moto/.test(n)) return /moto/.test(n) ? '🏍️' : '🚗';
+        if (/casa|hipotec|vivienda|terreno|house|mortgage/.test(n)) return '🏠';
+        if (/estudio|universidad|colegio|student|school/.test(n)) return '🎓';
+        if (/famil|mam[aá]|pap[aá]|amig|family|friend/.test(n)) return '🤝';
+        if (/celular|tel[eé]fono|phone/.test(n)) return '📱';
+        return i.subtype === 'cc' ? '💳' : i.subtype === 'loan' ? '🏦' : '📄';
+    }
     function renderDebts(c, P) {
         const all = state.items.filter(i => i.type === 'debt');
         const active = all.filter(i => !i.completed);
@@ -2867,8 +2877,8 @@
             return `<div class="debt-card">
                 <div class="between" style="align-items:flex-start">
                     <div class="grow">
-                        <p class="truncate" style="font-weight:700; font-size:16px">${esc(i.name)}</p>
-                        <div class="row wrap mt-1" style="gap:6px"><span class="pill">${esc(typeLabel(i))}</span>${i.apr ? `<span class="pill">${i.apr}%</span>` : ''}</div>
+                        <p class="row" style="gap:10px; font-weight:700; font-size:16px; min-width:0"><span class="emoji-badge">${debtEmoji(i)}</span><span class="truncate">${esc(i.name)}</span></p>
+                        <div class="row wrap mt-1" style="gap:6px; padding-left:46px"><span class="pill">${esc(typeLabel(i))}</span>${i.apr ? `<span class="pill">${i.apr}%</span>` : ''}</div>
                     </div>
                     <button class="icon-btn sm" onclick="openEditModal('${i.id}')" title="${esc(t('editBtn'))}" aria-label="${esc(t('editBtn'))}">${EDIT_ICON}</button>
                 </div>
