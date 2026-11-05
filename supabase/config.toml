@@ -1,0 +1,16 @@
+# Valiu · Supabase
+# Con la integración de GitHub (Deploy to production encendido), cada push a main publica
+# las Edge Functions de esta lista. Los secretos (CRON_SECRET, VAPID, FCM, APNS) se quedan en Supabase, no aquí.
+project_id = "fbcmeqsxrvusnpcfwufu"
+
+# Las tablas se crean con los archivos update-*.sql (SQL Editor), no con migraciones automáticas.
+[db.migrations]
+enabled = false
+
+# Apple Pay y Back Tap: el iPhone no inicia sesión, se identifica con el enlace personal (?t=...).
+[functions.gasto]
+verify_jwt = false
+
+# Recordatorios diarios: lo llama el cron de la base con x-cron-secret, no con sesión.
+[functions.recordatorios]
+verify_jwt = false
