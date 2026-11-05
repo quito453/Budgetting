@@ -5,8 +5,8 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#f4f6fb" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#0b1330" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#eef5ec" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0f2b26" media="(prefers-color-scheme: dark)">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -19,44 +19,44 @@
     <script src="vendor/supabase.js"></script>
     <script src="config.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
     <style>
         /* ---------- Tokens ---------- */
         :root {
             color-scheme: light;
-            --bg: #f4f6fb; --surface: #ffffff; --surface-2: #eef1f8; --surface-3: #e2e7f2; --border: #e1e6f0;
-            --text: #0d1633; --muted: #5a6482; --faint: #959db5;
-            --accent: #0e9f76; --accent-strong: #0b8462; --accent-soft: #dff5ec; --accent-ink: #ffffff;
-            --brand-1: #2bd99a; --brand-2: #2ab9e6; --gold: #e8b23a; --navy: #0d1633;
-            --warn: #b97a0c; --warn-soft: #fbf0d8; --danger: #d14343; --danger-soft: #fbe4e4; --info: #1d86c2; --info-soft: #e0f0fa;
-            --c-bills: #e0625e; --c-buffer: #e8b23a; --c-surplus: #18c38a; --c-savings: #2ab9e6;
-            --grid: #e8ecf4; --ring-track: #e6eaf3;
-            --shadow: 0 1px 2px rgba(13, 22, 51, .05), 0 8px 24px -12px rgba(13, 22, 51, .16);
+            --bg: #eef5ec; --surface: #ffffff; --surface-2: #e5efe3; --surface-3: #d6e6d4; --border: #d9e7d6;
+            --text: #12302a; --muted: #52695f; --faint: #8aa197;
+            --accent: #1e8150; --accent-strong: #176b42; --accent-soft: #dcf1e2; --accent-ink: #ffffff;
+            --brand-1: #3db873; --brand-2: #2c8fb8; --gold: #e0a21f; --navy: #0f2b26; --pink: #e8557a; --pink-soft: #fde4eb;
+            --warn: #a06400; --warn-soft: #fbefd3; --danger: #c9423f; --danger-soft: #fbe3e1; --info: #22789c; --info-soft: #ddeff6;
+            --c-bills: #e0625e; --c-buffer: #e0a21f; --c-surplus: #2fa66a; --c-savings: #2c8fb8;
+            --grid: #dfeadc; --ring-track: #dce9d9;
+            --shadow: 0 1px 2px rgba(18, 48, 42, .05), 0 8px 24px -12px rgba(18, 48, 42, .18);
             --radius: 20px;
         }
         @media (prefers-color-scheme: dark) {
             :root:not([data-theme="light"]) {
                 color-scheme: dark;
-                --bg: #0b1330; --surface: #121c40; --surface-2: #19254f; --surface-3: #22305f; --border: #233161;
-                --text: #eef2fb; --muted: #a4afcc; --faint: #6c7898;
-                --accent: #2bd99a; --accent-strong: #63e7b6; --accent-soft: rgba(43, 217, 154, .14); --accent-ink: #052118;
-                --brand-1: #2bd99a; --brand-2: #3ad7f0; --gold: #f0bd4a; --navy: #0b1330;
-                --warn: #f0bd4a; --warn-soft: rgba(240, 189, 74, .14); --danger: #ff7d7d; --danger-soft: rgba(255, 125, 125, .14); --info: #3ad7f0; --info-soft: rgba(58, 215, 240, .14);
-                --c-bills: #ff8a7a; --c-buffer: #f0bd4a; --c-surplus: #2bd99a; --c-savings: #3ad7f0;
-                --grid: #1c2852; --ring-track: #1e2a55;
-                --shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 10px 30px -14px rgba(0, 0, 0, .7);
+                --bg: #0f2b26; --surface: #15362f; --surface-2: #1b4138; --surface-3: #234d43; --border: #24493f;
+                --text: #eaf5ee; --muted: #a3bfb3; --faint: #6d8c80;
+                --accent: #4ccb86; --accent-strong: #7fdda8; --accent-soft: rgba(76, 203, 134, .15); --accent-ink: #072117;
+                --brand-1: #4ccb86; --brand-2: #4fb3dc; --gold: #f2b43c; --navy: #0f2b26; --pink: #ff6f91; --pink-soft: rgba(255, 111, 145, .15);
+                --warn: #f2b43c; --warn-soft: rgba(242, 180, 60, .15); --danger: #ff7d7d; --danger-soft: rgba(255, 125, 125, .14); --info: #5ec3ea; --info-soft: rgba(94, 195, 234, .14);
+                --c-bills: #ff8a7a; --c-buffer: #f2b43c; --c-surplus: #4ccb86; --c-savings: #5ec3ea;
+                --grid: #1e443b; --ring-track: #1f463c;
+                --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 10px 30px -14px rgba(0, 0, 0, .6);
             }
         }
         :root[data-theme="dark"] {
             color-scheme: dark;
-            --bg: #0b1330; --surface: #121c40; --surface-2: #19254f; --surface-3: #22305f; --border: #233161;
-            --text: #eef2fb; --muted: #a4afcc; --faint: #6c7898;
-            --accent: #2bd99a; --accent-strong: #63e7b6; --accent-soft: rgba(43, 217, 154, .14); --accent-ink: #052118;
-            --brand-1: #2bd99a; --brand-2: #3ad7f0; --gold: #f0bd4a; --navy: #0b1330;
-            --warn: #f0bd4a; --warn-soft: rgba(240, 189, 74, .14); --danger: #ff7d7d; --danger-soft: rgba(255, 125, 125, .14); --info: #3ad7f0; --info-soft: rgba(58, 215, 240, .14);
-            --c-bills: #ff8a7a; --c-buffer: #f0bd4a; --c-surplus: #2bd99a; --c-savings: #3ad7f0;
-            --grid: #1c2852; --ring-track: #1e2a55;
-            --shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 10px 30px -14px rgba(0, 0, 0, .7);
+            --bg: #0f2b26; --surface: #15362f; --surface-2: #1b4138; --surface-3: #234d43; --border: #24493f;
+            --text: #eaf5ee; --muted: #a3bfb3; --faint: #6d8c80;
+            --accent: #4ccb86; --accent-strong: #7fdda8; --accent-soft: rgba(76, 203, 134, .15); --accent-ink: #072117;
+            --brand-1: #4ccb86; --brand-2: #4fb3dc; --gold: #f2b43c; --navy: #0f2b26; --pink: #ff6f91; --pink-soft: rgba(255, 111, 145, .15);
+            --warn: #f2b43c; --warn-soft: rgba(242, 180, 60, .15); --danger: #ff7d7d; --danger-soft: rgba(255, 125, 125, .14); --info: #5ec3ea; --info-soft: rgba(94, 195, 234, .14);
+            --c-bills: #ff8a7a; --c-buffer: #f2b43c; --c-surplus: #4ccb86; --c-savings: #5ec3ea;
+            --grid: #1e443b; --ring-track: #1f463c;
+            --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 10px 30px -14px rgba(0, 0, 0, .6);
         }
 
         /* ---------- Base ---------- */
@@ -72,7 +72,7 @@
         h1, h2, h3, h4, p { margin: 0; }
         button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; }
         input, select { font: inherit; color: inherit; }
-        .serif { font-family: 'Poppins', system-ui, sans-serif; font-weight: 600; letter-spacing: -.02em; }
+        .serif { font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 600; letter-spacing: -.02em; }
         .num { font-variant-numeric: tabular-nums; }
         .muted { color: var(--muted); } .faint { color: var(--faint); }
         .small { font-size: 13px; } .tiny { font-size: 12px; }
@@ -95,7 +95,7 @@
         @media (min-width: 640px) { .header-inner { padding: 16px 24px; } }
         .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
         .brand-mark { width: 40px; height: 40px; flex-shrink: 0; }
-        .wordmark { font-family: 'Poppins', system-ui, sans-serif; font-weight: 600; font-size: 23px; line-height: 1.05; letter-spacing: -.02em; }
+        .wordmark { font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 600; font-size: 23px; line-height: 1.05; letter-spacing: -.02em; }
         .wordmark span { background: linear-gradient(135deg, var(--brand-1), var(--brand-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
         .brand p { font-size: 12.5px; color: var(--muted); }
         .top-tabs { display: none; margin: 0 auto; background: var(--surface-2); border-radius: 999px; padding: 4px; gap: 2px; }
@@ -142,7 +142,7 @@
 
         .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); min-width: 0; transition: background-color .3s, border-color .3s; }
         @media (min-width: 640px) { .card { padding: 24px; } }
-        .card-title { font-family: 'Poppins', system-ui, sans-serif; font-weight: 600; letter-spacing: -.01em; font-size: 19px; line-height: 1.2; display: flex; align-items: center; gap: 10px; }
+        .card-title { font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 600; letter-spacing: -.01em; font-size: 19px; line-height: 1.2; display: flex; align-items: center; gap: 10px; }
         .card-title svg.lucide { color: var(--accent); width: 20px; height: 20px; }
         .card-sub { color: var(--muted); font-size: 14px; margin-top: 4px; }
         .eyebrow { font-size: 13px; font-weight: 600; color: var(--muted); }
@@ -197,7 +197,7 @@
         .ring-fg { transition: stroke-dashoffset 1s cubic-bezier(.2, .7, .2, 1), stroke .4s; stroke: var(--accent); }
         .ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 26px; }
         .ring-center .big { font-size: 34px; line-height: 1.05; margin: 4px 0 2px; }
-        .hero-msg { font-family: 'Poppins', system-ui, sans-serif; font-weight: 600; font-size: 19px; line-height: 1.3; }
+        .hero-msg { font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 600; font-size: 19px; line-height: 1.3; }
         .stat-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
         .stat { background: var(--surface-2); border-radius: 14px; padding: 12px; min-width: 0; }
         .stat .v { font-size: 17px; font-weight: 700; margin-top: 2px; }
@@ -239,7 +239,7 @@
         .ob-name { font-weight: 700; font-size: 15px; }
         .ob-side { display: flex; align-items: center; gap: 6px; min-width: 0; }
         .ob-side .acts { display: flex; align-items: center; gap: 4px; }
-        .ob-amount { font-family: 'Poppins', system-ui, sans-serif; font-weight: 600; font-size: 17px; margin-right: 6px; }
+        .ob-amount { font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 600; font-size: 17px; margin-right: 6px; }
 
         /* ---------- Calendar ---------- */
         .cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; }
@@ -320,7 +320,7 @@
         @media (min-width: 640px) { .modal { align-items: center; padding: 16px; } }
         .sheet { background: var(--surface); width: 100%; max-width: 520px; border-radius: 24px 24px 0 0; padding: 22px 18px calc(22px + env(safe-area-inset-bottom)); box-shadow: 0 -10px 40px rgba(0,0,0,.2); animation: sheetUp .35s cubic-bezier(.2, .8, .2, 1); max-height: 94vh; overflow-y: auto; }
         @media (min-width: 640px) { .sheet { border-radius: 24px; padding: 28px; margin: auto; animation-name: pop; } }
-        .sheet h2 { font-family: 'Poppins', system-ui, sans-serif; font-size: 23px; font-weight: 600; letter-spacing: -.01em; margin-bottom: 18px; }
+        .sheet h2 { font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-size: 23px; font-weight: 600; letter-spacing: -.01em; margin-bottom: 18px; }
         .sheet .grab { width: 40px; height: 4px; border-radius: 4px; background: var(--surface-3); margin: -8px auto 14px; }
         @media (min-width: 640px) { .sheet .grab { display: none; } }
         @keyframes sheetUp { from { transform: translateY(40px); opacity: .4; } to { transform: none; opacity: 1; } }
@@ -422,7 +422,7 @@
             body { background: #fff !important; color: #111 !important; padding: 0 !important; }
             body > *:not(#print-report) { display: none !important; }
             #print-report { display: block !important; font-size: 12px; color: #111; }
-            #print-report h1 { font-family: 'Poppins', system-ui, sans-serif; font-size: 24px; font-weight: 600; margin: 0 0 4px; }
+            #print-report h1 { font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-size: 24px; font-weight: 600; margin: 0 0 4px; }
             #print-report h2 { font-size: 14px; margin: 18px 0 6px; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
             #print-report table { width: 100%; border-collapse: collapse; }
             #print-report td, #print-report th { text-align: left; padding: 4px 6px; border-bottom: 1px solid #eee; }
@@ -452,7 +452,7 @@
         .next-due { width: 100%; display: flex; align-items: center; gap: 14px; text-align: left; padding: 12px; border-radius: 16px; background: var(--surface-2); border: 1.5px solid transparent; transition: transform .12s, border-color .2s; }
         .next-due:active { transform: scale(.985); }
         .nd-days { width: 58px; height: 58px; border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; line-height: 1; }
-        .nd-days b { font-family: 'Poppins', system-ui, sans-serif; font-size: 22px; }
+        .nd-days b { font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-size: 22px; }
         .nd-days small { font-size: 11px; font-weight: 700; margin-top: 3px; }
         .next-due.ok .nd-days { background: var(--accent-soft); color: var(--accent); }
         .next-due.warn { border-color: color-mix(in srgb, var(--warn) 45%, transparent); }
@@ -474,7 +474,7 @@
         /* ---------- Empty states ---------- */
         .empty { text-align: center; padding: 18px 10px 8px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
         .empty .small { max-width: 320px; }
-        .empty-t { font-family: 'Poppins', system-ui, sans-serif; font-weight: 600; font-size: 16px; margin-top: 8px; }
+        .empty-t { font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 600; font-size: 16px; margin-top: 8px; }
         .empty-art { position: relative; width: 84px; height: 84px; }
         .empty-art > span { position: absolute; inset: 8px; border-radius: 24px; display: flex; align-items: center; justify-content: center; background: linear-gradient(145deg, var(--accent-soft), color-mix(in srgb, var(--brand-2) 16%, transparent)); color: var(--accent); transform: rotate(-6deg); animation: floaty 4s ease-in-out infinite; }
         .empty-art > span svg.lucide { width: 30px; height: 30px; transform: rotate(6deg); }
@@ -484,7 +484,7 @@
 
         /* ---------- Profile, grouped like phone settings ---------- */
         .profile-sheet { background: var(--bg); }
-        .profile-sheet h2 { font-family: 'Poppins', system-ui, sans-serif; }
+        .profile-sheet h2 { font-family: 'Bricolage Grotesque', system-ui, sans-serif; }
         .set-group { margin-top: 22px; }
         .set-head { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 0 4px 8px; }
         .set-head svg.lucide { width: 15px; height: 15px; color: var(--accent); }
@@ -499,7 +499,7 @@
         .set-ic { width: 32px; height: 32px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; background: var(--accent-soft); color: var(--accent); flex-shrink: 0; }
         .set-ic svg.lucide { width: 17px; height: 17px; }
         .acct { display: flex; align-items: center; gap: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 14px 16px; margin-bottom: 10px; }
-        .avatar { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Poppins', system-ui, sans-serif; font-weight: 600; font-size: 20px; color: #0b1330; background: linear-gradient(135deg, var(--brand-1), var(--brand-2)); flex-shrink: 0; }
+        .avatar { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 600; font-size: 20px; color: #0f2b26; background: linear-gradient(135deg, var(--brand-1), var(--brand-2)); flex-shrink: 0; }
 
         /* ---------- Welcome guide ---------- */
         .onboard { position: fixed; inset: 0; z-index: 400; background: var(--bg); display: none; overflow-y: auto; }
@@ -518,7 +518,7 @@
         .ob-icon { width: 64px; height: 64px; border-radius: 20px; display: flex; align-items: center; justify-content: center; background: linear-gradient(145deg, var(--accent-soft), color-mix(in srgb, var(--brand-2) 18%, transparent)); color: var(--accent); margin-bottom: 18px; }
         .ob-icon svg.lucide { width: 30px; height: 30px; }
         .ob-icon.party { margin: 18px auto 10px; }
-        .ob-h { font-family: 'Poppins', system-ui, sans-serif; font-weight: 600; font-size: 28px; line-height: 1.15; letter-spacing: -.02em; text-wrap: balance; }
+        .ob-h { font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 600; font-size: 28px; line-height: 1.15; letter-spacing: -.02em; text-wrap: balance; }
         .ob-hero + .ob-h, .ob-hero ~ .ob-s { text-align: center; }
         .ob-s { color: var(--muted); font-size: 16px; margin-top: 8px; text-wrap: pretty; }
         .ob-benefits { display: grid; gap: 10px; margin: 26px 0 8px; }
@@ -535,7 +535,7 @@
         .ob-bill #ob-name { grid-column: 1 / -1; }
         .ob-bill .btn { grid-column: 1 / -1; }
         @media (min-width: 420px) { .ob-bill { grid-template-columns: minmax(0, 2fr) minmax(0, 1.3fr) minmax(0, .8fr); } .ob-bill #ob-name { grid-column: auto; } }
-        .ob-cardart { position: relative; width: 240px; max-width: 80%; aspect-ratio: 1.586; margin: 30px auto 10px; border-radius: 18px; background: linear-gradient(135deg, #0d1633, #1d3a7a 55%, #2ab9e6); box-shadow: 0 18px 40px -16px rgba(13, 22, 51, .6); transform: rotate(-5deg); animation: floaty 5s ease-in-out infinite; }
+        .ob-cardart { position: relative; width: 240px; max-width: 80%; aspect-ratio: 1.586; margin: 30px auto 10px; border-radius: 18px; background: linear-gradient(135deg, #0f2b26, #1f6b4a 55%, #3db873); box-shadow: 0 18px 40px -16px rgba(15, 43, 38, .6); transform: rotate(-5deg); animation: floaty 5s ease-in-out infinite; }
         .ob-cardart .chip-gold { position: absolute; left: 22px; top: 34%; width: 38px; height: 28px; border-radius: 6px; background: linear-gradient(135deg, #f0bd4a, #e8a02a); }
         .ob-cardart .ln { position: absolute; left: 22px; height: 8px; border-radius: 4px; background: rgba(255,255,255,.35); }
         .ob-cardart .l1 { bottom: 34px; width: 55%; } .ob-cardart .l2 { bottom: 18px; width: 30%; background: rgba(255,255,255,.2); }
@@ -596,6 +596,37 @@
         .news-item b { display: block; font-size: 15px; }
         .news-hero { text-align: center; margin-bottom: 18px; }
         .news-hero .ob-icon { margin: 0 auto 12px; }
+
+        /* ---------- Frog mascot, welcome, Apple Pay ---------- */
+        .frog { display: block; overflow: visible; }
+        .ob-frog { display: flex; justify-content: center; margin: 8px 0 6px; }
+        .ob-frog.sm { justify-content: flex-start; margin: 0 0 4px; }
+        .ob-frog .frog-hi, .aw-frog .frog { animation: frogBob 3.2s ease-in-out infinite; transform-origin: 50% 100%; }
+        @keyframes frogBob { 0%, 100% { transform: translateY(0) scale(1, 1); } 45% { transform: translateY(-5px) scale(.98, 1.02); } 55% { transform: translateY(-5px) scale(.98, 1.02); } }
+        .ob-h.center, .ob-s.center { text-align: center; }
+        .ob-plan { list-style: none; padding: 0; margin: 22px 0 0; display: grid; gap: 10px; counter-reset: plan; }
+        .ob-plan li { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); font-weight: 600; }
+        .ob-debt { display: grid; gap: 12px; }
+        .empty-frog { display: flex; justify-content: center; margin-bottom: 2px; }
+        .empty-frog .frog { animation: frogBob 4s ease-in-out infinite; transform-origin: 50% 100%; }
+        .auth-welcome { display: flex; flex-direction: column; gap: 14px; }
+        .aw-frog { display: flex; justify-content: center; margin-top: 4px; }
+        .aw-h { font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 800; font-size: clamp(34px, 10vw, 44px); line-height: 1.02; letter-spacing: -.035em; text-align: center; text-wrap: balance; }
+        .auth-welcome > p.muted { text-align: center; text-wrap: pretty; }
+        .aw-list { list-style: none; padding: 0; margin: 6px 0 8px; display: grid; gap: 4px; }
+        .aw-list li { display: flex; align-items: center; gap: 12px; font-weight: 600; font-size: 15px; padding: 4px 0; }
+        .aw-list .frog { flex-shrink: 0; }
+        .pw-wrap { position: relative; }
+        .pw-wrap .input { padding-right: 84px; }
+        .pw-eye { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); padding: 6px 10px; border-radius: 10px; font-size: 13px; font-weight: 700; color: var(--accent); }
+        .pw-eye:hover { background: var(--accent-soft); }
+        .w-hero { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; margin-bottom: 8px; }
+        .w-step { margin-top: 18px; padding: 16px; border-radius: 18px; background: var(--surface-2); }
+        .w-step h3 { font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 700; font-size: 17px; margin-bottom: 4px; }
+        .w-list { list-style: none; padding: 0; margin: 8px 0 0; display: grid; gap: 10px; }
+        .w-list li { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.45; }
+        .w-n { width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); font-weight: 800; font-size: 12px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+        .news-hero .frog { margin: 0 auto 8px; }
         /* ---------- Login (web version) ---------- */
         .auth { position: fixed; inset: 0; z-index: 420; background: var(--bg); display: none; overflow-y: auto; }
         .auth.open { display: block; }
@@ -603,7 +634,7 @@
         .auth-card { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 14px; }
         .auth-brand { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; margin-bottom: 10px; }
         .auth-brand h1 { line-height: 1.1; }
-        .auth-h { font-family: 'Poppins', system-ui, sans-serif; font-weight: 600; letter-spacing: -.01em; font-size: 22px; text-wrap: balance; }
+        .auth-h { font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 600; letter-spacing: -.01em; font-size: 22px; text-wrap: balance; }
         .auth-links { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 4px; text-align: center; }
         .auth-pin { display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; }
         .auth-pin .input { max-width: 320px; }
@@ -1045,6 +1076,11 @@
                 <p class="tiny muted set-foot" data-i18n="pinNote"></p>
             </section>
 
+            <section id="wallet-group" class="set-group hidden">
+                <p class="set-head"><i data-lucide="smartphone"></i><span data-i18n="wTitle"></span></p>
+                <div class="set-card rows"><button class="set-row" onclick="closeModal('config-modal'); openWalletSetup()"><span class="set-ic"><i data-lucide="credit-card"></i></span><span class="grow" data-i18n="wRow"></span><i data-lucide="chevron-right" class="faint"></i></button></div>
+            </section>
+
             <section id="notify-group" class="set-group hidden">
                 <p class="set-head"><i data-lucide="bell"></i><span data-i18n="nTitle"></span></p>
                 <div id="notify-box" class="set-card form-grid"></div>
@@ -1336,7 +1372,7 @@
 
     <script>
     // ================= Icons (inlined from Lucide, ISC license) — no external download needed =================
-    const ICONS = {"building-2":"<path d=\"M10 12h4\"/><path d=\"M10 8h4\"/><path d=\"M14 21v-3a2 2 0 0 0-4 0v3\"/><path d=\"M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2\"/><path d=\"M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16\"/>","calendar-arrow-down":"<path d=\"m14 17 4 4 4-4\"/><path d=\"M16 2v3\"/><path d=\"M18 13v8\"/><path d=\"M21 10.354V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h7.343\"/><path d=\"M3 9h18\"/><path d=\"M8 2v3\"/>","calendar-days":"<path d=\"M8 2v3\"/><path d=\"M16 2v3\"/><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\"/><path d=\"M3 9h18\"/><path d=\"M8 13h.01\"/><path d=\"M12 13h.01\"/><path d=\"M16 13h.01\"/><path d=\"M8 17h.01\"/><path d=\"M12 17h.01\"/><path d=\"M16 17h.01\"/>","chart-pie":"<path d=\"M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z\"/><path d=\"M21.21 15.89A10 10 0 1 1 8 2.83\"/>","chevron-right":"<path d=\"m9 18 6-6-6-6\"/>","combine":"<path d=\"M14 3a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1\"/><path d=\"M19 3a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1\"/><path d=\"m7 15 3 3\"/><path d=\"m7 21 3-3H5a2 2 0 0 1-2-2v-2\"/><rect x=\"14\" y=\"14\" width=\"7\" height=\"7\" rx=\"1\"/><rect x=\"3\" y=\"3\" width=\"7\" height=\"7\" rx=\"1\"/>","credit-card":"<rect width=\"20\" height=\"14\" x=\"2\" y=\"5\" rx=\"2\"/><line x1=\"2\" x2=\"22\" y1=\"10\" y2=\"10\"/>","download":"<path d=\"M12 15V3\"/><path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"/><path d=\"m7 10 5 5 5-5\"/>","file-text":"<path d=\"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z\"/><path d=\"M14 2v5a1 1 0 0 0 1 1h5\"/><path d=\"M10 9H8\"/><path d=\"M16 13H8\"/><path d=\"M16 17H8\"/>","gift":"<path d=\"M12 7v14\"/><path d=\"M20 11v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8\"/><path d=\"M7.5 7a1 1 0 0 1 0-5A4.8 8 0 0 1 12 7a4.8 8 0 0 1 4.5-5 1 1 0 0 1 0 5\"/><rect x=\"3\" y=\"7\" width=\"18\" height=\"4\" rx=\"1\"/>","hand-coins":"<path d=\"M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17\"/><path d=\"m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9\"/><path d=\"m2 16 6 6\"/><circle cx=\"16\" cy=\"9\" r=\"2.9\"/><circle cx=\"6\" cy=\"5\" r=\"3\"/>","heart-pulse":"<path d=\"M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5\"/><path d=\"M3.22 13H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27\"/>","history":"<path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"/><path d=\"M3 3v5h5\"/><path d=\"M12 7v5l4 2\"/>","house":"<path d=\"M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8\"/><path d=\"M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/>","landmark":"<path d=\"M10 18v-7\"/><path d=\"M11.119 2.205a2 2 0 0 1 1.762 0l7.84 3.846A.5.5 0 0 1 20.5 7h-17a.5.5 0 0 1-.22-.949z\"/><path d=\"M14 18v-7\"/><path d=\"M18 18v-7\"/><path d=\"M3 22h18\"/><path d=\"M6 18v-7\"/>","lightbulb":"<path d=\"M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5\"/><path d=\"M9 18h6\"/><path d=\"M10 22h4\"/>","list-checks":"<path d=\"M13 5h8\"/><path d=\"M13 12h8\"/><path d=\"M13 19h8\"/><path d=\"m3 17 2 2 4-4\"/><path d=\"m3 7 2 2 4-4\"/>","lock":"<rect width=\"18\" height=\"11\" x=\"3\" y=\"11\" rx=\"2\" ry=\"2\"/><path d=\"M7 11V7a5 5 0 0 1 10 0v4\"/>","piggy-bank":"<path d=\"M11 17h3v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a3.16 3.16 0 0 0 2-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1a5 5 0 0 0-2-4V3a4 4 0 0 0-3.2 1.6l-.3.4H11a6 6 0 0 0-6 6v1a5 5 0 0 0 2 4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z\"/><path d=\"M16 10h.01\"/><path d=\"M2 8v1a2 2 0 0 0 2 2h1\"/>","plus":"<path d=\"M5 12h14\"/><path d=\"M12 5v14\"/>","receipt":"<path d=\"M12 17V7\"/><path d=\"M16 8h-6a2 2 0 0 0 0 4h4a2 2 0 0 1 0 4H8\"/><path d=\"M4 3a1 1 0 0 1 1-1 1.3 1.3 0 0 1 .7.2l.933.6a1.3 1.3 0 0 0 1.4 0l.934-.6a1.3 1.3 0 0 1 1.4 0l.933.6a1.3 1.3 0 0 0 1.4 0l.933-.6a1.3 1.3 0 0 1 1.4 0l.934.6a1.3 1.3 0 0 0 1.4 0l.933-.6A1.3 1.3 0 0 1 19 2a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1 1.3 1.3 0 0 1-.7-.2l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.934.6a1.3 1.3 0 0 1-1.4 0l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-1.4 0l-.934-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-.7.2 1 1 0 0 1-1-1z\"/>","shield-check":"<path d=\"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z\"/><path d=\"m9 12 2 2 4-4\"/>","smartphone":"<rect width=\"14\" height=\"20\" x=\"5\" y=\"2\" rx=\"2\" ry=\"2\"/><path d=\"M12 18h.01\"/>","sparkles":"<path d=\"M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z\"/><path d=\"M20 2v4\"/><path d=\"M22 4h-4\"/><circle cx=\"4\" cy=\"20\" r=\"2\"/>","target":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><circle cx=\"12\" cy=\"12\" r=\"6\"/><circle cx=\"12\" cy=\"12\" r=\"2\"/>","trending-down":"<path d=\"M16 17h6v-6\"/><path d=\"m22 17-8.5-8.5-5 5L2 7\"/>","trophy":"<path d=\"M10 14.66V17a1 1 0 0 1-1 1 2 2 0 0 0-2 2v2\"/><path d=\"M14 14.66V17a1 1 0 0 0 1 1 2 2 0 0 1 2 2v2\"/><path d=\"M17.916 10H19.5A2.5 2.5 0 0 0 22 7.5V5a1 1 0 0 0-1-1h-3\"/><path d=\"M4 22h16\"/><path d=\"M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z\"/><path d=\"M6.084 10H4.5A2.5 2.5 0 0 1 2 7.5V5a1 1 0 0 1 1-1h3\"/>","upload":"<path d=\"M12 3v12\"/><path d=\"m17 8-5-5-5 5\"/><path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"/>","user-cog":"<path d=\"M10 15H6a4 4 0 0 0-4 4v2\"/><path d=\"m14.305 16.53.923-.382\"/><path d=\"m15.228 13.852-.923-.383\"/><path d=\"m16.852 12.228-.383-.923\"/><path d=\"m16.852 17.772-.383.924\"/><path d=\"m19.148 12.228.383-.923\"/><path d=\"m19.53 18.696-.382-.924\"/><path d=\"m20.772 13.852.924-.383\"/><path d=\"m20.772 16.148.924.383\"/><circle cx=\"18\" cy=\"15\" r=\"3\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/>","wallet":"<path d=\"M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1\"/><path d=\"M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4\"/>","sun":"<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2\"/><path d=\"M12 20v2\"/><path d=\"m4.93 4.93 1.41 1.41\"/><path d=\"m17.66 17.66 1.41 1.41\"/><path d=\"M2 12h2\"/><path d=\"M20 12h2\"/><path d=\"m6.34 17.66-1.41 1.41\"/><path d=\"m19.07 4.93-1.41 1.41\"/>","moon":"<path d=\"M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401\"/>","sun-moon":"<path d=\"M12 2v2\"/><path d=\"M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715\"/><path d=\"M16 12a4 4 0 0 0-4-4\"/><path d=\"m19 5-1.256 1.256\"/><path d=\"M20 12h2\"/>","info":"<circle cx=\"12\" cy=\"12\" r=\"10\" /><path d=\"M12 16v-4\" /><path d=\"M12 8h.01\" />","bell":"<path d=\"M10.268 21a2 2 0 0 0 3.464 0\" /><path d=\"M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326\" />","user":"<path d=\"M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2\" /><circle cx=\"12\" cy=\"7\" r=\"4\" />","palette":"<path d=\"M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z\" /><circle cx=\"13.5\" cy=\"6.5\" r=\".5\" fill=\"currentColor\" /><circle cx=\"17.5\" cy=\"10.5\" r=\".5\" fill=\"currentColor\" /><circle cx=\"6.5\" cy=\"12.5\" r=\".5\" fill=\"currentColor\" /><circle cx=\"8.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\" />","database":"<ellipse cx=\"12\" cy=\"5\" rx=\"9\" ry=\"3\" /><path d=\"M3 5V19A9 3 0 0 0 21 19V5\" /><path d=\"M3 12A9 3 0 0 0 21 12\" />","settings-2":"<path d=\"M14 17H5\" /><path d=\"M19 7h-9\" /><circle cx=\"17\" cy=\"17\" r=\"3\" /><circle cx=\"7\" cy=\"7\" r=\"3\" />","log-out":"<path d=\"m16 17 5-5-5-5\" /><path d=\"M21 12H9\" /><path d=\"M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4\" />","trash-2":"<path d=\"M10 11v6\" /><path d=\"M14 11v6\" /><path d=\"M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6\" /><path d=\"M3 6h18\" /><path d=\"M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2\" />","scale":"<path d=\"M12 3v18\" /><path d=\"m19 8 3 8a5 5 0 0 1-6 0zV7\" /><path d=\"M3 7h1a17 17 0 0 0 8-2 17 17 0 0 0 8 2h1\" /><path d=\"m5 8 3 8a5 5 0 0 1-6 0zV7\" /><path d=\"M7 21h10\" />","circle-help":"<circle cx=\"12\" cy=\"12\" r=\"10\" /><path d=\"M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3\" /><path d=\"M12 17h.01\" />","arrow-right":"<path d=\"M5 12h14\" /><path d=\"m12 5 7 7-7 7\" />","check":"<path d=\"M20 6 9 17l-5-5\" />","party-popper":"<path d=\"M5.8 11.3 2 22l10.7-3.79\" /><path d=\"M4 3h.01\" /><path d=\"M22 8h.01\" /><path d=\"M15 2h.01\" /><path d=\"M22 20h.01\" /><path d=\"m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10\" /><path d=\"m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17\" /><path d=\"m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7\" /><path d=\"M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z\" />","wand-sparkles":"<path d=\"m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72\" /><path d=\"m14 7 3 3\" /><path d=\"M5 6v4\" /><path d=\"M19 14v4\" /><path d=\"M10 2v2\" /><path d=\"M7 8H3\" /><path d=\"M21 16h-4\" /><path d=\"M11 3H9\" />","chevron-left":"<path d=\"m15 18-6-6 6-6\" />","x":"<path d=\"M18 6 6 18\" /><path d=\"m6 6 12 12\" />","calendar-clock":"<path d=\"M16 14v2.2l1.6 1\" /><path d=\"M16 2v3\" /><path d=\"M21 7.338V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h2.338\" /><path d=\"M3 9h5.859\" /><path d=\"M8 2v3\" /><circle cx=\"16\" cy=\"16\" r=\"6\" />","wallet-cards":"<path d=\"M3 11h3.75a2 2 0 0 1 1.6.8l.45.6a4 4 0 0 0 6.4 0l.45-.6a2 2 0 0 1 1.6-.8H21\" /><path d=\"M3 7h18\" /><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\" />","sliders-horizontal":"<path d=\"M10 5H3\" /><path d=\"M12 19H3\" /><path d=\"M14 3v4\" /><path d=\"M16 17v4\" /><path d=\"M21 12h-9\" /><path d=\"M21 19h-5\" /><path d=\"M21 5h-7\" /><path d=\"M8 10v4\" /><path d=\"M8 12H3\" />","send":"<path d=\"M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z\" /><path d=\"m21.854 2.147-10.94 10.939\" />","repeat":"<path d=\"m17 2 4 4-4 4\" /><path d=\"M3 11v-1a4 4 0 0 1 4-4h14\" /><path d=\"m7 22-4-4 4-4\" /><path d=\"M21 13v1a4 4 0 0 1-4 4H3\" />","megaphone":"<path d=\"M11 6a13 13 0 0 0 8.4-2.8A1 1 0 0 1 21 4v12a1 1 0 0 1-1.6.8A13 13 0 0 0 11 14H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z\" /><path d=\"M6 14a12 12 0 0 0 2.4 7.2 2 2 0 0 0 3.2-2.4A8 8 0 0 1 10 14\" /><path d=\"M8 6v8\" />","badge-percent":"<path d=\"M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z\" /><path d=\"m15 9-6 6\" /><path d=\"M9 9h.01\" /><path d=\"M15 15h.01\" />","external-link":"<path d=\"M15 3h6v6\" /><path d=\"M10 14 21 3\" /><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\" />"};
+    const ICONS = {"building-2":"<path d=\"M10 12h4\"/><path d=\"M10 8h4\"/><path d=\"M14 21v-3a2 2 0 0 0-4 0v3\"/><path d=\"M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2\"/><path d=\"M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16\"/>","calendar-arrow-down":"<path d=\"m14 17 4 4 4-4\"/><path d=\"M16 2v3\"/><path d=\"M18 13v8\"/><path d=\"M21 10.354V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h7.343\"/><path d=\"M3 9h18\"/><path d=\"M8 2v3\"/>","calendar-days":"<path d=\"M8 2v3\"/><path d=\"M16 2v3\"/><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\"/><path d=\"M3 9h18\"/><path d=\"M8 13h.01\"/><path d=\"M12 13h.01\"/><path d=\"M16 13h.01\"/><path d=\"M8 17h.01\"/><path d=\"M12 17h.01\"/><path d=\"M16 17h.01\"/>","chart-pie":"<path d=\"M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z\"/><path d=\"M21.21 15.89A10 10 0 1 1 8 2.83\"/>","chevron-right":"<path d=\"m9 18 6-6-6-6\"/>","combine":"<path d=\"M14 3a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1\"/><path d=\"M19 3a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1\"/><path d=\"m7 15 3 3\"/><path d=\"m7 21 3-3H5a2 2 0 0 1-2-2v-2\"/><rect x=\"14\" y=\"14\" width=\"7\" height=\"7\" rx=\"1\"/><rect x=\"3\" y=\"3\" width=\"7\" height=\"7\" rx=\"1\"/>","credit-card":"<rect width=\"20\" height=\"14\" x=\"2\" y=\"5\" rx=\"2\"/><line x1=\"2\" x2=\"22\" y1=\"10\" y2=\"10\"/>","download":"<path d=\"M12 15V3\"/><path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"/><path d=\"m7 10 5 5 5-5\"/>","file-text":"<path d=\"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z\"/><path d=\"M14 2v5a1 1 0 0 0 1 1h5\"/><path d=\"M10 9H8\"/><path d=\"M16 13H8\"/><path d=\"M16 17H8\"/>","gift":"<path d=\"M12 7v14\"/><path d=\"M20 11v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8\"/><path d=\"M7.5 7a1 1 0 0 1 0-5A4.8 8 0 0 1 12 7a4.8 8 0 0 1 4.5-5 1 1 0 0 1 0 5\"/><rect x=\"3\" y=\"7\" width=\"18\" height=\"4\" rx=\"1\"/>","hand-coins":"<path d=\"M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17\"/><path d=\"m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9\"/><path d=\"m2 16 6 6\"/><circle cx=\"16\" cy=\"9\" r=\"2.9\"/><circle cx=\"6\" cy=\"5\" r=\"3\"/>","heart-pulse":"<path d=\"M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5\"/><path d=\"M3.22 13H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27\"/>","history":"<path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"/><path d=\"M3 3v5h5\"/><path d=\"M12 7v5l4 2\"/>","house":"<path d=\"M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8\"/><path d=\"M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/>","landmark":"<path d=\"M10 18v-7\"/><path d=\"M11.119 2.205a2 2 0 0 1 1.762 0l7.84 3.846A.5.5 0 0 1 20.5 7h-17a.5.5 0 0 1-.22-.949z\"/><path d=\"M14 18v-7\"/><path d=\"M18 18v-7\"/><path d=\"M3 22h18\"/><path d=\"M6 18v-7\"/>","lightbulb":"<path d=\"M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5\"/><path d=\"M9 18h6\"/><path d=\"M10 22h4\"/>","list-checks":"<path d=\"M13 5h8\"/><path d=\"M13 12h8\"/><path d=\"M13 19h8\"/><path d=\"m3 17 2 2 4-4\"/><path d=\"m3 7 2 2 4-4\"/>","lock":"<rect width=\"18\" height=\"11\" x=\"3\" y=\"11\" rx=\"2\" ry=\"2\"/><path d=\"M7 11V7a5 5 0 0 1 10 0v4\"/>","piggy-bank":"<path d=\"M11 17h3v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a3.16 3.16 0 0 0 2-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1a5 5 0 0 0-2-4V3a4 4 0 0 0-3.2 1.6l-.3.4H11a6 6 0 0 0-6 6v1a5 5 0 0 0 2 4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z\"/><path d=\"M16 10h.01\"/><path d=\"M2 8v1a2 2 0 0 0 2 2h1\"/>","plus":"<path d=\"M5 12h14\"/><path d=\"M12 5v14\"/>","receipt":"<path d=\"M12 17V7\"/><path d=\"M16 8h-6a2 2 0 0 0 0 4h4a2 2 0 0 1 0 4H8\"/><path d=\"M4 3a1 1 0 0 1 1-1 1.3 1.3 0 0 1 .7.2l.933.6a1.3 1.3 0 0 0 1.4 0l.934-.6a1.3 1.3 0 0 1 1.4 0l.933.6a1.3 1.3 0 0 0 1.4 0l.933-.6a1.3 1.3 0 0 1 1.4 0l.934.6a1.3 1.3 0 0 0 1.4 0l.933-.6A1.3 1.3 0 0 1 19 2a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1 1.3 1.3 0 0 1-.7-.2l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.934.6a1.3 1.3 0 0 1-1.4 0l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-1.4 0l-.934-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-.7.2 1 1 0 0 1-1-1z\"/>","shield-check":"<path d=\"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z\"/><path d=\"m9 12 2 2 4-4\"/>","smartphone":"<rect width=\"14\" height=\"20\" x=\"5\" y=\"2\" rx=\"2\" ry=\"2\"/><path d=\"M12 18h.01\"/>","sparkles":"<path d=\"M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z\"/><path d=\"M20 2v4\"/><path d=\"M22 4h-4\"/><circle cx=\"4\" cy=\"20\" r=\"2\"/>","target":"<circle cx=\"12\" cy=\"12\" r=\"10\"/><circle cx=\"12\" cy=\"12\" r=\"6\"/><circle cx=\"12\" cy=\"12\" r=\"2\"/>","trending-down":"<path d=\"M16 17h6v-6\"/><path d=\"m22 17-8.5-8.5-5 5L2 7\"/>","trophy":"<path d=\"M10 14.66V17a1 1 0 0 1-1 1 2 2 0 0 0-2 2v2\"/><path d=\"M14 14.66V17a1 1 0 0 0 1 1 2 2 0 0 1 2 2v2\"/><path d=\"M17.916 10H19.5A2.5 2.5 0 0 0 22 7.5V5a1 1 0 0 0-1-1h-3\"/><path d=\"M4 22h16\"/><path d=\"M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z\"/><path d=\"M6.084 10H4.5A2.5 2.5 0 0 1 2 7.5V5a1 1 0 0 1 1-1h3\"/>","upload":"<path d=\"M12 3v12\"/><path d=\"m17 8-5-5-5 5\"/><path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"/>","user-cog":"<path d=\"M10 15H6a4 4 0 0 0-4 4v2\"/><path d=\"m14.305 16.53.923-.382\"/><path d=\"m15.228 13.852-.923-.383\"/><path d=\"m16.852 12.228-.383-.923\"/><path d=\"m16.852 17.772-.383.924\"/><path d=\"m19.148 12.228.383-.923\"/><path d=\"m19.53 18.696-.382-.924\"/><path d=\"m20.772 13.852.924-.383\"/><path d=\"m20.772 16.148.924.383\"/><circle cx=\"18\" cy=\"15\" r=\"3\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/>","wallet":"<path d=\"M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1\"/><path d=\"M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4\"/>","sun":"<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2\"/><path d=\"M12 20v2\"/><path d=\"m4.93 4.93 1.41 1.41\"/><path d=\"m17.66 17.66 1.41 1.41\"/><path d=\"M2 12h2\"/><path d=\"M20 12h2\"/><path d=\"m6.34 17.66-1.41 1.41\"/><path d=\"m19.07 4.93-1.41 1.41\"/>","moon":"<path d=\"M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401\"/>","sun-moon":"<path d=\"M12 2v2\"/><path d=\"M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715\"/><path d=\"M16 12a4 4 0 0 0-4-4\"/><path d=\"m19 5-1.256 1.256\"/><path d=\"M20 12h2\"/>","info":"<circle cx=\"12\" cy=\"12\" r=\"10\" /><path d=\"M12 16v-4\" /><path d=\"M12 8h.01\" />","bell":"<path d=\"M10.268 21a2 2 0 0 0 3.464 0\" /><path d=\"M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326\" />","user":"<path d=\"M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2\" /><circle cx=\"12\" cy=\"7\" r=\"4\" />","palette":"<path d=\"M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z\" /><circle cx=\"13.5\" cy=\"6.5\" r=\".5\" fill=\"currentColor\" /><circle cx=\"17.5\" cy=\"10.5\" r=\".5\" fill=\"currentColor\" /><circle cx=\"6.5\" cy=\"12.5\" r=\".5\" fill=\"currentColor\" /><circle cx=\"8.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\" />","database":"<ellipse cx=\"12\" cy=\"5\" rx=\"9\" ry=\"3\" /><path d=\"M3 5V19A9 3 0 0 0 21 19V5\" /><path d=\"M3 12A9 3 0 0 0 21 12\" />","settings-2":"<path d=\"M14 17H5\" /><path d=\"M19 7h-9\" /><circle cx=\"17\" cy=\"17\" r=\"3\" /><circle cx=\"7\" cy=\"7\" r=\"3\" />","log-out":"<path d=\"m16 17 5-5-5-5\" /><path d=\"M21 12H9\" /><path d=\"M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4\" />","trash-2":"<path d=\"M10 11v6\" /><path d=\"M14 11v6\" /><path d=\"M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6\" /><path d=\"M3 6h18\" /><path d=\"M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2\" />","scale":"<path d=\"M12 3v18\" /><path d=\"m19 8 3 8a5 5 0 0 1-6 0zV7\" /><path d=\"M3 7h1a17 17 0 0 0 8-2 17 17 0 0 0 8 2h1\" /><path d=\"m5 8 3 8a5 5 0 0 1-6 0zV7\" /><path d=\"M7 21h10\" />","circle-help":"<circle cx=\"12\" cy=\"12\" r=\"10\" /><path d=\"M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3\" /><path d=\"M12 17h.01\" />","arrow-right":"<path d=\"M5 12h14\" /><path d=\"m12 5 7 7-7 7\" />","check":"<path d=\"M20 6 9 17l-5-5\" />","party-popper":"<path d=\"M5.8 11.3 2 22l10.7-3.79\" /><path d=\"M4 3h.01\" /><path d=\"M22 8h.01\" /><path d=\"M15 2h.01\" /><path d=\"M22 20h.01\" /><path d=\"m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10\" /><path d=\"m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17\" /><path d=\"m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7\" /><path d=\"M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z\" />","wand-sparkles":"<path d=\"m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72\" /><path d=\"m14 7 3 3\" /><path d=\"M5 6v4\" /><path d=\"M19 14v4\" /><path d=\"M10 2v2\" /><path d=\"M7 8H3\" /><path d=\"M21 16h-4\" /><path d=\"M11 3H9\" />","chevron-left":"<path d=\"m15 18-6-6 6-6\" />","x":"<path d=\"M18 6 6 18\" /><path d=\"m6 6 12 12\" />","calendar-clock":"<path d=\"M16 14v2.2l1.6 1\" /><path d=\"M16 2v3\" /><path d=\"M21 7.338V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h2.338\" /><path d=\"M3 9h5.859\" /><path d=\"M8 2v3\" /><circle cx=\"16\" cy=\"16\" r=\"6\" />","wallet-cards":"<path d=\"M3 11h3.75a2 2 0 0 1 1.6.8l.45.6a4 4 0 0 0 6.4 0l.45-.6a2 2 0 0 1 1.6-.8H21\" /><path d=\"M3 7h18\" /><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\" />","sliders-horizontal":"<path d=\"M10 5H3\" /><path d=\"M12 19H3\" /><path d=\"M14 3v4\" /><path d=\"M16 17v4\" /><path d=\"M21 12h-9\" /><path d=\"M21 19h-5\" /><path d=\"M21 5h-7\" /><path d=\"M8 10v4\" /><path d=\"M8 12H3\" />","send":"<path d=\"M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z\" /><path d=\"m21.854 2.147-10.94 10.939\" />","repeat":"<path d=\"m17 2 4 4-4 4\" /><path d=\"M3 11v-1a4 4 0 0 1 4-4h14\" /><path d=\"m7 22-4-4 4-4\" /><path d=\"M21 13v1a4 4 0 0 1-4 4H3\" />","megaphone":"<path d=\"M11 6a13 13 0 0 0 8.4-2.8A1 1 0 0 1 21 4v12a1 1 0 0 1-1.6.8A13 13 0 0 0 11 14H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z\" /><path d=\"M6 14a12 12 0 0 0 2.4 7.2 2 2 0 0 0 3.2-2.4A8 8 0 0 1 10 14\" /><path d=\"M8 6v8\" />","badge-percent":"<path d=\"M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z\" /><path d=\"m15 9-6 6\" /><path d=\"M9 9h.01\" /><path d=\"M15 15h.01\" />","external-link":"<path d=\"M15 3h6v6\" /><path d=\"M10 14 21 3\" /><path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\" />","copy":"<rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\" /><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\" />"};
     window.lucide = { createIcons() {
         document.querySelectorAll("i[data-lucide]").forEach(el => {
             const name = el.getAttribute("data-lucide"), body = ICONS[name];
@@ -3754,6 +3790,7 @@
         $('acct-head').innerHTML = web && AUTH.user ? acctHeadHTML(AUTH.user.email) : '';
         $('notify-group').classList.toggle('hidden', !web);
         $('legal-group').classList.toggle('hidden', !web);
+        $('wallet-group').classList.toggle('hidden', !(web && typeof openWalletSetup === 'function'));
         if (web) {
             $('notify-box').innerHTML = remindersHTML();
             $('legal-box').innerHTML = setRow('file-text', t('legalLink'), `window.open('${legalUrl()}', '_blank', 'noopener')`) + setRow('trash-2', t('delBtn'), 'webDeleteAccount()', 'danger');
@@ -4311,6 +4348,61 @@
         s.min = 0;
         item.paid = true;
         return s.full === 0 ? { big: true, msg: t('ccPaidFullToast') } : null;
+    }
+
+    // ================= Mascot: an original frog drawn in SVG =================
+    // Outline trick: every shape is drawn once thick in ink (the outline), then again filled on top.
+    const FROG = { skin: '#46BE7B', shade: '#2F9A5E', belly: '#C9EFC9', ink: '#12302A', cheek: '#FF7FA0', gold: '#F2B43C', goldDk: '#C98A12' };
+    function frogSVG(mood = 'hi', size = 120, label = '') {
+        const F = FROG;
+        const legs = `<ellipse cx="40" cy="122" rx="22" ry="11"/><ellipse cx="120" cy="122" rx="22" ry="11"/>`;
+        const body = `<ellipse cx="80" cy="96" rx="48" ry="36"/><ellipse cx="80" cy="70" rx="56" ry="36"/><circle cx="50" cy="40" r="21"/><circle cx="110" cy="40" r="21"/>`;
+        const wave = mood === 'hi';
+        const armR = wave ? `<path d="M118 92 Q138 78 140 56" stroke-width="15" stroke-linecap="round" fill="none"/><circle cx="141" cy="52" r="9"/>` : `<ellipse cx="108" cy="116" rx="11" ry="8"/>`;
+        const armL = `<ellipse cx="52" cy="116" rx="11" ry="8"/>`;
+        const outline = `<g fill="${F.ink}" stroke="${F.ink}" stroke-width="6" stroke-linejoin="round">${legs}${body}${armL}${wave ? '' : armR}</g>${wave ? `<g stroke="${F.ink}" fill="${F.ink}"><path d="M118 92 Q138 78 140 56" stroke-width="21" stroke-linecap="round" fill="none"/><circle cx="141" cy="52" r="12"/></g>` : ''}`;
+        const fill = `<g fill="${F.shade}">${legs}</g><g fill="${F.skin}">${body}</g>
+            <ellipse cx="80" cy="102" rx="30" ry="22" fill="${F.belly}"/>
+            <g fill="${F.shade}" stroke="${F.shade}">${armL}${wave ? '' : armR}</g>${wave ? `<g fill="${F.skin}" stroke="${F.skin}">${armR}</g>` : ''}`;
+        const open = (cx, look) => `<circle cx="${cx}" cy="40" r="14" fill="#fff"/><circle cx="${cx + look[0]}" cy="${42 + look[1]}" r="7.5" fill="${F.ink}"/><circle cx="${cx + look[0] + 2.5}" cy="${39 + look[1]}" r="2.6" fill="#fff"/>`;
+        const arc = cx => `<path d="M${cx - 9} 44 Q${cx} 32 ${cx + 9} 44" stroke="${F.ink}" stroke-width="4.5" fill="none" stroke-linecap="round"/>`;
+        const shut = cx => `<path d="M${cx - 9} 41 Q${cx} 47 ${cx + 9} 41" stroke="${F.ink}" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+        let eyes, mouth, extra = '';
+        const cheeks = `<ellipse cx="42" cy="76" rx="9" ry="5.5" fill="${F.cheek}" opacity=".85"/><ellipse cx="118" cy="76" rx="9" ry="5.5" fill="${F.cheek}" opacity=".85"/>`;
+        const smile = `<path d="M60 74 Q80 92 100 74" stroke="${F.ink}" stroke-width="4.5" fill="none" stroke-linecap="round"/>`;
+        switch (mood) {
+            case 'happy':
+                eyes = arc(50) + arc(110);
+                mouth = `<path d="M58 72 Q80 100 102 72 Z" fill="${F.ink}"/><path d="M68 84 Q80 96 92 84 Q80 80 68 84 Z" fill="${F.cheek}"/>`;
+                extra = `<g fill="${F.gold}"><circle cx="18" cy="30" r="4"/><circle cx="146" cy="22" r="3"/></g><g fill="${F.cheek}"><rect x="8" y="58" width="7" height="7" rx="1.5" transform="rotate(20 11 61)"/><rect x="144" y="70" width="6" height="6" rx="1.5" transform="rotate(-25 147 73)"/></g>`;
+                break;
+            case 'sleep':
+                eyes = shut(50) + shut(110);
+                mouth = `<ellipse cx="80" cy="80" rx="5" ry="4" fill="${F.ink}"/>`;
+                extra = `<text x="128" y="20" font-family="system-ui, sans-serif" font-weight="800" font-size="18" fill="${F.shade}">z</text><text x="142" y="8" font-family="system-ui, sans-serif" font-weight="800" font-size="12" fill="${F.shade}">z</text>`;
+                break;
+            case 'think':
+                eyes = open(50, [-4, -4]) + open(110, [-4, -4]);
+                mouth = `<path d="M66 80 Q80 76 94 82" stroke="${F.ink}" stroke-width="4.5" fill="none" stroke-linecap="round"/>`;
+                extra = `<circle cx="146" cy="16" r="13" fill="#fff" stroke="${F.ink}" stroke-width="3"/><text x="146" y="22" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="800" font-size="17" fill="${F.ink}">?</text>`;
+                break;
+            case 'coin':
+                eyes = open(50, [2, 2]) + open(110, [-2, 2]);
+                mouth = smile;
+                extra = `<circle cx="80" cy="108" r="17" fill="${F.gold}" stroke="${F.ink}" stroke-width="4"/><circle cx="80" cy="108" r="11" fill="none" stroke="${F.goldDk}" stroke-width="2.5"/><text x="80" y="114" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="800" font-size="16" fill="${F.goldDk}">Q</text>`;
+                break;
+            case 'phone':
+                eyes = open(50, [3, 3]) + open(110, [-3, 3]);
+                mouth = smile;
+                extra = `<rect x="66" y="88" width="28" height="44" rx="6" fill="${F.ink}"/><rect x="70" y="93" width="20" height="32" rx="3" fill="#8fd8ff"/><g stroke="${F.gold}" stroke-width="3.5" fill="none" stroke-linecap="round"><path d="M100 98 Q106 106 100 114"/><path d="M107 92 Q117 106 107 120"/></g>`;
+                break;
+            default:
+                eyes = open(50, [1, 1]) + open(110, [-1, 1]);
+                mouth = smile;
+        }
+        const title = label ? `<title>${esc(label)}</title>` : '';
+        return `<svg class="frog frog-${mood}" viewBox="-4 -8 168 146" width="${size}" height="${Math.round(size * 146 / 168)}" role="${label ? 'img' : 'presentation'}" ${label ? '' : 'aria-hidden="true"'}>${title}
+            <ellipse cx="80" cy="134" rx="52" ry="5" fill="${F.ink}" opacity=".12"/>${outline}${fill}${cheeks}${eyes}${mouth}${extra}</svg>`;
     }
 
     // ================= Income profile: fixed salary vs flexible income, paydays and split =================
@@ -5013,7 +5105,7 @@
         const lang = state.lang === 'en' ? 'en' : 'es';
         el.innerHTML = `<div class="sheet" role="dialog" aria-modal="true" aria-labelledby="news-title" style="max-width:480px">
             <div class="grab"></div>
-            <div class="news-hero"><div class="ob-icon"><i data-lucide="megaphone"></i></div><h2 id="news-title" class="ob-h" style="font-size:24px">${esc(t('newsTitle'))}</h2>
+            <div class="news-hero">${frogSVG('hi', 110)}<h2 id="news-title" class="ob-h" style="font-size:24px">${esc(t('newsTitle'))}</h2>
                 <p class="tiny muted mt-1">${esc(new Date(n.id.slice(0, 10) + 'T12:00:00').toLocaleDateString(LOCALES[state.lang], { day: 'numeric', month: 'long', year: 'numeric' }))}</p></div>
             ${items.map(it => `<div class="news-item"><span class="set-ic"><i data-lucide="${it.icon}"></i></span><div><b>${esc(it[lang][0])}</b><p class="small muted mt-1">${esc(it[lang][1])}</p></div></div>`).join('')}
             <button class="btn btn-primary btn-block mt-5" onclick="closeNews()">${esc(t('newsOk'))}</button>
@@ -5086,7 +5178,7 @@
     }
     function emptyHTML(icon, title, text, btn, action) {
         return `<div class="empty">
-            <div class="empty-art" aria-hidden="true"><i class="spark s1"></i><i class="spark s2"></i><i class="spark s3"></i><span><i data-lucide="${icon}"></i></span></div>
+            <div class="empty-frog">${frogSVG({ 'party-popper': 'happy', 'trending-down': 'happy', 'calendar-clock': 'think', receipt: 'coin', target: 'coin' }[icon] || 'hi', 96)}</div>
             <p class="empty-t">${esc(title)}</p>
             <p class="small muted">${esc(text)}</p>
             ${btn ? `<button class="btn btn-primary btn-sm mt-3" onclick="${action}"><i data-lucide="plus"></i>${esc(btn)}</button>` : ''}
@@ -5132,17 +5224,45 @@
     }
 
     // ---------- welcome guide ----------
-    const OB = { open: false, step: 0, income: '', freq: 'monthly', currency: '', bills: [], wantCard: false, err: '' };
-    const OB_STEPS = 5;
+    Object.assign(I18N.es, {
+        obHiT: '¡Hola! Armemos tu presupuesto', obHiS: 'Son tres pasos cortos. Al final te digo cuánto puedes gastar cada día sin descuidar tus pagos.',
+        obPlanIncome: 'Tu ingreso', obPlanBills: 'Tus pagos fijos', obPlanDebt: 'Tu primera deuda (si tienes)',
+        obStepOf: 'Paso {n} de {t}',
+        obDebtT: '¿Tienes alguna deuda?', obDebtS: 'Tarjeta de crédito, préstamo, lo que sea. Agrega la que más te preocupa y te ayudo a pagarla con menos intereses.',
+        obDebtCard: 'Tarjeta de crédito', obDebtLoan: 'Préstamo', obDebtOther: 'Otra',
+        obDebtName: 'Nombre', obDebtNamePh: 'Ej. Visa BI', obDebtBal: 'Saldo total que debes', obDebtMin: 'Pago mínimo', obDebtPay: 'Cuota al mes', obDebtDay: 'Día límite de pago',
+        obDebtApr: 'Tasa anual (opcional)', obDebtAprHint: 'Viene en tu estado de cuenta. Si no la sabes, déjala vacía.',
+        obDebtAdd: 'Agregar deuda', obDebtAnother: 'Agregar otra', obDebtNone: 'No tengo deudas', obDebtErr: 'Completa nombre, saldo, pago y un día del 1 al 31.',
+        obWalletT: '¿Pagas con Apple Pay?', obWalletS: 'Puedo anotar tus compras solas: pagas con tu iPhone y el gasto aparece en Valiu con el monto y el comercio.',
+        obWalletYes: 'Sí, configurarlo al terminar', obWalletNo: 'Ahora no',
+        obGoWallet: 'Configurar Apple Pay'
+    });
+    Object.assign(I18N.en, {
+        obHiT: 'Hi! Let\'s build your budget', obHiS: 'Three short steps. At the end I\'ll tell you how much you can spend each day without missing a payment.',
+        obPlanIncome: 'Your income', obPlanBills: 'Your fixed bills', obPlanDebt: 'Your first debt (if you have one)',
+        obStepOf: 'Step {n} of {t}',
+        obDebtT: 'Do you have any debt?', obDebtS: 'A credit card, a loan, anything. Add the one that worries you most and I\'ll help you pay it with less interest.',
+        obDebtCard: 'Credit card', obDebtLoan: 'Loan', obDebtOther: 'Other',
+        obDebtName: 'Name', obDebtNamePh: 'e.g. Visa BI', obDebtBal: 'Total balance you owe', obDebtMin: 'Minimum payment', obDebtPay: 'Monthly payment', obDebtDay: 'Payment due day',
+        obDebtApr: 'Yearly rate (optional)', obDebtAprHint: 'It\'s on your statement. If you don\'t know it, leave it empty.',
+        obDebtAdd: 'Add debt', obDebtAnother: 'Add another', obDebtNone: 'I don\'t have debt', obDebtErr: 'Fill in name, balance, payment and a day from 1 to 31.',
+        obWalletT: 'Do you pay with Apple Pay?', obWalletS: 'I can log your purchases by myself: you pay with your iPhone and the expense shows up in Valiu with the amount and the store.',
+        obWalletYes: 'Yes, set it up when I finish', obWalletNo: 'Not now',
+        obGoWallet: 'Set up Apple Pay'
+    });
+    const OB = { open: false, step: 0, steps: [], currency: '', bills: [], debts: [], debtKind: 'cc', wantWallet: false, err: '' };
+    const obKey = () => OB.steps[OB.step];
     function needsOnboarding() {
         return !state.onboarded && !(state.income > 0) && !state.items.length && !state.expenses.length && !(state.goals || []).length;
     }
+    function walletOffer() { return !!(window.APP_CONFIG && typeof openWalletSetup === 'function' && /iphone|ipad|ipod/i.test(navigator.userAgent)); }
     function maybeOnboard() {
         if (OB.open) return;
         if (!needsOnboarding()) { maybeNews(); return; }
         const auth = $('auth'), lock = $('lock');
         if ((auth && auth.classList.contains('open')) || (lock && lock.classList.contains('open'))) { setTimeout(maybeOnboard, 900); return; }
-        OB.open = true; OB.step = 0; OB.err = '';
+        OB.open = true; OB.step = 0; OB.err = ''; OB.bills = []; OB.debts = []; OB.wantWallet = false;
+        OB.steps = ['hi', 'income', 'bills', 'debt', ...(walletOffer() ? ['wallet'] : []), 'reveal'];
         OB.currency = state.currencyCode && state.currencyCode !== 'USD' ? state.currencyCode : (state.lang === 'es' ? 'GTQ' : 'USD');
         state.currencyCode = OB.currency;
         IE.ob = ieNorm(ieFromState());
@@ -5157,14 +5277,18 @@
         if (!document.querySelector('.modal.open')) document.body.style.overflow = '';
     }
     function obSkip() { state.onboarded = true; state.seenNews = latestNews().id; obClose(); render(); }
-    function obGo(step) { OB.err = ''; OB.step = Math.max(0, Math.min(OB_STEPS - 1, step)); obRender(); }
+    function obGo(step) { OB.err = ''; OB.step = Math.max(0, Math.min(OB.steps.length - 1, step)); obRender(); const el = $('onboard'); if (el) el.scrollTop = 0; }
     function obNext() {
-        if (OB.step === 1) {
+        const k = obKey();
+        if (k === 'income') {
             IE.ob.touched = true;
             const e = ieValidate(IE.ob);
             if (e) { OB.err = e; obRender(); return; }
         }
-        if (OB.step === 2 && $('ob-name') && $('ob-name').value.trim() && $('ob-amount').value) { if (!obAddBill()) return; }
+        if (k === 'bills' && $('ob-name') && $('ob-name').value.trim() && $('ob-amount').value) { if (!obAddBill()) return; }
+        // With no debt added yet the button reads "Add debt", so an empty form must ask for the fields.
+        if (k === 'debt' && $('obd-name') && ($('obd-name').value.trim() || !OB.debts.length)) { if (!obAddDebt(false)) return; }
+        if (OB.steps[OB.step + 1] === 'reveal') { obFinish(); return; }
         obGo(OB.step + 1);
     }
     function obAddBill() {
@@ -5177,16 +5301,30 @@
     }
     function obDelBill(k) { OB.bills.splice(k, 1); obRender(); }
     function obSugg(name) { const n = $('ob-name'); if (n) { n.value = name; $('ob-amount').focus(); } }
-    function obCard(yes) { OB.wantCard = yes; obFinish(); }
+    function obDebtKind(k) { OB.debtKind = k; obRender(); }
+    function obAddDebt(rerender = true) {
+        const name = $('obd-name').value.trim(), bal = parseFloat($('obd-bal').value), pay = parseFloat($('obd-pay').value), day = parseInt($('obd-day').value, 10);
+        const apr = parseFloat($('obd-apr').value);
+        if (!name || !(bal > 0) || !(pay > 0) || !(day >= 1 && day <= 31)) { OB.err = t('obDebtErr'); obRender(); return false; }
+        OB.debts.push({ kind: OB.debtKind, name: name.slice(0, 40), bal: round2(bal), pay: round2(pay), day, apr: apr > 0 && apr < 200 ? round2(apr) : 0 });
+        OB.err = '';
+        if (rerender) obRender();
+        return true;
+    }
+    function obDelDebt(k) { OB.debts.splice(k, 1); obRender(); }
+    function obNoDebt() { OB.debts = []; OB.err = ''; if (OB.steps[OB.step + 1] === 'reveal') obFinish(); else obGo(OB.step + 1); }
+    function obWallet(yes) { OB.wantWallet = yes; obFinish(); }
     function obFinish() {
         ieApply(IE.ob);
         state.currencyCode = OB.currency || state.currencyCode;
         const today = new Date().getDate();
+        const base = { balance: 0, startBalance: 0, apr: 0, totalMonths: 0, monthsPaid: 0, completed: false, extraPaid: 0, lastPay: null, history: [] };
         // A bill whose day already passed this month was most likely paid already.
-        OB.bills.forEach(b => state.items.push({ id: uid(), type: 'fixed', subtype: null, name: b.name, amount: b.amount, date: b.date, balance: 0, startBalance: 0, apr: 0,
-            totalMonths: 0, monthsPaid: 0, paid: b.date < today, completed: false, extraPaid: 0, lastPay: null, history: [] }));
+        OB.bills.forEach(b => state.items.push({ ...base, id: uid(), type: 'fixed', subtype: null, name: b.name, amount: b.amount, date: b.date, paid: b.date < today }));
+        OB.debts.forEach(d => state.items.push({ ...base, id: uid(), type: 'debt', subtype: d.kind === 'other' ? null : d.kind, name: d.name, amount: d.pay, date: d.day,
+            balance: d.bal, startBalance: d.bal, apr: d.apr, paid: false }));
         state.onboarded = true; state.seenNews = latestNews().id; state.planMode = 'rec';
-        OB.step = 4;
+        OB.step = OB.steps.indexOf('reveal');
         resetCharts(); render(); obRender();
         const el = $('ob-reveal'), c = compute();
         if (el) { el._v = 0; countTo(el, c.dailyBudget, v => fmt(v)); }
@@ -5194,79 +5332,104 @@
     }
     function obDone() {
         obClose();
-        if (OB.wantCard && typeof openCardModal === 'function') setTimeout(() => openCardModal(), 250);
+        if (OB.wantWallet && typeof openWalletSetup === 'function') setTimeout(() => openWalletSetup(), 250);
     }
     function obRender() {
         const el = $('onboard'); if (!el) return;
-        const s = OB.step;
-        const dots = Array.from({ length: OB_STEPS }, (_, k) => `<i class="${k === s ? 'on' : k < s ? 'done' : ''}"></i>`).join('');
+        const s = OB.step, k = obKey(), total = OB.steps.length;
+        const dots = OB.steps.map((_, i) => `<i class="${i === s ? 'on' : i < s ? 'done' : ''}"></i>`).join('');
+        const final = k === 'reveal';
         const top = `<div class="ob-top">
-            ${s > 0 && s < 4 ? `<button class="icon-btn" onclick="obGo(${s - 1})" aria-label="${esc(t('obBack'))}"><i data-lucide="chevron-left"></i></button>` : '<span style="width:40px"></span>'}
-            <div class="ob-dots">${dots}</div>
-            ${s < 4 ? `<button class="btn-link small" onclick="obSkip()">${esc(t('obSkip'))}</button>` : '<span style="width:40px"></span>'}
+            ${s > 0 && !final ? `<button class="icon-btn" onclick="obGo(${s - 1})" aria-label="${esc(t('obBack'))}"><i data-lucide="chevron-left"></i></button>` : '<span style="width:40px"></span>'}
+            <div class="ob-dots" role="img" aria-label="${esc(t('obStepOf', { n: s + 1, t: total }))}">${dots}</div>
+            ${!final ? `<button class="btn-link small" onclick="obSkip()">${esc(t('obSkip'))}</button>` : '<span style="width:40px"></span>'}
         </div>`;
-        const err = OB.err ? `<p class="small danger mt-3">${esc(OB.err)}</p>` : '';
+        const err = OB.err ? `<p class="small danger mt-3" role="alert">${esc(OB.err)}</p>` : '';
+        const cta = (label, fn = 'obNext()') => `<button class="btn btn-primary btn-block ob-cta" onclick="${fn}">${esc(label)}<i data-lucide="arrow-right"></i></button>`;
         let body = '';
-        if (s === 0) {
-            body = `<div class="ob-hero"><img src="${document.querySelector('.brand-mark').src}" alt="" width="84" height="84"></div>
-                <h2 class="ob-h">${esc(t('obWelcomeT'))}</h2>
-                <p class="ob-s">${esc(t('obWelcomeS'))}</p>
-                <div class="ob-benefits">
-                    <div><span class="set-ic"><i data-lucide="wallet"></i></span>${esc(t('obB1'))}</div>
-                    <div><span class="set-ic"><i data-lucide="bell"></i></span>${esc(t('obB2'))}</div>
-                    <div><span class="set-ic"><i data-lucide="trending-down"></i></span>${esc(t('obB3'))}</div>
-                </div>
-                <button class="btn btn-primary btn-block ob-cta" onclick="obGo(1)">${esc(t('obStart'))}<i data-lucide="arrow-right"></i></button>`;
-        } else if (s === 1) {
+        if (k === 'hi') {
+            body = `<div class="ob-frog">${frogSVG('hi', 150)}</div>
+                <h2 class="ob-h center">${esc(t('obHiT'))}</h2>
+                <p class="ob-s center">${esc(t('obHiS'))}</p>
+                <ol class="ob-plan">
+                    <li><span class="set-ic"><i data-lucide="wallet"></i></span>${esc(t('obPlanIncome'))}</li>
+                    <li><span class="set-ic"><i data-lucide="calendar-days"></i></span>${esc(t('obPlanBills'))}</li>
+                    <li><span class="set-ic"><i data-lucide="credit-card"></i></span>${esc(t('obPlanDebt'))}</li>
+                </ol>
+                ${cta(t('obStart'))}`;
+        } else if (k === 'income') {
             const opts = ['GTQ', 'USD', 'MXN', 'EUR', 'HNL', 'CRC', 'COP', 'GBP'].map(c => `<option value="${c}" ${c === OB.currency ? 'selected' : ''}>${c}</option>`).join('');
-            body = `<div class="ob-icon"><i data-lucide="hand-coins"></i></div>
-                <h2 class="ob-h">${esc(t('obIncomeT'))}</h2>
+            body = `<h2 class="ob-h">${esc(t('obIncomeT'))}</h2>
                 <p class="ob-s">${esc(t('obIncomeS'))}</p>
                 <div class="row mt-4" style="gap:10px"><label class="label" for="ob-cur" style="margin:0">${esc(t('currencyLabel'))}</label>
                     <select id="ob-cur" class="input" style="width:120px" onchange="OB.currency=this.value; state.currencyCode=this.value; ieRefresh('ob')">${opts}</select></div>
                 ${ieHTML('ob')}
-                <button class="btn btn-primary btn-block ob-cta" onclick="obNext()">${esc(t('obNext'))}<i data-lucide="arrow-right"></i></button>`;
-        } else if (s === 2) {
+                ${cta(t('obNext'))}`;
+        } else if (k === 'bills') {
             const sugg = t('obSugg').split(',').filter(n => !OB.bills.some(b => b.name === n)).map(n => `<button class="chip" onclick="obSugg('${esc(n)}')">${esc(n)}</button>`).join('');
-            const list = OB.bills.length ? OB.bills.map((b, k) => `<div class="list-row"><span class="emoji-badge">🧾</span><div class="grow"><p class="truncate" style="font-weight:600">${esc(b.name)}</p><p class="tiny muted">${esc(t('obBillDay'))} ${b.date}</p></div><b class="num">${fmt(b.amount)}</b><button class="icon-btn sm del" onclick="obDelBill(${k})" aria-label="${esc(t('deleteBtn'))}"><i data-lucide="x"></i></button></div>`).join('')
+            const list = OB.bills.length ? OB.bills.map((b, i) => `<div class="list-row"><span class="emoji-badge">🧾</span><div class="grow"><p class="truncate" style="font-weight:600">${esc(b.name)}</p><p class="tiny muted">${esc(t('obBillDay'))} ${b.date}</p></div><b class="num">${fmt(b.amount)}</b><button class="icon-btn sm del" onclick="obDelBill(${i})" aria-label="${esc(t('deleteBtn'))}"><i data-lucide="x"></i></button></div>`).join('')
                 : `<p class="small faint">${esc(t('obBillsNone'))}</p>`;
-            body = `<div class="ob-icon"><i data-lucide="calendar-days"></i></div>
-                <h2 class="ob-h">${esc(t('obBillsT'))}</h2>
+            body = `<h2 class="ob-h">${esc(t('obBillsT'))}</h2>
                 <p class="ob-s">${esc(t('obBillsS'))}</p>
                 <div class="chips mt-4">${sugg}</div>
                 <div class="ob-bill mt-3">
-                    <input id="ob-name" class="input" maxlength="40" placeholder="${esc(t('obBillName'))}">
-                    <input id="ob-amount" class="input" type="number" inputmode="decimal" min="0" step="0.01" placeholder="${esc(t('obBillAmount'))}">
-                    <input id="ob-day" class="input" type="number" inputmode="numeric" min="1" max="31" placeholder="${esc(t('obBillDay'))}" onkeydown="if(event.key==='Enter')obAddBill()">
+                    <input id="ob-name" class="input" maxlength="40" placeholder="${esc(t('obBillName'))}" aria-label="${esc(t('obBillName'))}">
+                    <input id="ob-amount" class="input" type="number" inputmode="decimal" min="0" step="0.01" placeholder="${esc(t('obBillAmount'))}" aria-label="${esc(t('obBillAmount'))}">
+                    <input id="ob-day" class="input" type="number" inputmode="numeric" min="1" max="31" placeholder="${esc(t('obBillDay'))}" aria-label="${esc(t('obBillDay'))}" onkeydown="if(event.key==='Enter')obAddBill()">
                     <button class="btn btn-soft" onclick="obAddBill()"><i data-lucide="plus"></i><span>${esc(t('obBillAdd'))}</span></button>
                 </div>
                 ${err}
                 <div class="mt-4">${list}</div>
-                <button class="btn btn-primary btn-block ob-cta" onclick="obNext()">${esc(t('obNext'))}<i data-lucide="arrow-right"></i></button>`;
-        } else if (s === 3) {
-            body = `<div class="ob-icon"><i data-lucide="credit-card"></i></div>
-                <h2 class="ob-h">${esc(t('obCardT'))}</h2>
-                <p class="ob-s">${esc(t('obCardS'))}</p>
-                <div class="ob-cardart" aria-hidden="true"><span class="chip-gold"></span><span class="ln l1"></span><span class="ln l2"></span></div>
+                ${cta(t('obNext'))}`;
+        } else if (k === 'debt') {
+            const kinds = [['cc', 'obDebtCard'], ['loan', 'obDebtLoan'], ['other', 'obDebtOther']].map(([v, l]) => `<button type="button" class="${OB.debtKind === v ? 'active' : ''}" onclick="obDebtKind('${v}')">${esc(t(l))}</button>`).join('');
+            const list = OB.debts.map((d, i) => `<div class="list-row"><span class="emoji-badge">${d.kind === 'cc' ? '💳' : d.kind === 'loan' ? '🏦' : '📄'}</span><div class="grow"><p class="truncate" style="font-weight:600">${esc(d.name)}</p><p class="tiny muted">${fmt(d.pay)} · ${esc(t('obBillDay'))} ${d.day}${d.apr ? ' · ' + d.apr + '%' : ''}</p></div><b class="num">${fmt(d.bal, 0)}</b><button class="icon-btn sm del" onclick="obDelDebt(${i})" aria-label="${esc(t('deleteBtn'))}"><i data-lucide="x"></i></button></div>`).join('');
+            body = `<div class="ob-frog sm">${frogSVG('think', 96)}</div>
+                <h2 class="ob-h">${esc(t('obDebtT'))}</h2>
+                <p class="ob-s">${esc(t('obDebtS'))}</p>
+                ${list ? `<div class="mt-4">${list}</div>` : ''}
+                <div class="ob-debt mt-4">
+                    <div class="seg-wide three">${kinds}</div>
+                    <div><label class="label" for="obd-name">${esc(t('obDebtName'))}</label><input id="obd-name" class="input" maxlength="40" placeholder="${esc(OB.debtKind === 'cc' ? t('obDebtNamePh') : '')}"></div>
+                    <div class="form-grid">
+                        <div><label class="label" for="obd-bal">${esc(t('obDebtBal'))}</label><input id="obd-bal" class="input" type="number" inputmode="decimal" min="0" step="0.01"></div>
+                        <div><label class="label" for="obd-pay">${esc(t(OB.debtKind === 'cc' ? 'obDebtMin' : 'obDebtPay'))}</label><input id="obd-pay" class="input" type="number" inputmode="decimal" min="0" step="0.01"></div>
+                    </div>
+                    <div class="form-grid">
+                        <div><label class="label" for="obd-day">${esc(t('obDebtDay'))}</label><input id="obd-day" class="input" type="number" inputmode="numeric" min="1" max="31"></div>
+                        <div><label class="label" for="obd-apr">${esc(t('obDebtApr'))}</label><input id="obd-apr" class="input" type="number" inputmode="decimal" min="0" max="200" step="0.01" placeholder="%"></div>
+                    </div>
+                    <p class="tiny muted">${esc(t('obDebtAprHint'))}</p>
+                    ${list ? `<button class="btn btn-soft btn-block" onclick="obAddDebt()"><i data-lucide="plus"></i>${esc(t('obDebtAnother'))}</button>` : ''}
+                </div>
+                ${err}
                 <div class="stack ob-cta" style="gap:10px">
-                    <button class="btn btn-primary btn-block" onclick="obCard(true)"><i data-lucide="credit-card"></i>${esc(t('obCardYes'))}</button>
-                    <button class="btn btn-ghost btn-block" onclick="obCard(false)">${esc(t('obCardNo'))}</button>
+                    <button class="btn btn-primary btn-block" onclick="obNext()">${esc(list ? t('obNext') : t('obDebtAdd'))}<i data-lucide="arrow-right"></i></button>
+                    ${list ? '' : `<button class="btn btn-ghost btn-block" onclick="obNoDebt()">${esc(t('obDebtNone'))}</button>`}
+                </div>`;
+        } else if (k === 'wallet') {
+            body = `<div class="ob-frog">${frogSVG('phone', 150)}</div>
+                <h2 class="ob-h center">${esc(t('obWalletT'))}</h2>
+                <p class="ob-s center">${esc(t('obWalletS'))}</p>
+                <div class="stack ob-cta" style="gap:10px">
+                    <button class="btn btn-primary btn-block" onclick="obWallet(true)">${esc(t('obWalletYes'))}</button>
+                    <button class="btn btn-ghost btn-block" onclick="obWallet(false)">${esc(t('obWalletNo'))}</button>
                 </div>`;
         } else {
             const c = compute();
-            body = `<div class="ob-icon party"><i data-lucide="party-popper"></i></div>
-                <p class="ob-s" style="margin-top:6px">${esc(t('obRevealT'))}</p>
+            body = `<div class="ob-frog">${frogSVG('happy', 150)}</div>
+                <p class="ob-s center" style="margin-top:6px">${esc(t('obRevealT'))}</p>
                 <p id="ob-reveal" class="ob-reveal serif num">${fmt(0)}</p>
-                <p class="ob-s">${esc(t('obRevealS'))}</p>
+                <p class="ob-s center">${esc(t('obRevealS'))}</p>
                 <div class="note plain small mt-4">${esc(t('obRevealLine', { income: fmt(c.income, 0), fixed: fmt(c.fixed, 0), save: fmt(Math.max(0, c.income - c.fixed - c.buffer), 0) }))}</div>
-                <button class="btn btn-primary btn-block ob-cta" onclick="obDone()">${esc(OB.wantCard ? t('obGoCard') : t('obGo'))}<i data-lucide="arrow-right"></i></button>`;
+                ${cta(OB.wantWallet ? t('obGoWallet') : t('obGo'), 'obDone()')}`;
         }
-        el.innerHTML = `<div class="ob-wrap">${top}<div class="ob-body" key="${s}">${body}</div></div>`;
+        el.innerHTML = `<div class="ob-wrap">${top}<div class="ob-body">${body}</div></div>`;
         if (window.lucide) lucide.createIcons();
-        if (s === 1) { ieRefresh('ob'); setTimeout(() => { const i = $('ie-ob-amount'); if (i && !IE.ob.amount && document.activeElement === document.body) i.focus(); }, 80); }
+        if (k === 'income') { ieRefresh('ob'); setTimeout(() => { const i = $('ie-ob-amount'); if (i && !IE.ob.amount && document.activeElement === document.body) i.focus(); }, 80); }
     }
     // Remote data arrived (another device) while the guide is open: the user already has a budget.
-    function obCheckRemote() { if (OB.open && OB.step < 4 && (state.income > 0 || state.items.length)) { state.onboarded = true; obClose(); } }
+    function obCheckRemote() { if (OB.open && obKey() !== 'reveal' && (state.income > 0 || state.items.length)) { state.onboarded = true; obClose(); } }
 
     // ---------- zoom: double-tap zoom is turned off with CSS (touch-action: manipulation) and 16px inputs ----------
     // iOS standalone apps also honor the viewport limit; block the pinch gesture there only.
@@ -5280,6 +5443,11 @@
         aTagline: 'Tu dinero, claro y bajo control.',
         aLoginTitle: 'Inicia sesión', aEmail: 'Correo electrónico', aPassword: 'Contraseña', aPassword2: 'Confirma la contraseña',
         aLoginBtn: 'Entrar', aNoAccount: '¿No tienes cuenta?', aCreate: 'Crear cuenta', aForgot: '¿Olvidaste tu contraseña?',
+        aShow: 'Mostrar', aHide: 'Ocultar',
+        awTitle: 'Tu dinero, sin sustos', awBody: 'Valiu te dice cuánto puedes gastar hoy, te avisa antes de cada pago y te ayuda a salir de deudas.',
+        awP1: 'Un límite diario que se ajusta a tus días de pago', awP2: 'Un plan para pagar tus tarjetas con menos intereses', awP3: 'Tus compras con Apple Pay se anotan solas',
+        awCreate: 'Crear mi cuenta', awHave: 'Ya tengo cuenta', awFree: 'Gratis. Toma un par de minutos.',
+        awStep1: 'Paso 1 de 3 · Tu cuenta', awStep2: 'Paso 2 de 3 · Tu PIN',
         aSignupTitle: 'Crea tu cuenta', aSignupBtn: 'Crear cuenta', aHaveAccount: '¿Ya tienes cuenta?', aLoginLink: 'Inicia sesión',
         aPwHint: 'Mínimo 8 caracteres.',
         aCheckTitle: 'Revisa tu correo', aCheckBody: 'Te enviamos un enlace a {email}. Ábrelo desde este dispositivo para confirmar tu cuenta.', aBack: 'Volver',
@@ -5309,6 +5477,11 @@
         aTagline: 'Your money, clear and under control.',
         aLoginTitle: 'Sign in', aEmail: 'Email', aPassword: 'Password', aPassword2: 'Confirm password',
         aLoginBtn: 'Sign in', aNoAccount: "Don't have an account?", aCreate: 'Create account', aForgot: 'Forgot your password?',
+        aShow: 'Show', aHide: 'Hide',
+        awTitle: 'Your money, no surprises', awBody: 'Valiu tells you how much you can spend today, reminds you before every payment and helps you get out of debt.',
+        awP1: 'A daily limit that follows your paydays', awP2: 'A plan to pay off your cards with less interest', awP3: 'Your Apple Pay purchases log themselves',
+        awCreate: 'Create my account', awHave: 'I already have an account', awFree: 'Free. Takes a couple of minutes.',
+        awStep1: 'Step 1 of 3 · Your account', awStep2: 'Step 2 of 3 · Your PIN',
         aSignupTitle: 'Create your account', aSignupBtn: 'Create account', aHaveAccount: 'Already have an account?', aLoginLink: 'Sign in',
         aPwHint: 'At least 8 characters.',
         aCheckTitle: 'Check your email', aCheckBody: 'We sent a link to {email}. Open it on this device to confirm your account.', aBack: 'Back',
@@ -5452,12 +5625,12 @@
     const validEmail = e => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
 
     // ---------- screens ----------
-    function authShell(inner) {
+    function authShell(inner, bare) {
         return `<div class="auth-inner"><div class="auth-card">
-            <div class="auth-brand">
+            ${bare ? '' : `<div class="auth-brand">
                 <img src="data:image/png;base64,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" alt="" width="84" height="84">
                 <h1 class="wordmark" style="font-size:34px"><span>V</span>aliu</h1><p class="muted small">${esc(t('aTagline'))}</p>
-            </div>
+            </div>`}
             ${inner}
             <div class="auth-lang">
                 <button class="${state.lang === 'es' ? 'on' : ''}" onclick="authLang('es')">Español</button><span>·</span>
@@ -5465,7 +5638,10 @@
             </div>
         </div></div>`;
     }
-    const field = (id, label, type, val = '', extra = '') => `<div><label class="label" for="${id}">${esc(label)}</label><input id="${id}" type="${type}" class="input" value="${esc(val)}" ${extra}></div>`;
+    const field = (id, label, type, val = '', extra = '') => type === 'password'
+        ? `<div><label class="label" for="${id}">${esc(label)}</label><div class="pw-wrap"><input id="${id}" type="password" class="input" value="${esc(val)}" ${extra}><button type="button" class="pw-eye" onclick="togglePw('${id}', this)" aria-controls="${id}">${esc(t('aShow'))}</button></div></div>`
+        : `<div><label class="label" for="${id}">${esc(label)}</label><input id="${id}" type="${type}" class="input" value="${esc(val)}" ${extra}></div>`;
+    function togglePw(id, btn) { const i = $(id); const show = i.type === 'password'; i.type = show ? 'text' : 'password'; btn.textContent = t(show ? 'aHide' : 'aShow'); i.focus(); }
     const msgP = o => `<p id="a-msg" class="small ${o.ok ? 'accent' : 'danger'}" style="min-height:20px">${esc(o.msg || '')}</p>`;
     function keypadAuth() {
         const k = n => `<button onclick="authKey('${n}')">${n}</button>`;
@@ -5477,7 +5653,20 @@
         AUTH.view = view; AUTH.opts = opts;
         const el = $('auth'), dev = getDevice();
         let html = '';
-        if (view === 'loading') html = `<p class="muted" style="text-align:center">${esc(t('aLoading'))}</p>`;
+        if (view === 'welcome') html = `<div class="auth-welcome">
+                <div class="aw-frog">${frogSVG('hi', 170)}</div>
+                <h1 class="aw-h">${esc(t('awTitle'))}</h1>
+                <p class="muted">${esc(t('awBody'))}</p>
+                <ul class="aw-list">
+                    <li>${frogSVG('coin', 44)}<span>${esc(t('awP1'))}</span></li>
+                    <li>${frogSVG('think', 44)}<span>${esc(t('awP2'))}</span></li>
+                    <li>${frogSVG('phone', 44)}<span>${esc(t('awP3'))}</span></li>
+                </ul>
+                <button class="btn btn-primary btn-block" onclick="showAuth('signup')">${esc(t('awCreate'))}</button>
+                <button class="btn btn-ghost btn-block" onclick="showAuth('login')">${esc(t('awHave'))}</button>
+                <p class="tiny faint" style="text-align:center">${esc(t('awFree'))}</p>
+            </div>`;
+        else if (view === 'loading') html = `<p class="muted" style="text-align:center">${esc(t('aLoading'))}</p>`;
         else if (view === 'delete') html = deleteViewHTML();
         else if (view === 'config') html = `<h2 class="auth-h">${esc(t('aConfigTitle'))}</h2><p class="small muted">${esc(t('aConfigBody'))}</p>`;
         else if (view === 'login') html = `<h2 class="auth-h">${esc(t('aLoginTitle'))}</h2>
@@ -5490,11 +5679,10 @@
             <div class="auth-links"><button class="btn-link small" onclick="showAuth('forgot', {email: $('a-email').value})">${esc(t('aForgot'))}</button>
             <p class="small muted">${esc(t('aNoAccount'))} <button class="btn-link small" onclick="showAuth('signup', {email: $('a-email').value})">${esc(t('aCreate'))}</button></p>
             ${legalLinkHTML('btn-link tiny muted')}</div>`;
-        else if (view === 'signup') html = `<h2 class="auth-h">${esc(t('aSignupTitle'))}</h2>
+        else if (view === 'signup') html = `<p class="tiny muted">${esc(t('awStep1'))}</p><h2 class="auth-h">${esc(t('aSignupTitle'))}</h2>
             <form class="stack" style="gap:12px" onsubmit="event.preventDefault(); doSignup()">
                 ${field('a-email', t('aEmail'), 'email', opts.email || '', 'autocomplete="email" inputmode="email" required')}
                 ${field('a-pass', t('aPassword'), 'password', '', 'autocomplete="new-password" minlength="8" required')}
-                ${field('a-pass2', t('aPassword2'), 'password', '', 'autocomplete="new-password" minlength="8" required')}
                 <p class="tiny muted">${esc(t('aPwHint'))}</p>
                 <label class="row small" style="gap:10px; align-items:flex-start; cursor:pointer"><input type="checkbox" id="a-agree" style="width:18px; height:18px; margin-top:2px; accent-color: var(--accent)">
                     <span>${esc(t('signupAgree', { link: '\u0000' })).replace('\u0000', `<a class="btn-link small" href="${legalUrl()}" target="_blank" rel="noopener">${esc(t('signupAgreeLink'))}</a>`)}</span></label>
@@ -5517,7 +5705,7 @@
             </form>`;
         else if (view === 'pinset') {
             AUTH.pinBuf = ''; AUTH.pinStage = 'new'; AUTH.pinFirst = '';
-            html = `<div class="auth-pin"><h2 class="auth-h" id="a-pin-title">${esc(t(opts.reset || opts.change ? 'aPinResetTitle' : 'aPinCreateTitle'))}</h2><p class="small muted" id="a-pin-body">${esc(t(opts.reset || opts.change ? 'aPinResetBody' : 'aPinCreateBody'))}</p>
+            html = `<div class="auth-pin">${opts.reset || opts.change ? '' : `<p class="tiny muted">${esc(t('awStep2'))}</p>`}<h2 class="auth-h" id="a-pin-title">${esc(t(opts.reset || opts.change ? 'aPinResetTitle' : 'aPinCreateTitle'))}</h2><p class="small muted" id="a-pin-body">${esc(t(opts.reset || opts.change ? 'aPinResetBody' : 'aPinCreateBody'))}</p>
                 ${dotsAuth(0)}${keypadAuth()}${msgP(opts)}</div>`;
         } else if (view === 'pinverify') {
             AUTH.pinBuf = '';
@@ -5532,11 +5720,11 @@
                 <div class="auth-links"><button class="btn-link small" onclick="showAuth('login', {email: (getDevice()||{}).email})">${esc(t('aUsePassword'))}</button>
                 ${opts.relock ? '' : `<button class="btn-link small muted" onclick="switchAccount()">${esc(t('aOtherAccount'))}</button>`}</div></div>`;
         }
-        el.innerHTML = authShell(html);
+        el.innerHTML = authShell(html, view === 'welcome');
         el.classList.add('open');
         document.body.style.overflow = 'hidden';
         const first = el.querySelector('input:not([readonly])');
-        if (first && view !== 'pin') setTimeout(() => first.focus(), 50);
+        if (first && view !== 'pin' && view !== 'welcome') setTimeout(() => first.focus(), 50);
     }
     function hideAuth() { $('auth').classList.remove('open'); $('auth').innerHTML = ''; document.body.style.overflow = ''; AUTH.view = null; }
     function setAuthMsg(msg, ok) { const m = $('a-msg'); if (m) { m.textContent = msg; m.className = 'small ' + (ok ? 'accent' : 'danger'); } }
@@ -5555,10 +5743,9 @@
         } catch (e) { setAuthMsg(authErr(e)); } finally { busy(false); }
     }
     async function doSignup() {
-        const email = $('a-email').value.trim(), p1 = $('a-pass').value, p2 = $('a-pass2').value;
+        const email = $('a-email').value.trim(), p1 = $('a-pass').value;
         if (!validEmail(email)) return setAuthMsg(t('eEmail'));
         if (p1.length < 8) return setAuthMsg(t('eWeak'));
-        if (p1 !== p2) return setAuthMsg(t('eMatch'));
         if (!$('a-agree').checked) return setAuthMsg(t('eAgree'));
         busy(true);
         try {
@@ -5735,14 +5922,17 @@
             } catch (e) { sync.on = false; }
             renderSyncStatus();
         };
-        pullRemote(true).finally(() => setTimeout(maybeOnboard, 300));
+        lsSet('ap.known', '1');
+        pullRemote(true).finally(() => { if (typeof importWalletInbox === 'function') importWalletInbox(); setTimeout(maybeOnboard, 300); });
         try {
             if (AUTH.channel) sb.removeChannel(AUTH.channel);
             AUTH.channel = sb.channel('app_state_' + uid)
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'app_state', filter: 'user_id=eq.' + uid }, p => {
                     const r = p.new;
                     if (r && r.data && +r.updated_at > (state.updatedAt || 0) && applyRemote(JSON.stringify(r.data))) { render(); toast(t('syncUpdated')); }
-                }).subscribe();
+                })
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'wallet_inbox', filter: 'user_id=eq.' + uid }, () => { if (typeof importWalletInbox === 'function') importWalletInbox(); })
+                .subscribe();
         } catch (e) { /* realtime is optional; focus refresh still works */ }
     }
     window.addEventListener('online', () => { if (AUTH.started) pullRemote(true); });
@@ -5751,7 +5941,7 @@
         if (!window.APP_CONFIG || !AUTH.started) return;
         if (document.hidden) { AUTH.hiddenAt = Date.now(); return; }
         if (AUTH.hiddenAt && Date.now() - AUTH.hiddenAt > 2 * 60 * 1000 && getDevice()) showAuth('pin', { relock: true });
-        else pullRemote(false);
+        else { pullRemote(false); if (typeof importWalletInbox === 'function') setTimeout(importWalletInbox, 900); }
     });
     document.addEventListener('keydown', e => {
         if (!AUTH.view || !['pin', 'pinset', 'pinverify'].includes(AUTH.view)) return;
@@ -5797,7 +5987,7 @@
             return;
         }
         const dev = getDevice();
-        if (dev && lsGet(VAULT_KEY)) showAuth('pin'); else showAuth('login');
+        if (dev && lsGet(VAULT_KEY)) showAuth('pin'); else showAuth(lsGet('ap.known') ? 'login' : 'welcome');
     }
 
     // ================= Web version: reminders (Web Push), delete account, legal links =================
@@ -5939,6 +6129,176 @@
     // ---------- legal ----------
     const legalUrl = () => 'privacidad.html' + (state.lang === 'en' ? '#en' : '');
     function legalLinkHTML(cls = 'btn-link small') { return `<a class="${cls}" href="${legalUrl()}" target="_blank" rel="noopener">${esc(t('legalLink'))}</a>`; }
+
+    // ================= Apple Pay tracker (web version): iPhone Shortcuts automation → Edge Function → inbox → expenses =================
+    Object.assign(I18N.es, {
+        wTitle: 'Gastos de Apple Pay automáticos', wRow: 'Apple Pay automático',
+        wIntro: 'Cada vez que pagues con Apple Pay en tu iPhone, el gasto aparece solo en Valiu, con el monto y el comercio.',
+        wOnlyIos: 'Funciona en iPhone con iOS 17 o más reciente, con las tarjetas que tengas en Wallet.',
+        wStep1: 'Crea tu enlace personal', wStep1S: 'Es como una llave: quien la tenga puede agregar gastos a tu cuenta, así que no la compartas.',
+        wCreate: 'Crear mi enlace', wNew: 'Crear un enlace nuevo', wCopy: 'Copiar enlace', wCopied: 'Enlace copiado',
+        wHave: 'Ya tienes un enlace activo desde el {d}. Por seguridad no lo mostramos otra vez; si lo perdiste, crea uno nuevo (el anterior deja de funcionar).',
+        wShowOnce: 'Cópialo ahora: solo se muestra esta vez.',
+        wStep2: 'Crea la automatización en Atajos', wStep2S: 'Toma un par de minutos y solo se hace una vez.',
+        wA1: 'Abre la app <b>Atajos</b> y entra a <b>Automatización</b>.',
+        wA2: 'Toca <b>+</b> (o <b>Nueva automatización</b>) y elige <b>Transacción</b>.',
+        wA3: 'Marca tus tarjetas, elige <b>Ejecutar de inmediato</b> y toca <b>Siguiente</b>.',
+        wA4: 'Elige <b>Nueva automatización en blanco</b> y agrega la acción <b>Obtener contenido de URL</b>.',
+        wA5: 'Pega tu enlace donde dice <b>URL</b>. Toca la flecha <b>›</b> y cambia el <b>Método</b> a <b>POST</b>.',
+        wA6: 'En <b>Cuerpo de la solicitud</b> elige <b>JSON</b> y agrega dos campos de texto: <b>amount</b> con la variable <b>Importe</b>, y <b>merchant</b> con la variable <b>Comerciante</b>. Opcional: <b>card</b> con <b>Tarjeta o pase</b>.',
+        wA7: 'Toca <b>OK</b>. Listo.',
+        wShortcutBtn: 'Agregar el atajo de Valiu', wShortcutS: 'Si prefieres, instala el atajo ya armado y pega tu enlace cuando te lo pida. Luego, en el paso 4, agrega la acción <b>Ejecutar atajo → Valiu gasto</b> en vez de «Obtener contenido de URL».',
+        wStep3: 'Prueba la conexión', wTest: 'Probar conexión', wTestOk: '¡Conectado! Tu iPhone ya puede mandar gastos a Valiu.', wTestFail: 'No se pudo conectar: {msg}',
+        wNeedSetup: 'Falta activar esta función en el servidor (paso de Supabase).',
+        wRevoke: 'Desactivar y borrar mi enlace', wRevoked: 'Listo: tu enlace ya no funciona.',
+        wNote: 'La categoría se adivina por el nombre del comercio; puedes cambiarla o borrar el gasto como cualquier otro.',
+        wToast1: '🧾 Gasto de Apple Pay: {x} en {m}', wToastN: '🧾 {n} gastos de Apple Pay agregados', wDefault: 'Apple Pay',
+        wOn: 'Activo', wOff: 'Sin configurar'
+    });
+    Object.assign(I18N.en, {
+        wTitle: 'Automatic Apple Pay expenses', wRow: 'Automatic Apple Pay',
+        wIntro: 'Every time you pay with Apple Pay on your iPhone, the expense shows up in Valiu by itself, with the amount and the store.',
+        wOnlyIos: 'Works on iPhone with iOS 17 or later, with the cards in your Wallet.',
+        wStep1: 'Create your personal link', wStep1S: 'It works like a key: anyone who has it can add expenses to your account, so don\'t share it.',
+        wCreate: 'Create my link', wNew: 'Create a new link', wCopy: 'Copy link', wCopied: 'Link copied',
+        wHave: 'You have an active link since {d}. For safety we don\'t show it again; if you lost it, create a new one (the old one stops working).',
+        wShowOnce: 'Copy it now: it\'s only shown this once.',
+        wStep2: 'Create the automation in Shortcuts', wStep2S: 'It takes a couple of minutes and you only do it once.',
+        wA1: 'Open the <b>Shortcuts</b> app and go to <b>Automation</b>.',
+        wA2: 'Tap <b>+</b> (or <b>New Automation</b>) and choose <b>Transaction</b>.',
+        wA3: 'Select your cards, choose <b>Run Immediately</b> and tap <b>Next</b>.',
+        wA4: 'Choose <b>New Blank Automation</b> and add the <b>Get Contents of URL</b> action.',
+        wA5: 'Paste your link where it says <b>URL</b>. Tap the <b>›</b> arrow and change <b>Method</b> to <b>POST</b>.',
+        wA6: 'Under <b>Request Body</b> choose <b>JSON</b> and add two text fields: <b>amount</b> with the <b>Amount</b> variable, and <b>merchant</b> with the <b>Merchant</b> variable. Optional: <b>card</b> with <b>Card or Pass</b>.',
+        wA7: 'Tap <b>Done</b>. That\'s it.',
+        wShortcutBtn: 'Add the Valiu shortcut', wShortcutS: 'If you prefer, install the ready-made shortcut and paste your link when it asks. Then in step 4, add <b>Run Shortcut → Valiu gasto</b> instead of “Get Contents of URL”.',
+        wStep3: 'Test the connection', wTest: 'Test connection', wTestOk: 'Connected! Your iPhone can now send expenses to Valiu.', wTestFail: 'Couldn\'t connect: {msg}',
+        wNeedSetup: 'This feature still needs to be turned on on the server (Supabase step).',
+        wRevoke: 'Turn off and delete my link', wRevoked: 'Done: your link no longer works.',
+        wNote: 'The category is guessed from the store name; you can change it or delete the expense like any other.',
+        wToast1: '🧾 Apple Pay expense: {x} at {m}', wToastN: '🧾 {n} Apple Pay expenses added', wDefault: 'Apple Pay',
+        wOn: 'On', wOff: 'Not set up'
+    });
+
+    const W = { token: null, info: null, loaded: false, importing: false };
+    const fnUrl = () => ((window.APP_CONFIG || {}).supabaseUrl || '').replace(/\/$/, '') + '/functions/v1/gasto';
+    const walletLink = tok => `${fnUrl()}?t=${tok}`;
+    function b64url(bytes) { return btoa(String.fromCharCode(...bytes)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+    async function sha256Hex(s) { const d = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)); return [...new Uint8Array(d)].map(b => b.toString(16).padStart(2, '0')).join(''); }
+
+    // ---------- category guess from the store name ----------
+    const CAT_RULES = [
+        ['food', /walmart|paiz|la torre|despensa|maxi ?despensa|super|pricesmart|econosuper|mercado|carnicer|tienda|abarrot/i],
+        ['eat', /pollo campero|campero|mcdonald|burger|pizza|domino|kfc|subway|starbucks|caf[eé]|restaur|taco|sushi|wendy|little caesars|panader|pastel|uber ?eats|pedidos ?ya|hugo|rappi/i],
+        ['transport', /uber|indriver|didi|gasolin|shell|puma|texaco|uno |parqueo|parking|transmetro|bus|peaje/i],
+        ['health', /farmacia|cruz verde|galeno|batres|meykos|hospital|cl[ií]nica|laborator|dental|[oó]ptica/i],
+        ['bills', /tigo|claro|eegsa|energuate|empagua|cable|internet|netflix|spotify|apple\.com|icloud|google|disney|hbo|amazon prime|youtube/i],
+        ['fun', /cine|cinepolis|cinemark|steam|playstation|xbox|nintendo|bar |discoteca|concierto|boleto|ticket/i]
+    ];
+    function guessCat(merchant) { const m = String(merchant || ''); const r = CAT_RULES.find(([, re]) => re.test(m)); return r ? r[0] : 'other'; }
+
+    // ---------- inbox → expenses ----------
+    async function importWalletInbox() {
+        if (!AUTH.sb || !AUTH.user || W.importing) return;
+        W.importing = true;
+        try {
+            const { data, error } = await AUTH.sb.from('wallet_inbox').select('id, amount, merchant, card, created_at').order('created_at').limit(200);
+            if (error || !data || !data.length) return;
+            const added = [];
+            data.forEach(r => {
+                const id = 'w' + String(r.id).replace(/[^0-9a-f]/gi, '').slice(0, 24);
+                if (state.expenses.some(e => e.id === id)) return;
+                const amount = round2(+r.amount);
+                if (!(amount > 0)) return;
+                const ts = Date.parse(r.created_at) || Date.now();
+                const note = String(r.merchant || t('wDefault')).slice(0, 60);
+                const e = { id, amount, note, ts, period: periodKey(new Date(ts)), cat: guessCat(r.merchant) };
+                state.expenses.push(e); added.push(e);
+            });
+            if (added.length) {
+                render();
+                toast(added.length === 1 ? t('wToast1', { x: fmt(added[0].amount), m: added[0].note }) : t('wToastN', { n: added.length }));
+            }
+            // Saved locally (and queued to sync) before clearing the inbox.
+            await AUTH.sb.from('wallet_inbox').delete().in('id', data.map(r => r.id));
+        } catch (e) { /* try again on next open */ } finally { W.importing = false; }
+    }
+
+    // ---------- setup sheet ----------
+    async function loadWalletInfo() {
+        try {
+            const { data, error } = await AUTH.sb.from('wallet_tokens').select('created_at, last_used').maybeSingle();
+            W.info = error ? { missing: /relation|does not exist|schema cache/i.test(error.message || '') } : data;
+        } catch (e) { W.info = null; }
+        W.loaded = true;
+    }
+    async function createWalletLink() {
+        try {
+            const bytes = crypto.getRandomValues(new Uint8Array(32)), token = b64url(bytes);
+            await AUTH.sb.from('wallet_tokens').delete().eq('user_id', AUTH.user.id);
+            const { error } = await AUTH.sb.from('wallet_tokens').insert({ token_hash: await sha256Hex(token), user_id: AUTH.user.id });
+            if (error) throw error;
+            W.token = token; await loadWalletInfo(); renderWalletSheet();
+        } catch (e) { toast(/relation|does not exist|schema cache/i.test(e.message || '') ? t('wNeedSetup') : t('wTestFail', { msg: e.message || e })); }
+    }
+    async function revokeWalletLink() {
+        try { await AUTH.sb.from('wallet_tokens').delete().eq('user_id', AUTH.user.id); } catch (e) { /* nothing to delete */ }
+        W.token = null; await loadWalletInfo(); renderWalletSheet(); toast(t('wRevoked'));
+    }
+    function copyWalletLink() {
+        const v = walletLink(W.token);
+        (navigator.clipboard ? navigator.clipboard.writeText(v) : Promise.reject()).then(() => toast(t('wCopied')), () => { const i = $('w-link'); if (i) { i.select(); document.execCommand('copy'); toast(t('wCopied')); } });
+    }
+    async function testWalletLink() {
+        if (!W.token) return;
+        const out = $('w-test-msg');
+        try {
+            const r = await fetch(walletLink(W.token), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ test: true }) });
+            const j = await r.json().catch(() => ({}));
+            if (!r.ok || !j.ok) throw new Error(r.status === 404 ? t('wNeedSetup') : (j.error || 'HTTP ' + r.status));
+            out.className = 'note ok small mt-2'; out.textContent = t('wTestOk');
+            if (window.confetti && !reduceMotion()) confetti(true);
+        } catch (e) { out.className = 'note danger small mt-2'; out.textContent = t('wTestFail', { msg: e.message || e }); }
+    }
+    async function openWalletSetup() {
+        let el = $('wallet-modal');
+        if (!el) {
+            el = document.createElement('div'); el.id = 'wallet-modal'; el.className = 'modal';
+            el.onclick = e => { if (e.target === el) closeModal('wallet-modal'); };
+            document.body.appendChild(el);
+        }
+        W.loaded = false; renderWalletSheet(); openModal('wallet-modal');
+        await loadWalletInfo(); renderWalletSheet();
+    }
+    function renderWalletSheet() {
+        const el = $('wallet-modal'); if (!el) return;
+        const C = window.APP_CONFIG || {}, info = W.info;
+        const active = !!(info && info.created_at);
+        let step1;
+        if (!W.loaded) step1 = `<p class="small muted">…</p>`;
+        else if (info && info.missing) step1 = `<div class="note warn small">${esc(t('wNeedSetup'))}</div>`;
+        else if (W.token) step1 = `<div class="note warn small">${esc(t('wShowOnce'))}</div>
+            <input id="w-link" class="input mt-2" readonly value="${esc(walletLink(W.token))}" onclick="this.select()" style="font-family:ui-monospace,monospace; font-size:13px">
+            <button class="btn btn-primary btn-block mt-2" onclick="copyWalletLink()"><i data-lucide="copy"></i>${esc(t('wCopy'))}</button>`;
+        else if (active) step1 = `<p class="small muted">${esc(t('wHave', { d: new Date(info.created_at).toLocaleDateString(LOCALES[state.lang], { day: 'numeric', month: 'long' }) }))}</p>
+            <button class="btn btn-ghost btn-block mt-2" onclick="createWalletLink()">${esc(t('wNew'))}</button>`;
+        else step1 = `<button class="btn btn-primary btn-block" onclick="createWalletLink()">${esc(t('wCreate'))}</button>`;
+        const steps = ['wA1', 'wA2', 'wA3', 'wA4', 'wA5', 'wA6', 'wA7'].map((k, i) => `<li><span class="w-n">${i + 1}</span><span>${t(k)}</span></li>`).join('');
+        el.innerHTML = `<div class="sheet" role="dialog" aria-modal="true" aria-labelledby="w-title" style="max-width:520px">
+            <div class="grab"></div>
+            <div class="between mb-2"><span></span><button class="icon-btn" onclick="closeModal('wallet-modal')" aria-label="${esc(t('close'))}"><i data-lucide="x"></i></button></div>
+            <div class="w-hero">${frogSVG('phone', 120)}<h2 id="w-title" class="ob-h" style="font-size:24px">${esc(t('wTitle'))}</h2><p class="small muted">${esc(t('wIntro'))}</p><p class="tiny faint mt-1">${esc(t('wOnlyIos'))}</p></div>
+            <section class="w-step"><h3>1. ${esc(t('wStep1'))}</h3><p class="tiny muted mb-2">${esc(t('wStep1S'))}</p>${step1}</section>
+            <section class="w-step"><h3>2. ${esc(t('wStep2'))}</h3><p class="tiny muted mb-2">${esc(t('wStep2S'))}</p><ol class="w-list">${steps}</ol>
+                ${C.shortcutUrl ? `<div class="note plain small mt-3"><p>${t('wShortcutS')}</p><a class="btn btn-soft btn-sm mt-2" href="${esc(C.shortcutUrl)}" target="_blank" rel="noopener">${esc(t('wShortcutBtn'))}</a></div>` : ''}</section>
+            <section class="w-step"><h3>3. ${esc(t('wStep3'))}</h3>
+                <button class="btn btn-ghost btn-block" onclick="testWalletLink()" ${W.token ? '' : 'disabled style="opacity:.5"'}>${esc(t('wTest'))}</button>
+                <p id="w-test-msg" class="hidden"></p></section>
+            <p class="tiny muted mt-4">${esc(t('wNote'))}</p>
+            ${active ? `<button class="btn-link small danger mt-3" onclick="revokeWalletLink()">${esc(t('wRevoke'))}</button>` : ''}
+        </div>`;
+        if (window.lucide) lucide.createIcons();
+    }
 
     if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
         window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
