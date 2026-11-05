@@ -604,6 +604,12 @@
         .ob-frog .frog-hi, .aw-frog .frog { animation: frogBob 3.2s ease-in-out infinite; transform-origin: 50% 100%; }
         @keyframes frogBob { 0%, 100% { transform: translateY(0) scale(1, 1); } 45% { transform: translateY(-5px) scale(.98, 1.02); } 55% { transform: translateY(-5px) scale(.98, 1.02); } }
         .ob-h.center, .ob-s.center { text-align: center; }
+        .ob-cap { width: 100%; display: flex; align-items: center; gap: 12px; text-align: left; padding: 12px 14px; border-radius: 18px; background: var(--surface); border: 2px solid var(--border); color: var(--text); }
+        .ob-cap b { display: block; font-size: 15px; } .ob-cap .grow span { display: block; font-size: 13px; color: var(--muted); line-height: 1.35; margin-top: 2px; }
+        .ob-cap[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+        .ob-tick { width: 26px; height: 26px; border-radius: 8px; border: 2px solid var(--border); display: grid; place-items: center; flex: none; color: transparent; }
+        .ob-tick svg { width: 16px; height: 16px; stroke-width: 3; }
+        .ob-cap[aria-pressed="true"] .ob-tick { background: var(--accent); border-color: var(--accent); color: #fff; }
         .ob-plan { list-style: none; padding: 0; margin: 22px 0 0; display: grid; gap: 10px; counter-reset: plan; }
         .ob-plan li { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); font-weight: 600; }
         .ob-debt { display: grid; gap: 12px; }
@@ -1103,7 +1109,7 @@
 
             <section id="wallet-group" class="set-group hidden">
                 <p class="set-head"><i data-lucide="smartphone"></i><span data-i18n="wTitle"></span></p>
-                <div class="set-card rows"><button class="set-row" onclick="closeModal('config-modal'); openWalletSetup()"><span class="set-ic"><i data-lucide="credit-card"></i></span><span class="grow" data-i18n="wRow"></span><i data-lucide="chevron-right" class="faint"></i></button></div>
+                <div class="set-card rows"><button class="set-row" onclick="closeModal('config-modal'); openWalletSetup()"><span class="set-ic"><i data-lucide="credit-card"></i></span><span class="grow" data-i18n="wRow"></span><i data-lucide="chevron-right" class="faint"></i></button><button class="set-row" onclick="closeModal('config-modal'); openWalletSetup('tap')"><span class="set-ic"><i data-lucide="smartphone"></i></span><span class="grow"><span data-i18n="wTapRow"></span><span class="tiny muted" style="display:block" data-i18n="wTapRowS"></span></span><i data-lucide="chevron-right" class="faint"></i></button></div>
             </section>
 
             <section id="notify-group" class="set-group hidden">
@@ -5294,29 +5300,33 @@
         obHiT: '¡Hola! Armemos tu presupuesto', obHiS: 'Son tres pasos cortos. Al final te digo cuánto puedes gastar cada día sin descuidar tus pagos.',
         obPlanIncome: 'Tu ingreso', obPlanBills: 'Tus pagos fijos', obPlanDebt: 'Tu primera deuda (si tienes)',
         obStepOf: 'Paso {n} de {t}',
-        obDebtT: '¿Tienes alguna deuda?', obDebtS: 'Tarjeta de crédito, préstamo, lo que sea. Agrega la que más te preocupa y te ayudo a pagarla con menos intereses.',
+        obDebtT: '¿Tienes alguna deuda?', obDebtS: 'Agrega todas las que tengas, una por una: varias tarjetas, préstamos, lo que sea. Te ayudo a pagarlas con menos intereses.',
         obDebtCard: 'Tarjeta de crédito', obDebtLoan: 'Préstamo', obDebtOther: 'Otra',
-        obDebtName: 'Nombre', obDebtNamePh: 'Ej. Visa BI', obDebtBal: 'Saldo total que debes', obDebtMin: 'Pago mínimo', obDebtPay: 'Cuota al mes', obDebtDay: 'Día límite de pago',
+        obDebtName: 'Nombre', obDebtNamePh: 'Ej. Mi tarjeta principal', obDebtNamePhLoan: 'Ej. Préstamo del carro', obDebtNamePhOther: 'Ej. Deuda con un familiar', obDebtBal: 'Saldo total que debes', obDebtMin: 'Pago mínimo', obDebtPay: 'Cuota al mes', obDebtDay: 'Día límite de pago',
         obDebtApr: 'Tasa anual (opcional)', obDebtAprHint: 'Viene en tu estado de cuenta. Si no la sabes, déjala vacía.',
-        obDebtAdd: 'Agregar deuda', obDebtAnother: 'Agregar otra', obDebtNone: 'No tengo deudas', obDebtErr: 'Completa nombre, saldo, pago y un día del 1 al 31.',
-        obWalletT: '¿Pagas con Apple Pay?', obWalletS: 'Puedo anotar tus compras solas: pagas con tu iPhone y el gasto aparece en Valiu con el monto y el comercio.',
-        obWalletYes: 'Sí, configurarlo al terminar', obWalletNo: 'Ahora no',
-        obGoWallet: 'Configurar Apple Pay'
+        obDebtAdd: 'Guardar y continuar', obDebtAnother: 'Guardar y agregar otra', obDebtNone: 'No tengo deudas', obDebtErr: 'Completa nombre, saldo, pago y un día del 1 al 31.',
+        obWalletT: 'Anota tus gastos sin escribir', obWalletS: 'Elige cómo. Puedes usar los dos.',
+        obWalletYes: 'Continuar', obWalletNo: 'Ahora no',
+        obApT: 'Con Apple Pay', obApS: 'Pagas con tu iPhone o reloj y el gasto se anota solo.',
+        obTapT: 'Con Back Tap', obTapS: 'Toca dos veces la parte de atrás de tu iPhone, escribe el monto y listo. Ideal para efectivo.',
+        obGoWallet: 'Configurarlo ahora'
     });
     Object.assign(I18N.en, {
         obHiT: 'Hi! Let\'s build your budget', obHiS: 'Three short steps. At the end I\'ll tell you how much you can spend each day without missing a payment.',
         obPlanIncome: 'Your income', obPlanBills: 'Your fixed bills', obPlanDebt: 'Your first debt (if you have one)',
         obStepOf: 'Step {n} of {t}',
-        obDebtT: 'Do you have any debt?', obDebtS: 'A credit card, a loan, anything. Add the one that worries you most and I\'ll help you pay it with less interest.',
+        obDebtT: 'Do you have any debt?', obDebtS: 'Add all of them, one at a time: several cards, loans, anything. I\'ll help you pay them with less interest.',
         obDebtCard: 'Credit card', obDebtLoan: 'Loan', obDebtOther: 'Other',
-        obDebtName: 'Name', obDebtNamePh: 'e.g. Visa BI', obDebtBal: 'Total balance you owe', obDebtMin: 'Minimum payment', obDebtPay: 'Monthly payment', obDebtDay: 'Payment due day',
+        obDebtName: 'Name', obDebtNamePh: 'e.g. My main card', obDebtNamePhLoan: 'e.g. Car loan', obDebtNamePhOther: 'e.g. Money owed to family', obDebtBal: 'Total balance you owe', obDebtMin: 'Minimum payment', obDebtPay: 'Monthly payment', obDebtDay: 'Payment due day',
         obDebtApr: 'Yearly rate (optional)', obDebtAprHint: 'It\'s on your statement. If you don\'t know it, leave it empty.',
-        obDebtAdd: 'Add debt', obDebtAnother: 'Add another', obDebtNone: 'I don\'t have debt', obDebtErr: 'Fill in name, balance, payment and a day from 1 to 31.',
-        obWalletT: 'Do you pay with Apple Pay?', obWalletS: 'I can log your purchases by myself: you pay with your iPhone and the expense shows up in Valiu with the amount and the store.',
-        obWalletYes: 'Yes, set it up when I finish', obWalletNo: 'Not now',
-        obGoWallet: 'Set up Apple Pay'
+        obDebtAdd: 'Save and continue', obDebtAnother: 'Save and add another', obDebtNone: 'I don\'t have debt', obDebtErr: 'Fill in name, balance, payment and a day from 1 to 31.',
+        obWalletT: 'Log expenses without typing', obWalletS: 'Pick how. You can use both.',
+        obWalletYes: 'Continue', obWalletNo: 'Not now',
+        obApT: 'With Apple Pay', obApS: 'Pay with your iPhone or watch and the expense logs itself.',
+        obTapT: 'With Back Tap', obTapS: 'Double-tap the back of your iPhone, type the amount, done. Great for cash.',
+        obGoWallet: 'Set it up now'
     });
-    const OB = { open: false, step: 0, steps: [], currency: '', bills: [], debts: [], debtKind: 'cc', wantWallet: false, err: '' };
+    const OB = { open: false, step: 0, steps: [], currency: '', bills: [], debts: [], debtKind: 'cc', wantWallet: false, cap: { ap: true, tap: true }, err: '' };
     const obKey = () => OB.steps[OB.step];
     function needsOnboarding() {
         return !state.onboarded && !(state.income > 0) && !state.items.length && !state.expenses.length && !(state.goals || []).length;
@@ -5327,7 +5337,7 @@
         if (!needsOnboarding()) { maybeNews(); return; }
         const auth = $('auth'), lock = $('lock');
         if ((auth && auth.classList.contains('open')) || (lock && lock.classList.contains('open'))) { setTimeout(maybeOnboard, 900); return; }
-        OB.open = true; OB.step = 0; OB.err = ''; OB.bills = []; OB.debts = []; OB.wantWallet = false;
+        OB.open = true; OB.step = 0; OB.err = ''; OB.bills = []; OB.debts = []; OB.wantWallet = false; OB.cap = { ap: true, tap: true };
         OB.steps = ['hi', 'income', 'bills', 'debt', ...(walletOffer() ? ['wallet'] : []), 'reveal'];
         OB.currency = state.currencyCode && state.currencyCode !== 'USD' ? state.currencyCode : (state.lang === 'es' ? 'GTQ' : 'USD');
         state.currencyCode = OB.currency;
@@ -5367,7 +5377,11 @@
     }
     function obDelBill(k) { OB.bills.splice(k, 1); obRender(); }
     function obSugg(name) { const n = $('ob-name'); if (n) { n.value = name; $('ob-amount').focus(); } }
-    function obDebtKind(k) { OB.debtKind = k; obRender(); }
+    function obDebtKind(k) {
+        const keep = ['obd-name', 'obd-bal', 'obd-pay', 'obd-day', 'obd-apr'].map(id => [id, ($(id) || {}).value || '']);
+        OB.debtKind = k; obRender();
+        keep.forEach(([id, v]) => { const el = $(id); if (el) el.value = v; });
+    }
     function obAddDebt(rerender = true) {
         const name = $('obd-name').value.trim(), bal = parseFloat($('obd-bal').value), pay = parseFloat($('obd-pay').value), day = parseInt($('obd-day').value, 10);
         const apr = parseFloat($('obd-apr').value);
@@ -5379,7 +5393,8 @@
     }
     function obDelDebt(k) { OB.debts.splice(k, 1); obRender(); }
     function obNoDebt() { OB.debts = []; OB.err = ''; if (OB.steps[OB.step + 1] === 'reveal') obFinish(); else obGo(OB.step + 1); }
-    function obWallet(yes) { OB.wantWallet = yes; obFinish(); }
+    function obWallet(yes) { OB.wantWallet = yes && (OB.cap.ap || OB.cap.tap); obFinish(); }
+    function obCap(k, btn) { OB.cap[k] = !OB.cap[k]; btn.setAttribute('aria-pressed', OB.cap[k]); }
     function obFinish() {
         ieApply(IE.ob);
         state.currencyCode = OB.currency || state.currencyCode;
@@ -5398,7 +5413,7 @@
     }
     function obDone() {
         obClose();
-        if (OB.wantWallet && typeof openWalletSetup === 'function') setTimeout(() => openWalletSetup(), 250);
+        if (OB.wantWallet && typeof openWalletSetup === 'function') setTimeout(() => openWalletSetup(OB.cap.ap ? '' : 'tap'), 250);
     }
     function obRender() {
         const el = $('onboard'); if (!el) return;
@@ -5425,7 +5440,7 @@
                 ${cta(t('obStart'))}`;
         } else if (k === 'income') {
             const opts = ['GTQ', 'USD', 'MXN', 'EUR', 'HNL', 'CRC', 'COP', 'GBP'].map(c => `<option value="${c}" ${c === OB.currency ? 'selected' : ''}>${c}</option>`).join('');
-            body = `<div class="ob-frog sm">${mascot(IE.ob && IE.ob.type === 'remit' ? 'enviando' : 'trabajando', 104)}</div><h2 class="ob-h">${esc(t('obIncomeT'))}</h2>
+            body = `<div class="ob-frog sm">${mascot('trabajando', 104)}</div><h2 class="ob-h">${esc(t('obIncomeT'))}</h2>
                 <p class="ob-s">${esc(t('obIncomeS'))}</p>
                 <div class="row mt-4" style="gap:10px"><label class="label" for="ob-cur" style="margin:0">${esc(t('currencyLabel'))}</label>
                     <select id="ob-cur" class="input" style="width:120px" onchange="OB.currency=this.value; state.currencyCode=this.value; ieRefresh('ob')">${opts}</select></div>
@@ -5456,7 +5471,7 @@
                 ${list ? `<div class="mt-4">${list}</div>` : ''}
                 <div class="ob-debt mt-4">
                     <div class="seg-wide three">${kinds}</div>
-                    <div><label class="label" for="obd-name">${esc(t('obDebtName'))}</label><input id="obd-name" class="input" maxlength="40" placeholder="${esc(OB.debtKind === 'cc' ? t('obDebtNamePh') : '')}"></div>
+                    <div><label class="label" for="obd-name">${esc(t('obDebtName'))}</label><input id="obd-name" class="input" maxlength="40" placeholder="${esc(t(OB.debtKind === 'cc' ? 'obDebtNamePh' : OB.debtKind === 'loan' ? 'obDebtNamePhLoan' : 'obDebtNamePhOther'))}"></div>
                     <div class="form-grid">
                         <div><label class="label" for="obd-bal">${esc(t('obDebtBal'))}</label><input id="obd-bal" class="input" type="number" inputmode="decimal" min="0" step="0.01"></div>
                         <div><label class="label" for="obd-pay">${esc(t(OB.debtKind === 'cc' ? 'obDebtMin' : 'obDebtPay'))}</label><input id="obd-pay" class="input" type="number" inputmode="decimal" min="0" step="0.01"></div>
@@ -5466,7 +5481,7 @@
                         <div><label class="label" for="obd-apr">${esc(t('obDebtApr'))}</label><input id="obd-apr" class="input" type="number" inputmode="decimal" min="0" max="200" step="0.01" placeholder="%"></div>
                     </div>
                     <p class="tiny muted">${esc(t('obDebtAprHint'))}</p>
-                    ${list ? `<button class="btn btn-soft btn-block" onclick="obAddDebt()"><i data-lucide="plus"></i>${esc(t('obDebtAnother'))}</button>` : ''}
+                    <button class="btn btn-soft btn-block" onclick="obAddDebt() && setTimeout(() => { const n = $('obd-name'); if (n) n.focus(); }, 30)"><i data-lucide="plus"></i>${esc(t('obDebtAnother'))}</button>
                 </div>
                 ${err}
                 <div class="stack ob-cta" style="gap:10px">
@@ -5474,9 +5489,11 @@
                     ${list ? '' : `<button class="btn btn-ghost btn-block" onclick="obNoDebt()">${esc(t('obDebtNone'))}</button>`}
                 </div>`;
         } else if (k === 'wallet') {
-            body = `<div class="ob-frog">${mascot('pagando', 180)}</div>
+            const cap = (k, icon, ti, su) => `<button type="button" class="ob-cap" aria-pressed="${OB.cap[k]}" onclick="obCap('${k}', this)"><span class="set-ic"><i data-lucide="${icon}"></i></span><span class="grow"><b>${esc(t(ti))}</b><span>${esc(t(su))}</span></span><span class="ob-tick" aria-hidden="true"><i data-lucide="check"></i></span></button>`;
+            body = `<div class="ob-frog sm">${mascot('pagando', 120)}</div>
                 <h2 class="ob-h center">${esc(t('obWalletT'))}</h2>
                 <p class="ob-s center">${esc(t('obWalletS'))}</p>
+                <div class="stack mt-4" style="gap:10px">${cap('ap', 'wallet-cards', 'obApT', 'obApS')}${cap('tap', 'smartphone', 'obTapT', 'obTapS')}</div>
                 <div class="stack ob-cta" style="gap:10px">
                     <button class="btn btn-primary btn-block" onclick="obWallet(true)">${esc(t('obWalletYes'))}</button>
                     <button class="btn btn-ghost btn-block" onclick="obWallet(false)">${esc(t('obWalletNo'))}</button>
@@ -6219,7 +6236,16 @@
         wRevoke: 'Desactivar y borrar mi enlace', wRevoked: 'Listo: tu enlace ya no funciona.',
         wNote: 'La categoría se adivina por el nombre del comercio; puedes cambiarla o borrar el gasto como cualquier otro.',
         wToast1: '🧾 Gasto de Apple Pay: {x} en {m}', wToastN: '🧾 {n} gastos de Apple Pay agregados', wDefault: 'Apple Pay',
-        wOn: 'Activo', wOff: 'Sin configurar'
+        wOn: 'Activo', wOff: 'Sin configurar',
+        wTapRow: 'Back Tap', wTapRowS: 'Dos toques atrás del iPhone para anotar',
+        wTapT: 'Back Tap: anota con dos toques', wTapS: 'Para lo que pagas en efectivo o con tarjeta física. Usa el mismo enlace del paso 1.',
+        wT1: 'En <b>Atajos</b>, toca <b>+</b> para crear un atajo nuevo y llámalo <b>Anotar en Valiu</b>.',
+        wT2: 'Agrega <b>Solicitar entrada</b>: tipo <b>Número</b>, con la pregunta «¿Cuánto gastaste?».',
+        wT3: 'Agrega otra <b>Solicitar entrada</b>: tipo <b>Texto</b>, con la pregunta «¿En qué?».',
+        wT4: 'Agrega <b>Obtener contenido de URL</b> con tu enlace, método <b>POST</b> y cuerpo <b>JSON</b>: <b>amount</b> = la primera entrada, <b>merchant</b> = la segunda y <b>card</b> = el texto <b>Back Tap</b>.',
+        wT5: 'Ve a <b>Ajustes → Accesibilidad → Tocar → Tocar atrás → Doble toque</b> y elige <b>Anotar en Valiu</b>.',
+        wT6: 'Listo: das dos toquecitos atrás de tu iPhone, escribes el monto y aparece en Valiu.',
+        wTapNote: 'Funciona en iPhone 8 o más reciente.', wToastTap: '👆 Anotado: {x} en {m}', wTapDefault: 'Efectivo'
     });
     Object.assign(I18N.en, {
         wTitle: 'Automatic Apple Pay expenses', wRow: 'Automatic Apple Pay',
@@ -6243,7 +6269,16 @@
         wRevoke: 'Turn off and delete my link', wRevoked: 'Done: your link no longer works.',
         wNote: 'The category is guessed from the store name; you can change it or delete the expense like any other.',
         wToast1: '🧾 Apple Pay expense: {x} at {m}', wToastN: '🧾 {n} Apple Pay expenses added', wDefault: 'Apple Pay',
-        wOn: 'On', wOff: 'Not set up'
+        wOn: 'On', wOff: 'Not set up',
+        wTapRow: 'Back Tap', wTapRowS: 'Double-tap the back of your iPhone to log',
+        wTapT: 'Back Tap: log with two taps', wTapS: 'For what you pay in cash or with a physical card. It uses the same link from step 1.',
+        wT1: 'In <b>Shortcuts</b>, tap <b>+</b> to create a new shortcut and name it <b>Log in Valiu</b>.',
+        wT2: 'Add <b>Ask for Input</b>: type <b>Number</b>, with the prompt “How much did you spend?”.',
+        wT3: 'Add another <b>Ask for Input</b>: type <b>Text</b>, with the prompt “On what?”.',
+        wT4: 'Add <b>Get Contents of URL</b> with your link, method <b>POST</b> and a <b>JSON</b> body: <b>amount</b> = the first input, <b>merchant</b> = the second, and <b>card</b> = the text <b>Back Tap</b>.',
+        wT5: 'Go to <b>Settings → Accessibility → Touch → Back Tap → Double Tap</b> and choose <b>Log in Valiu</b>.',
+        wT6: 'Done: double-tap the back of your iPhone, type the amount and it shows up in Valiu.',
+        wTapNote: 'Works on iPhone 8 or newer.', wToastTap: '👆 Logged: {x} on {m}', wTapDefault: 'Cash'
     });
 
     const W = { token: null, info: null, loaded: false, importing: false };
@@ -6277,13 +6312,14 @@
                 const amount = round2(+r.amount);
                 if (!(amount > 0)) return;
                 const ts = Date.parse(r.created_at) || Date.now();
-                const note = String(r.merchant || t('wDefault')).slice(0, 60);
+                const tap = String(r.card || '').trim().toLowerCase() === 'back tap';
+                const note = String((r.merchant || '').trim() || t(tap ? 'wTapDefault' : 'wDefault')).slice(0, 60);
                 const e = { id, amount, note, ts, period: periodKey(new Date(ts)), cat: guessCat(r.merchant) };
-                state.expenses.push(e); added.push(e);
+                state.expenses.push(e); added.push({ ...e, tap });
             });
             if (added.length) {
                 render();
-                toast(added.length === 1 ? t('wToast1', { x: fmt(added[0].amount), m: added[0].note }) : t('wToastN', { n: added.length }));
+                toast(added.length === 1 ? t(added[0].tap ? 'wToastTap' : 'wToast1', { x: fmt(added[0].amount), m: added[0].note }) : t('wToastN', { n: added.length }));
             }
             // Saved locally (and queued to sync) before clearing the inbox.
             await AUTH.sb.from('wallet_inbox').delete().in('id', data.map(r => r.id));
@@ -6326,15 +6362,15 @@
             if (window.confetti && !reduceMotion()) confetti(true);
         } catch (e) { out.className = 'note danger small mt-2'; out.textContent = t('wTestFail', { msg: e.message || e }); }
     }
-    async function openWalletSetup() {
+    async function openWalletSetup(focus) {
         let el = $('wallet-modal');
         if (!el) {
             el = document.createElement('div'); el.id = 'wallet-modal'; el.className = 'modal';
             el.onclick = e => { if (e.target === el) closeModal('wallet-modal'); };
             document.body.appendChild(el);
         }
-        W.loaded = false; renderWalletSheet(); openModal('wallet-modal');
-        await loadWalletInfo(); renderWalletSheet();
+        W.loaded = false; W.focus = focus === 'tap' ? 'tap' : ''; renderWalletSheet(); openModal('wallet-modal');
+        await loadWalletInfo(); renderWalletSheet(); W.focus = '';
     }
     function renderWalletSheet() {
         const el = $('wallet-modal'); if (!el) return;
@@ -6349,6 +6385,7 @@
         else if (active) step1 = `<p class="small muted">${esc(t('wHave', { d: new Date(info.created_at).toLocaleDateString(LOCALES[state.lang], { day: 'numeric', month: 'long' }) }))}</p>
             <button class="btn btn-ghost btn-block mt-2" onclick="createWalletLink()">${esc(t('wNew'))}</button>`;
         else step1 = `<button class="btn btn-primary btn-block" onclick="createWalletLink()">${esc(t('wCreate'))}</button>`;
+        const tapSteps = ['wT1', 'wT2', 'wT3', 'wT4', 'wT5', 'wT6'].map((k, i) => `<li><span class="w-n">${i + 1}</span><span>${t(k)}</span></li>`).join('');
         const steps = ['wA1', 'wA2', 'wA3', 'wA4', 'wA5', 'wA6', 'wA7'].map((k, i) => `<li><span class="w-n">${i + 1}</span><span>${t(k)}</span></li>`).join('');
         el.innerHTML = `<div class="sheet" role="dialog" aria-modal="true" aria-labelledby="w-title" style="max-width:520px">
             <div class="grab"></div>
@@ -6360,10 +6397,12 @@
             <section class="w-step"><h3>3. ${esc(t('wStep3'))}</h3>
                 <button class="btn btn-ghost btn-block" onclick="testWalletLink()" ${W.token ? '' : 'disabled style="opacity:.5"'}>${esc(t('wTest'))}</button>
                 <p id="w-test-msg" class="hidden"></p></section>
+            <section class="w-step" id="w-tap"><h3>${esc(t('wTapT'))}</h3><p class="tiny muted mb-2">${esc(t('wTapS'))}</p><ol class="w-list">${tapSteps}</ol><p class="tiny faint mt-2">${esc(t('wTapNote'))}</p></section>
             <p class="tiny muted mt-4">${esc(t('wNote'))}</p>
             ${active ? `<button class="btn-link small danger mt-3" onclick="revokeWalletLink()">${esc(t('wRevoke'))}</button>` : ''}
         </div>`;
         if (window.lucide) lucide.createIcons();
+        if (W.focus === 'tap') { const sec = $('w-tap'); if (sec) setTimeout(() => sec.scrollIntoView({ block: 'start', behavior: 'auto' }), 60); }
     }
 
     if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
