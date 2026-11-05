@@ -1,4 +1,4 @@
-# Valiu · Supabase
+# Valiu · Supabase (publicado desde GitHub)
 # Con la integración de GitHub (Deploy to production encendido), cada push a main publica
 # las Edge Functions de esta lista. Los secretos (CRON_SECRET, VAPID, FCM, APNS) se quedan en Supabase, no aquí.
 project_id = "fbcmeqsxrvusnpcfwufu"
