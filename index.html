@@ -1160,6 +1160,7 @@
             </section>
 
             <button class="btn btn-block btn-ghost mt-4" onclick="closeModal('config-modal')" data-i18n="close"></button>
+            <p id="app-version" class="tiny faint center mt-3"></p>
         </div>
     </div>
 
@@ -6415,8 +6416,22 @@
         if (W.focus === 'tap') { const sec = $('w-tap'); if (sec) setTimeout(() => sec.scrollIntoView({ block: 'start', behavior: 'auto' }), 60); }
     }
 
+    // Version shown at the bottom of Profile, so anyone can tell which build they have.
+    window.VALIU_BUILD = '2026.11.04-2305';
+    (function () { const v = document.getElementById('app-version'); if (v) v.textContent = 'Valiu ' + window.VALIU_BUILD; })();
+    // Updates: check for a new version whenever the app comes back to the screen, and reload once when it takes over.
     if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
-        window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+        const hadController = !!navigator.serviceWorker.controller;
+        let reloaded = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            if (!hadController || reloaded) return;
+            const busy = document.querySelector('.modal.open, #onboard.open') || (document.activeElement && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName));
+            if (busy) return;   // never yank the page while someone is typing; the next open picks it up
+            reloaded = true; location.reload();
+        });
+        window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').then(reg => {
+            document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') reg.update().catch(() => {}); });
+        }).catch(() => {}));
     }
 
     </script>
