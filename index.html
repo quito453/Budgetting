@@ -325,7 +325,7 @@
         @media (min-width: 640px) { .sheet .grab { display: none; } }
         @keyframes sheetUp { from { transform: translateY(40px); opacity: .4; } to { transform: none; opacity: 1; } }
         @keyframes pop { from { transform: scale(.96); opacity: 0; } to { transform: none; opacity: 1; } }
-        .toast { position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom)); transform: translateX(-50%) translateY(20px); z-index: 200; background: var(--text); color: var(--bg); font-size: 14px; font-weight: 600; padding: 12px 18px; border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,.25); opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s; max-width: calc(100vw - 32px); text-align: center; }
+        .toast { position: fixed; left: 50%; bottom: calc(110px + env(safe-area-inset-bottom)); transform: translateX(-50%) translateY(20px); z-index: 200; background: var(--text); color: var(--bg); font-size: 14px; font-weight: 600; padding: 12px 18px; border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,.25); opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s; max-width: calc(100vw - 32px); text-align: center; }
         .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
         @media (min-width: 900px) { .toast { bottom: 32px; } }
         #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 250; width: 100vw; height: 100vh; }
@@ -650,7 +650,7 @@
         .card-mascot { position: absolute; top: 8px; right: 8px; width: 76px; height: auto; pointer-events: none; filter: drop-shadow(0 6px 10px rgba(15, 43, 38, .18)); }
         .card.has-mascot .card-title { padding-right: 80px; min-height: 52px; }
         @media (max-width: 380px) { .card-mascot { width: 64px; top: 8px; } .card.has-mascot .card-title { padding-right: 64px; } }
-        .cheer { position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom)); z-index: 300; display: flex; align-items: center; gap: 12px; width: min(400px, calc(100vw - 32px));
+        .cheer { position: fixed; left: 50%; bottom: calc(110px + env(safe-area-inset-bottom)); z-index: 300; display: flex; align-items: center; gap: 12px; width: min(400px, calc(100vw - 32px));
             padding: 10px 18px 10px 10px; border-radius: 22px; background: var(--surface); color: var(--text); border: 1px solid var(--border); box-shadow: var(--shadow);
             transform: translate(-50%, 140%); opacity: 0; transition: transform .45s cubic-bezier(.2, 1.3, .4, 1), opacity .25s; pointer-events: none; }
         .cheer.show { transform: translate(-50%, 0); opacity: 1; pointer-events: auto; }
@@ -658,6 +658,56 @@
         .cheer img.mascot { width: 76px; flex-shrink: 0; }
         @media (min-width: 900px) { .cheer { bottom: 32px; } }
         @media (prefers-reduced-motion: reduce) { .cheer { transition: opacity .2s; } .ob-frog img.mascot, .aw-frog img.mascot { animation: none; } }
+
+        /* ================= Frog-first layout ================= */
+        .hero3 { padding-top: 26px; }
+        .h3-stage { display: grid; place-items: center; }
+        .h3-ring { position: relative; width: min(74vw, 300px); aspect-ratio: 1; margin-top: 30px; }
+        .h3-ring svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+        .h3-lily { position: absolute; inset: 12%; border-radius: 50%; background: radial-gradient(circle at 50% 72%, var(--accent-soft), transparent 70%); }
+        .h3-frog { position: absolute; inset: 9%; border-radius: 50%; display: grid; place-items: center; cursor: pointer; }
+        .h3-frog:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+        .h3-frog .hero-frog { display: grid; place-items: center; width: 70%; aspect-ratio: 1; }
+        .h3-frog .hero-frog img.mascot, .h3-frog .hero-frog svg { width: 100% !important; height: 100% !important; object-fit: contain; transform-origin: 50% 90%; animation: frogIdle 4s ease-in-out infinite; }
+        .h3-frog .hero-frog .hop { animation: frogHop .4s ease-out; }
+        @keyframes frogIdle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+        @keyframes frogHop { 0% { transform: none; } 40% { transform: translateY(-6px); } 100% { transform: none; } }
+        .h3-bubble { position: absolute; top: -26px; left: 50%; transform: translateX(-50%); z-index: 2; width: max-content; max-width: 94%; text-align: center;
+            background: var(--surface); color: var(--text); font-weight: 700; font-size: 15px; line-height: 1.3; padding: 9px 15px; border-radius: 18px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+        .h3-bubble::after { content: ''; position: absolute; left: 50%; bottom: -7px; width: 12px; height: 12px; background: var(--surface); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); transform: translateX(-50%) rotate(45deg); border-radius: 0 0 3px 0; }
+        .h3-bubble:empty { display: none; }
+        .h3-left { text-align: center; margin-top: 8px; }
+        .h3-left .hero-amount { font-size: clamp(46px, 14vw, 64px); margin: 4px 0; }
+        .h3-left .streak { display: inline-flex; }
+        .month-card { width: 100%; display: flex; align-items: center; gap: 12px; text-align: left; cursor: pointer; padding-top: 12px; padding-bottom: 12px; }
+        .month-card .grow b { display: block; font-size: 16px; } .month-card .grow span { display: block; }
+        .month-frog { width: 56px; flex: none; } .month-frog img.mascot, .month-frog svg { width: 56px; height: auto; }
+        .tab-head { display: flex; align-items: flex-end; gap: 10px; margin: 0 0 14px; }
+        .th-frog { width: 104px; flex: none; } .th-frog img.mascot, .th-frog svg { width: 104px; height: auto; display: block; }
+        .th-say { position: relative; background: var(--surface); border: 1px solid var(--border); border-radius: 20px 20px 20px 6px; padding: 10px 15px; font-weight: 700; box-shadow: var(--shadow); margin-bottom: 26px; }
+        .th-say:empty { display: none; }
+        @media (min-width: 900px) { .th-frog, .th-frog img.mascot, .th-frog svg { width: 84px; } .tab-head { margin-bottom: 18px; } }
+        .head-add { display: none; } @media (min-width: 900px) { .head-add { display: inline-flex; } }
+        /* bottom bar: a floating pill with the + in the middle */
+        .bottom-nav { left: 12px; right: 12px; bottom: calc(10px + env(safe-area-inset-bottom)); max-width: 460px; margin: 0 auto; border: 1px solid var(--border); border-radius: 26px; padding: 6px; box-shadow: var(--shadow); align-items: end; }
+        .bottom-nav button { border-radius: 18px; padding: 8px 0 6px; }
+        .bottom-nav button.active { background: var(--accent-soft); } .bottom-nav button.active::before { display: none; }
+        .bottom-nav .nav-add { justify-self: center; width: 58px; height: 58px; margin-top: -26px; padding: 0; border-radius: 21px; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; box-shadow: 0 10px 22px -8px rgba(30, 129, 80, .6); }
+        .bottom-nav .nav-add svg.lucide { width: 28px; height: 28px; stroke-width: 2.6; }
+        .bottom-nav .nav-add:active { transform: scale(.94); }
+        @media (max-width: 899px) { body { padding-bottom: calc(110px + env(safe-area-inset-bottom)); } }
+        /* add-expense sheet */
+        .sp-head { display: flex; align-items: center; gap: 10px; }
+        .sp-frog { width: 64px; flex: none; } .sp-frog img.mascot, .sp-frog svg { width: 64px; height: auto; display: block; }
+        .sp-amount { display: flex; align-items: center; gap: 8px; margin-top: 14px; padding: 0 18px; height: 72px; border-radius: 20px; background: var(--surface-2); border: 1.5px solid var(--border); }
+        .sp-amount:focus-within { border-color: var(--accent); }
+        .sp-cur { font: 800 28px 'Bricolage Grotesque', system-ui, sans-serif; color: var(--muted); }
+        .sp-in { flex: 1; min-width: 0; border: 0; background: none; outline: none; font: 800 34px 'Bricolage Grotesque', system-ui, sans-serif; color: var(--text); }
+        .sp-in::-webkit-outer-spin-button, .sp-in::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; } .sp-in { -moz-appearance: textfield; }
+        /* why sheet */
+        .why-row { display: flex; justify-content: space-between; gap: 12px; padding: 10px 2px; border-bottom: 1px dashed var(--border); }
+        .why-row.sum { border-bottom: 0; font-weight: 700; } .why-row.hl { margin-top: 8px; border: 0; border-radius: 14px; background: var(--accent-soft); padding: 12px 14px; color: var(--accent); font-weight: 800; }
+        @media (prefers-reduced-motion: reduce) { .h3-frog .hero-frog img.mascot, .h3-frog .hero-frog svg, .h3-frog .hero-frog .hop { animation: none; } }
         /* ---------- Login (web version) ---------- */
         .auth { position: fixed; inset: 0; z-index: 420; background: var(--bg); display: none; overflow-y: auto; }
         .auth.open { display: block; }
@@ -700,6 +750,7 @@
                         <svg class="flag" viewBox="0 0 20 14"><rect width="20" height="14" fill="#fff"/><g fill="#b22234"><rect width="20" height="1.08"/><rect y="2.15" width="20" height="1.08"/><rect y="4.3" width="20" height="1.08"/><rect y="6.46" width="20" height="1.08"/><rect y="8.62" width="20" height="1.08"/><rect y="10.77" width="20" height="1.08"/><rect y="12.92" width="20" height="1.08"/></g><rect width="8.5" height="7.54" fill="#3c3b6e"/></svg><span class="lbl">EN</span>
                     </button>
                 </div>
+                <button class="btn btn-primary btn-sm head-add" onclick="openSpend()"><i data-lucide="plus"></i><span data-i18n="spendTitle"></span></button>
                 <button id="theme-btn" class="icon-btn" onclick="cycleTheme()"></button>
                 <button class="icon-btn" onclick="openConfigModal()" data-i18n-title="profile"><i data-lucide="user-cog"></i></button>
             </div>
@@ -717,24 +768,25 @@
                         <button class="btn btn-primary mt-4" onclick="openConfigModal()" data-i18n="setupBtn"></button>
                     </div>
 
-                    <div id="hero-card" class="card anim hero-card">
-                        <div class="hero2">
-                            <div class="hero-head">
-                                <p id="hero-label" class="eyebrow"></p>
-                                <p id="hero-left" class="hero-amount serif num"></p>
-                                <p id="hero-of" class="small muted"></p>
-                            </div>
-                            <div class="ring-wrap mini">
+                    <div id="hero-card" class="card anim hero-card hero3">
+                        <div class="h3-stage">
+                            <div class="h3-ring">
                                 <svg viewBox="0 0 120 120" aria-hidden="true">
                                     <defs><linearGradient id="brandGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--brand-1)"/><stop offset="1" stop-color="var(--brand-2)"/></linearGradient></defs>
-                                    <circle class="ring-track" cx="60" cy="60" r="50" fill="none" stroke-width="13"/>
-                                    <circle id="hero-ring" class="ring-fg" cx="60" cy="60" r="50" fill="none" stroke-width="13" stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/>
+                                    <circle class="ring-track" cx="60" cy="60" r="53" fill="none" stroke-width="9"/>
+                                    <circle id="hero-ring" class="ring-fg" cx="60" cy="60" r="53" fill="none" stroke-width="9" stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/>
                                 </svg>
-                                <div class="ring-center"><span id="hero-pct" class="serif num" style="font-size:22px; line-height:1"></span><span class="tiny muted" data-i18n="heroPctLeft"></span></div>
+                                <span class="h3-lily" aria-hidden="true"></span>
+                                <button type="button" class="h3-frog" onclick="openWhyToday()" data-i18n-title="whyTitle"><span id="hero-frog" class="hero-frog"></span></button>
+                                <p id="hero-msg" class="h3-bubble" role="status"></p>
                             </div>
                         </div>
-                        <div class="hero-talk mt-4"><span id="hero-frog" class="hero-frog" aria-hidden="true"></span><p id="hero-msg" class="hero-msg"></p></div>
-                        <span id="streak-chip" class="streak mt-3"></span>
+                        <div class="h3-left">
+                            <p id="hero-label" class="eyebrow"></p>
+                            <p id="hero-left" class="hero-amount serif num"></p>
+                            <p class="small muted"><span id="hero-of"></span> · <span id="hero-pct" class="num"></span> <span data-i18n="heroPctLeft"></span></p>
+                            <span id="streak-chip" class="streak mt-3"></span>
+                        </div>
                         <div class="mt-4">
                             <div class="between small mb-2"><span id="hero-month" class="muted"></span><span id="hero-month-pct" class="muted num"></span></div>
                             <div class="bar"><span id="hero-month-bar"></span></div>
@@ -747,17 +799,18 @@
                         <div id="next-due" class="mt-4"></div>
                     </div>
 
+                    <button type="button" class="card anim month-card" onclick="setTab('summary')">
+                        <span id="month-frog" class="month-frog" aria-hidden="true"></span>
+                        <span class="grow"><b data-i18n="monthCardT"></b><span id="month-card-line" class="small muted num"></span></span>
+                        <i data-lucide="chevron-right" class="faint"></i>
+                    </button>
+
                     <div class="card anim">
-                        <h2 class="card-title"><i data-lucide="receipt"></i><span data-i18n="spendTitle"></span></h2>
-                        <div id="cat-chips" class="chips mt-4"></div>
-                        <div id="quick-spend" class="quick-spend mt-3 hidden"></div>
-                        <div class="spend-form mt-3">
-                            <input type="number" id="x-amount" inputmode="decimal" min="0" step="0.01" class="input amount-in" data-i18n-ph="spendAmountPh" onkeydown="if(event.key==='Enter')addExpense()">
-                            <input type="text" id="x-note" maxlength="60" class="input note-in" data-i18n-ph="spendNotePh" onkeydown="if(event.key==='Enter')addExpense()">
-                            <button class="btn btn-primary" onclick="addExpense()"><i data-lucide="plus"></i><span data-i18n="spendAdd"></span></button>
+                        <div class="between">
+                            <h2 class="card-title"><i data-lucide="receipt"></i><span data-i18n="spendRecent"></span></h2>
+                            <button class="btn btn-soft btn-sm" onclick="openSpend()"><i data-lucide="plus"></i><span data-i18n="spendAdd"></span></button>
                         </div>
-                        <p class="eyebrow mt-5 mb-2" data-i18n="spendRecent"></p>
-                        <div id="expense-list"></div>
+                        <div id="expense-list" class="mt-3"></div>
                         <div id="ant-insight"></div>
                     </div>
                 </div>
@@ -780,6 +833,7 @@
 
         <!-- ================= PAYMENTS ================= -->
         <section class="tab" id="tab-payments">
+            <div class="tab-head" data-frog="pagando"><span class="th-frog" aria-hidden="true"></span><p class="th-say" id="say-payments"></p></div>
             <div class="tab-grid two">
                 <div class="card anim">
                     <div class="between">
@@ -819,6 +873,7 @@
 
         <!-- ================= DEBTS ================= -->
         <section class="tab" id="tab-debts">
+            <div class="tab-head" data-frog="planeando"><span class="th-frog" aria-hidden="true"></span><p class="th-say" id="say-debts"></p></div>
             <div class="tab-grid">
                 <div class="card anim">
                     <div class="debt-hero">
@@ -923,6 +978,7 @@
 
         <!-- ================= GOALS ================= -->
         <section class="tab" id="tab-goals">
+            <div class="tab-head" data-frog="guardando"><span class="th-frog" aria-hidden="true"></span><p class="th-say" id="say-goals"></p></div>
             <div class="tab-grid two">
                 <div class="col">
                     <div class="card anim">
@@ -984,6 +1040,7 @@
 
         <!-- ================= SUMMARY ================= -->
         <section class="tab" id="tab-summary">
+            <div class="tab-head" data-frog="nivel-superior"><span class="th-frog" aria-hidden="true"></span><p class="th-say" id="say-summary"></p></div>
             <div class="tab-grid">
                 <div class="tiles anim">
                     <div class="tile"><p class="eyebrow" data-i18n="sumIncome"></p><p id="sum-income" class="serif v num truncate"></p></div>
@@ -1044,10 +1101,24 @@
     <nav class="bottom-nav" aria-label="Secciones">
         <button data-tab="today" onclick="setTab('today')"><i data-lucide="house"></i><span data-i18n="navToday"></span></button>
         <button data-tab="payments" onclick="setTab('payments')"><i data-lucide="calendar-days"></i><span data-i18n="navPayments"></span><i id="nav-badge" class="badge-dot hidden"></i></button>
+        <button class="nav-add" onclick="openSpend()" data-i18n-title="spendTitle" aria-label="+"><i data-lucide="plus"></i></button>
         <button data-tab="debts" onclick="setTab('debts')"><i data-lucide="landmark"></i><span data-i18n="navDebts"></span></button>
         <button data-tab="goals" onclick="setTab('goals')"><i data-lucide="piggy-bank"></i><span data-i18n="navGoals"></span></button>
-        <button data-tab="summary" onclick="setTab('summary')"><i data-lucide="chart-pie"></i><span data-i18n="navSummary"></span></button>
     </nav>
+
+    <!-- ADD EXPENSE -->
+    <div id="spend-modal" class="modal" onclick="if(event.target===this)closeModal('spend-modal')">
+        <div class="sheet spend-sheet" role="dialog" aria-modal="true" aria-labelledby="spend-title">
+            <div class="grab"></div>
+            <div class="sp-head"><span id="spend-frog" class="sp-frog" aria-hidden="true"></span><div class="grow"><h2 id="spend-title" data-i18n="spendTitle" style="margin:0"></h2><p id="x-after" class="small muted"></p></div>
+                <button class="icon-btn" onclick="closeModal('spend-modal')" data-i18n-title="close"><i data-lucide="x"></i></button></div>
+            <div class="sp-amount"><span id="x-cur" class="sp-cur"></span><input type="number" id="x-amount" inputmode="decimal" min="0" step="0.01" class="sp-in num" placeholder="0" data-i18n-ph="spendAmountPh" oninput="spendPreview()" onkeydown="if(event.key==='Enter')addExpense()"></div>
+            <div id="cat-chips" class="chips mt-4"></div>
+            <div id="quick-spend" class="quick-spend mt-3 hidden"></div>
+            <input type="text" id="x-note" maxlength="60" class="input mt-3" data-i18n-ph="spendNotePh" onkeydown="if(event.key==='Enter')addExpense()">
+            <button class="btn btn-primary btn-block mt-4" onclick="addExpense()"><i data-lucide="plus"></i><span data-i18n="spendAdd"></span></button>
+        </div>
+    </div>
 
     <!-- CONFIG -->
     <div id="config-modal" class="modal" onclick="if(event.target===this)closeModal('config-modal')">
@@ -2513,7 +2584,7 @@
         if (!document.querySelector('.modal.open')) document.body.style.overflow = '';
         if (id === 'entry-modal') editingId = null;
     }
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') ['config-modal', 'entry-modal', 'payment-modal'].forEach(closeModal); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') ['config-modal', 'entry-modal', 'payment-modal', 'spend-modal', 'why-modal'].filter(id => $(id)).forEach(closeModal); });
 
     const raf = cb => (window.requestAnimationFrame ? window.requestAnimationFrame(cb) : setTimeout(cb, 16));
 
@@ -2627,6 +2698,7 @@
         renderDirectory();
         renderHistory(c);
         renderStreak(c);
+        renderFrogTalk(c);
 
         const overdue = state.items.some(i => itemStatus(i).k === 'overdue');
         $('nav-badge').classList.toggle('hidden', !overdue);
@@ -3328,7 +3400,8 @@
         amtEl.classList.remove('invalid');
         state.expenses.push({ id: uid(), amount: round2(amount), note: $('x-note').value.trim().slice(0, 60), ts: Date.now(), period: state.period, cat: selectedCat });
         amtEl.value = ''; $('x-note').value = '';
-        render();
+        closeModal('spend-modal');
+        render(); frogHop();
         if (!limitToast(selectedCat, round2(amount))) toast(`${catOf(selectedCat).emoji} ${t('expenseAdded')}`);
     }
     function removeExpense(id) { state.expenses = state.expenses.filter(e => e.id !== id); render(); toast(t('expenseDeleted')); }
@@ -4485,7 +4558,7 @@
         const streak = typeof currentStreak === 'function' ? currentStreak(c) : 0;
         const name = over ? 'sin-fondos' : tone === 'danger' ? 'preocupado' : tone === 'warn' ? 'en-alerta' : streak >= 14 ? 'nivel-superior' : streak >= 5 ? 'en-racha' : c.spentToday === 0 ? 'equilibrio' : 'ahorrando';
         if (el.dataset.m === name) return;
-        el.dataset.m = name; el.innerHTML = mascot(name, 72);
+        el.dataset.m = name; el.innerHTML = mascot(name, 180);
     }
 
     // ================= Income profile: fixed salary vs flexible income, paydays and split =================
@@ -5032,7 +5105,8 @@
         const e = state.expenses.find(x => x.id === id);
         if (!e) return;
         state.expenses.push({ id: uid(), amount: e.amount, note: e.note, ts: Date.now(), period: state.period, cat: e.cat });
-        render();
+        if ($('spend-modal') && $('spend-modal').classList.contains('open')) closeModal('spend-modal');
+        render(); if (typeof frogHop === 'function') frogHop();
         if (!limitToast(e.cat, e.amount)) toast(`${catOf(e.cat).emoji} ${t('repeatToast', { x: (e.note || t('cat_' + e.cat)) + ' · ' + fmt(e.amount) })}`);
     }
     function renderQuickSpend() {
@@ -5528,6 +5602,89 @@
     // ---------- zoom: double-tap zoom is turned off with CSS (touch-action: manipulation) and 16px inputs ----------
     // iOS standalone apps also honor the viewport limit; block the pinch gesture there only.
     if (window.navigator.standalone === true) ['gesturestart', 'gesturechange'].forEach(ev => document.addEventListener(ev, e => e.preventDefault(), { passive: false }));
+
+    // ================= Frog-first layout: add-expense sheet, "why" sheet, month card, frog speech bubbles =================
+    Object.assign(I18N.es, {
+        monthCardT: 'Tu mes', monthCardLine: 'Gastaste {x} de {y}', whyTitle: '¿Cómo se calcula?',
+        whyIntro: 'Así sale lo que puedes gastar hoy:', whyIncome: 'Lo que recibes', whyFixed: 'Pagos fijos y deudas', whySave: 'Ahorro y pago extra a deudas',
+        whyLeft: 'Te queda para el día a día', whyDays: 'Repartido en {n} días', whyToday: 'Tu límite de hoy', whyClose: 'Entendido',
+        spAfter: 'Después te quedarían {x} hoy', spOver: 'Te pasarías por {x} hoy', spAsk: '¿Cuánto gastaste?',
+        sayPayN: 'Tienes {n} pagos pendientes', sayPay1: 'Tienes 1 pago pendiente', sayPayNone: '¡Todo pagado este mes!', sayPayLate: '¡Ojo! Tienes un pago vencido',
+        sayDebtNone: '¡Libre de deudas!', sayDebt: 'Tengo un plan para ti', sayDebtGood: '¡Vas por buen camino!',
+        sayGoals: 'Cada quetzal cuenta', sayGoalsEf: 'Tu fondo va en {p}%', sayGoalsDone: '¡Fondo completo!',
+        saySum: '¡Así va tu mes!', saySumGood: '¡Gran mes!', saySumMeh: 'Podemos mejorar'
+    });
+    Object.assign(I18N.en, {
+        monthCardT: 'Your month', monthCardLine: 'You spent {x} of {y}', whyTitle: 'How is this calculated?',
+        whyIntro: 'Here\'s how today\'s amount works out:', whyIncome: 'What you earn', whyFixed: 'Fixed bills and debt', whySave: 'Savings and extra to debt',
+        whyLeft: 'Left for day-to-day', whyDays: 'Spread over {n} days', whyToday: 'Today\'s limit', whyClose: 'Got it',
+        spAfter: 'You\'d have {x} left today', spOver: 'You\'d go over by {x} today', spAsk: 'How much did you spend?',
+        sayPayN: 'You have {n} payments due', sayPay1: 'You have 1 payment due', sayPayNone: 'All paid this month!', sayPayLate: 'Heads up! A payment is overdue',
+        sayDebtNone: 'Debt free!', sayDebt: 'I have a plan for you', sayDebtGood: 'You\'re on the right track!',
+        sayGoals: 'Every bit counts', sayGoalsEf: 'Your fund is at {p}%', sayGoalsDone: 'Fund complete!',
+        saySum: 'Here\'s your month!', saySumGood: 'Great month!', saySumMeh: 'We can do better'
+    });
+
+    // ---------- add expense: one sheet, opened from the + button ----------
+    function openSpend() {
+        const c = compute(), cur = fmt(0).replace(/[\d.,\s]/g, '').trim();
+        $('x-cur').textContent = cur || '$';
+        openModal('spend-modal'); spendPreview();
+        setTimeout(() => { const i = $('x-amount'); if (i) i.focus(); }, 80);
+    }
+    function spendPreview() {
+        const v = parseFloat($('x-amount').value) || 0, c = compute(), after = c.todayLeft - v, el = $('x-after');
+        el.innerHTML = !v ? esc(t('spAsk')) : after >= 0 ? t('spAfter', { x: `<b class="num">${esc(fmt(after))}</b>` }) : t('spOver', { x: `<b class="num">${esc(fmt(-after))}</b>` });
+        el.className = 'small ' + (v && after < 0 ? 'danger' : 'muted');
+        const ratio = c.dailyBudget > 0 ? after / c.dailyBudget : 0;
+        const name = !v ? 'ahorrando' : after < 0 ? 'sin-fondos' : ratio < 0.2 ? 'en-alerta' : ratio < 0.5 ? 'pensando' : 'ahorrando';
+        const f = $('spend-frog'); if (f && f.dataset.m !== name) { f.dataset.m = name; f.innerHTML = mascot(name, 64); }
+    }
+    function frogHop() {
+        const img = document.querySelector('#hero-frog img, #hero-frog svg'); if (!img || reduceMotion()) return;
+        img.classList.remove('hop'); void img.getBoundingClientRect(); img.classList.add('hop');
+    }
+
+    // ---------- why is today's number what it is ----------
+    function openWhyToday() {
+        const c = compute();
+        let el = $('why-modal');
+        if (!el) { el = document.createElement('div'); el.id = 'why-modal'; el.className = 'modal'; el.onclick = e => { if (e.target === el) closeModal('why-modal'); }; document.body.appendChild(el); }
+        const save = Math.max(0, c.income - c.fixed - c.buffer);
+        const days = c.biw ? c.periodDaysLeft : c.daysRemaining;
+        const row = (label, val, cls = '') => `<div class="why-row ${cls}"><span>${esc(label)}</span><b class="num">${esc(val)}</b></div>`;
+        el.innerHTML = `<div class="sheet" role="dialog" aria-modal="true" aria-labelledby="why-t" style="max-width:440px">
+            <div class="grab"></div>
+            <div class="center">${mascot('presupuesto', 120)}</div>
+            <h2 id="why-t" class="center" style="margin:6px 0 4px">${esc(t('whyTitle'))}</h2>
+            <p class="small muted center mb-4">${esc(t('whyIntro'))}</p>
+            ${row(t('whyIncome'), fmt(c.income, 0))}${row(t('whyFixed'), '− ' + fmt(c.fixed, 0))}${row(t('whySave'), '− ' + fmt(save, 0))}
+            ${row(t('whyLeft'), fmt(c.buffer, 0), 'sum')}
+            <p class="tiny muted mt-2">${esc(t('whyDays', { n: days }))}</p>
+            ${row(t('whyToday'), fmt(c.dailyBudget), 'hl')}
+            <button class="btn btn-primary btn-block mt-4" onclick="closeModal('why-modal')">${esc(t('whyClose'))}</button>
+        </div>`;
+        openModal('why-modal');
+    }
+
+    // ---------- month card + a frog with something to say on every tab ----------
+    function renderFrogTalk(c) {
+        const mf = $('month-frog');
+        if (mf && !mf.dataset.m) { mf.dataset.m = 1; mf.innerHTML = mascot('en-racha', 56); }
+        const ml = $('month-card-line'); if (ml) ml.textContent = t('monthCardLine', { x: fmt(c.spent, 0), y: fmt(c.buffer, 0) });
+        document.querySelectorAll('.tab-head').forEach(h => { const f = h.querySelector('.th-frog'); if (f && !f.dataset.m) { f.dataset.m = 1; f.innerHTML = mascot(h.dataset.frog, 104); } });
+        const say = (id, txt) => { const el = $(id); if (el && el.textContent !== txt) el.textContent = txt; };
+        const pending = state.items.filter(i => !i.paid && !i.completed);
+        const late = state.items.some(i => itemStatus(i).k === 'overdue');
+        say('say-payments', late ? t('sayPayLate') : !pending.length ? t('sayPayNone') : pending.length === 1 ? t('sayPay1') : t('sayPayN', { n: pending.length }));
+        const debts = state.items.filter(i => i.type === 'debt' && !i.completed);
+        say('say-debts', !debts.length ? t('sayDebtNone') : (state.planExtra || 0) > 0 ? t('sayDebtGood') : t('sayDebt'));
+        const ef = typeof emergencyGoal === 'function' ? emergencyGoal() : null;
+        const p = ef && ef.target > 0 ? Math.min(100, Math.round(ef.saved / ef.target * 100)) : null;
+        say('say-goals', p === null ? t('sayGoals') : p >= 100 ? t('sayGoalsDone') : t('sayGoalsEf', { p }));
+        const used = c.buffer > 0 ? c.spent / c.buffer : 0;
+        say('say-summary', c.buffer <= 0 ? t('saySum') : used <= 0.8 ? t('saySumGood') : used <= 1 ? t('saySum') : t('saySumMeh'));
+    }
 
     // ================= Web version: account login (Supabase) + 6-digit device PIN =================
     // Security model: email + password identify you to the server. The 6-digit PIN never leaves the device:
@@ -6417,7 +6574,7 @@
     }
 
     // Version shown at the bottom of Profile, so anyone can tell which build they have.
-    window.VALIU_BUILD = '2026.11.04-2305';
+    window.VALIU_BUILD = '2026.11.04-2320';
     (function () { const v = document.getElementById('app-version'); if (v) v.textContent = 'Valiu ' + window.VALIU_BUILD; })();
     // Updates: check for a new version whenever the app comes back to the screen, and reload once when it takes over.
     if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
