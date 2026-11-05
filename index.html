@@ -791,6 +791,7 @@
         .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; } .stat-grid .card { margin: 0; }
         .stat2 p:last-child { font: 800 26px/1.15 var(--display); letter-spacing: -.02em; margin-top: 2px; }
         .danger-link { color: var(--danger); background: transparent; }
+        .native #install-group { display: none; } .native .header { padding-top: env(safe-area-inset-top, 0px); } .native body { -webkit-user-select: none; user-select: none; } .native input, .native textarea { -webkit-user-select: text; user-select: text; }
         .ef-c .chips, .goal-c .chips { flex-wrap: wrap; overflow: visible; gap: 8px; } .ef-c .chip, .goal-c .chip { padding: 8px 14px; min-height: 0; height: auto; flex-direction: row; font-size: 14px; font-weight: 700; border-radius: 999px; }
         h2.h2[data-i18n] { display: inline-block; } h2.h2 + .info-btn { vertical-align: 1px; margin-left: 4px; } .between > h2.h2 + .info-btn { margin-right: auto; }
         /* profile sheet in the same style */
@@ -1234,7 +1235,7 @@
                 <div class="set-card rows"><button class="set-row" onclick="closeModal('config-modal'); showNews(true)"><span class="set-ic"><i data-lucide="megaphone"></i></span><span class="grow" data-i18n="newsRow"></span><i data-lucide="chevron-right" class="faint"></i></button></div>
             </section>
 
-            <section class="set-group">
+            <section id="install-group" class="set-group">
                 <p class="set-head"><i data-lucide="smartphone"></i><span data-i18n="installTitle"></span></p>
                 <div class="set-card stack" style="gap:8px">
                     <button id="install-btn" class="btn btn-primary hidden" onclick="installApp()"><i data-lucide="smartphone"></i><span data-i18n="installBtn"></span></button>
@@ -4559,6 +4560,7 @@
     }
     // Celebration card: the frog plus a short message, for the moments that matter.
     function cheer(name, msg, big) {
+        if (typeof haptic === 'function') haptic('success');
         if (window.confetti && !reduceMotion()) confetti(!!big);
         let el = $('cheer');
         if (!el) { el = document.createElement('div'); el.id = 'cheer'; el.className = 'cheer'; el.setAttribute('role', 'status'); el.onclick = () => el.classList.remove('show'); document.body.appendChild(el); }
@@ -5669,6 +5671,7 @@
     function frogHop() {
         const img = document.querySelector('#hero-frog img, #hero-frog svg'); if (!img || reduceMotion()) return;
         img.classList.remove('hop'); void img.getBoundingClientRect(); img.classList.add('hop');
+        if (typeof haptic === 'function') haptic('light');
     }
 
     // ---------- why is today's number what it is ----------
@@ -5835,7 +5838,7 @@
     }
     function goalQuick(id, amt) {
         const g = state.goals.find(x => x.id === id); if (!g) return;
-        const hit = goalAdd(g, amt); render();
+        const hit = goalAdd(g, amt); render(); if (typeof haptic === 'function') haptic('light');
         if (hit) cheer('celebrando', t('goalHitToast', { name: g.name }), true); else toast(`${g.emoji} +${fmt(amt, 0)}`);
     }
 
@@ -6726,11 +6729,112 @@
         if (W.focus === 'tap') { const sec = $('w-tap'); if (sec) setTimeout(() => sec.scrollIntoView({ block: 'start', behavior: 'auto' }), 60); }
     }
 
+    // ================= Inside the App Store / Google Play app (Capacitor) =================
+    // The same web app runs inside the store apps. There, notifications go through Apple/Google directly
+    // instead of Web Push, the phone vibrates on wins, and Android's back button behaves like an app.
+    const NATIVE = !!(window.Capacitor && typeof Capacitor.isNativePlatform === 'function' && Capacitor.isNativePlatform());
+    const NP = () => (window.Capacitor && Capacitor.Plugins) || {};
+    const nativePlatform = () => NATIVE ? Capacitor.getPlatform() : 'web';
+    Object.assign(I18N.es, {
+        nAppDenied: 'Las notificaciones están apagadas para Valiu. Actívalas en Ajustes → Valiu → Notificaciones.',
+        nAppFail: 'No pudimos activar los recordatorios en este teléfono. Inténtalo otra vez en un momento.'
+    });
+    Object.assign(I18N.en, {
+        nAppDenied: 'Notifications are off for Valiu. Turn them on in Settings → Valiu → Notifications.',
+        nAppFail: "Couldn't turn on reminders on this phone. Try again in a moment."
+    });
+
+    function haptic(kind) {
+        if (!NATIVE) return;
+        const H = NP().Haptics; if (!H) return;
+        try { kind === 'success' ? H.notification({ type: 'SUCCESS' }) : H.impact({ style: kind === 'medium' ? 'MEDIUM' : 'LIGHT' }); } catch (e) { /* no vibration motor */ }
+    }
+
+    // ---------- reminders through Apple / Google ----------
+    let nativeToken = null;
+    try { nativeToken = localStorage.getItem('ap.ntoken'); } catch (e) { /* private mode */ }
+    function nativePushRegister() {
+        const P = NP().PushNotifications; if (!P) return Promise.reject(new Error('push'));
+        return new Promise((resolve, reject) => {
+            let done = false;
+            const finish = (fn, v) => { if (!done) { done = true; fn(v); } };
+            P.addListener('registration', t => finish(resolve, t.value));
+            P.addListener('registrationError', e => finish(reject, new Error(e && e.error || 'registration')));
+            P.register().catch(e => finish(reject, e));
+            setTimeout(() => finish(reject, new Error('timeout')), 15000);
+        });
+    }
+    async function nativeEnableReminders() {
+        const P = NP().PushNotifications;
+        try {
+            let perm = await P.checkPermissions();
+            if (perm.receive !== 'granted') perm = await P.requestPermissions();
+            if (perm.receive !== 'granted') { toast(t('nAppDenied')); return; }
+            const token = await nativePushRegister();
+            const { error } = await AUTH.sb.from('native_push_tokens').upsert({ token, user_id: AUTH.user.id, platform: nativePlatform(), lang: state.lang, updated_at: new Date().toISOString() });
+            if (error) throw error;
+            nativeToken = token; try { localStorage.setItem('ap.ntoken', token); } catch (e) { /* ok */ }
+            state.notify = { ...notifyPrefs(), on: true };
+            render(); renderProfileExtras(); toast(t('nEnabled')); haptic('success');
+        } catch (e) { toast(/relation|does not exist|schema cache/i.test((e && e.message) || '') ? t('wNeedSetup') : t('nAppFail')); }
+    }
+    async function nativeDisableReminders() {
+        try {
+            if (nativeToken) await AUTH.sb.from('native_push_tokens').delete().eq('token', nativeToken);
+            await NP().PushNotifications.unregister();
+        } catch (e) { /* still turn it off locally */ }
+        nativeToken = null; try { localStorage.removeItem('ap.ntoken'); } catch (e) { /* ok */ }
+        state.notify = { ...notifyPrefs(), on: false };
+        render(); renderProfileExtras(); toast(t('nDisabled'));
+    }
+    function nativeRemindersHTML() {
+        const p = notifyPrefs(), on = p.on && !!nativeToken;
+        const chip = (d, k) => `<button class="toggle-chip ${p.days.includes(d) ? 'on' : ''}" onclick="toggleNotifyDay(${d})">${p.days.includes(d) ? '✓ ' : ''}${esc(t(k))}</button>`;
+        return `<p class="small muted full">${esc(t('nDesc'))}</p>
+            <div class="note ${on ? 'ok' : 'plain'} small full">${esc(on ? t('nActive') : t('nInactive'))}</div>
+            ${on ? `<button class="btn btn-ghost full" onclick="disableReminders()">${esc(t('nOff'))}</button>` : `<button class="btn btn-primary full" onclick="enableReminders()">${esc(t('nOn'))}</button>`}
+            <div class="full"><p class="tiny muted mb-2">${esc(t('nWhen'))}</p><div class="row wrap" style="gap:6px">${chip(3, 'nD3')}${chip(1, 'nD1')}${chip(0, 'nD0')}${chip(-1, 'nDm1')}</div></div>
+            <p class="tiny faint full">${esc(t('nNote'))}</p>`;
+    }
+    // Inside the app, the web-push versions hand over to these.
+    if (NATIVE) {
+        enableReminders = () => nativeEnableReminders();
+        disableReminders = () => nativeDisableReminders();
+        remindersHTML = () => nativeRemindersHTML();
+        pushSupported = () => true;
+    }
+
+    // ---------- the rest of the app shell ----------
+    function nativeSetup() {
+        if (!NATIVE) return;
+        document.documentElement.classList.add('native', 'native-' + nativePlatform());
+        const { StatusBar, App, PushNotifications, SplashScreen } = NP();
+        const paintBar = () => {
+            if (!StatusBar) return;
+            const dark = document.documentElement.getAttribute('data-theme') === 'dark' || (!document.documentElement.getAttribute('data-theme') && matchMedia('(prefers-color-scheme: dark)').matches);
+            StatusBar.setStyle({ style: dark ? 'DARK' : 'LIGHT' }).catch(() => {});
+            if (nativePlatform() === 'android') StatusBar.setBackgroundColor({ color: dark ? '#0f2b26' : '#eef5ec' }).catch(() => {});
+        };
+        paintBar();
+        new MutationObserver(paintBar).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+        if (App) App.addListener('backButton', () => {
+            const open = [...document.querySelectorAll('.modal.open')].pop();
+            if (open) { closeModal(open.id); return; }
+            if (OB && OB.open) { if (OB.step > 0) obGo(OB.step - 1); return; }
+            if (state.tab !== 'today') { setTab('today'); return; }
+            App.minimizeApp ? App.minimizeApp() : App.exitApp();
+        });
+        if (App) App.addListener('appStateChange', s => { if (s.isActive && typeof importWalletInbox === 'function') importWalletInbox(); });
+        if (PushNotifications) PushNotifications.addListener('pushNotificationActionPerformed', () => setTab('payments'));
+        if (SplashScreen) setTimeout(() => SplashScreen.hide().catch(() => {}), 300);
+    }
+
     // Version shown at the bottom of Profile, so anyone can tell which build they have.
-    window.VALIU_BUILD = '2026.11.04-2339';
+    window.VALIU_BUILD = '2026.11.04-2351';
     (function () { const v = document.getElementById('app-version'); if (v) v.textContent = 'Valiu ' + window.VALIU_BUILD; })();
     // Updates: check for a new version whenever the app comes back to the screen, and reload once when it takes over.
-    if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+    nativeSetup();
+    if (!NATIVE && 'serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
         const hadController = !!navigator.serviceWorker.controller;
         let reloaded = false;
         navigator.serviceWorker.addEventListener('controllerchange', () => {

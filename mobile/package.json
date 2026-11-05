@@ -1,0 +1,28 @@
+{
+  "name": "valiu-mobile",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Valiu para iPhone y Android (Capacitor). La app es la misma de la web: este proyecto solo la empaqueta.",
+  "scripts": {
+    "web": "node scripts/copy-web.mjs",
+    "sync": "npm run web && npx cap sync",
+    "android": "npm run sync && npx cap open android",
+    "ios": "npm run sync && npx cap open ios",
+    "assets": "npx capacitor-assets generate --ios --android --iconBackgroundColor '#1e8150' --iconBackgroundColorDark '#0f2b26' --splashBackgroundColor '#eef5ec' --splashBackgroundColorDark '#0f2b26'"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.6.0",
+    "@capacitor/app": "^8.0.0",
+    "@capacitor/core": "^8.6.0",
+    "@capacitor/haptics": "^8.0.0",
+    "@capacitor/ios": "^8.6.0",
+    "@capacitor/push-notifications": "^8.0.0",
+    "@capacitor/share": "^8.0.0",
+    "@capacitor/splash-screen": "^8.0.0",
+    "@capacitor/status-bar": "^8.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^8.6.0"
+  }
+}

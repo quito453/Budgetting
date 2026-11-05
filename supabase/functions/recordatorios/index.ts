@@ -1,7 +1,11 @@
 // Valiu · Edge Function "recordatorios"
 // Runs once a day (pg_cron). For every user with reminders on, finds statement credit cards that are
-// due in 3 days / tomorrow / today / were due yesterday, and sends a Web Push notification.
-// Secrets needed (Edge Functions → Secrets): VAPID_PRIVATE_JWK, VAPID_CONTACT, CRON_SECRET.
+// due in 3 days / tomorrow / today / were due yesterday, and sends a notification:
+//   - Web Push to browsers and home-screen apps (push_subscriptions)
+//   - FCM to the Android app and APNs to the iPhone app (native_push_tokens)
+// Secrets (Edge Functions → Secrets): VAPID_PRIVATE_JWK, VAPID_CONTACT, CRON_SECRET,
+//   and for the store apps: FCM_SERVICE_ACCOUNT (the Firebase JSON key), APNS_KEY_P8, APNS_KEY_ID, APNS_TEAM_ID,
+//   APNS_BUNDLE_ID (com.valiugt.app) and APNS_ENV ("production", or "sandbox" while testing from Xcode).
 import { buildPushHTTPRequest } from "npm:@pushforge/builder@2.0.5";
 import { createClient } from "npm:@supabase/supabase-js@2.112.4";
 
@@ -67,6 +71,68 @@ function sameSecret(a: string | null, b: string | undefined): boolean {
   return r === 0;
 }
 
+// ---------- store apps ----------
+const b64url = (buf: ArrayBuffer | Uint8Array | string) => {
+  const bytes = typeof buf === "string" ? new TextEncoder().encode(buf) : buf instanceof Uint8Array ? buf : new Uint8Array(buf);
+  let s = ""; for (const b of bytes) s += String.fromCharCode(b);
+  return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+};
+function pemToDer(pem: string): ArrayBuffer {
+  const b = atob(pem.replace(/-----[^-]+-----/g, "").replace(/\s+/g, ""));
+  return Uint8Array.from(b, (c) => c.charCodeAt(0)).buffer;
+}
+async function signJWT(header: object, claims: object, pem: string, alg: "RS256" | "ES256"): Promise<string> {
+  const key = await crypto.subtle.importKey("pkcs8", pemToDer(pem),
+    alg === "RS256" ? { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" } : { name: "ECDSA", namedCurve: "P-256" }, false, ["sign"]);
+  const input = `${b64url(JSON.stringify(header))}.${b64url(JSON.stringify(claims))}`;
+  const sig = await crypto.subtle.sign(alg === "RS256" ? { name: "RSASSA-PKCS1-v1_5" } : { name: "ECDSA", hash: "SHA-256" }, key, new TextEncoder().encode(input));
+  return `${input}.${b64url(sig)}`;
+}
+let fcmCache: { token: string; project: string } | null = null;
+async function fcmAuth() {
+  if (fcmCache) return fcmCache;
+  const raw = Deno.env.get("FCM_SERVICE_ACCOUNT"); if (!raw) return null;
+  const sa = JSON.parse(raw), now = Math.floor(Date.now() / 1000);
+  const jwt = await signJWT({ alg: "RS256", typ: "JWT" }, { iss: sa.client_email, scope: "https://www.googleapis.com/auth/firebase.messaging", aud: "https://oauth2.googleapis.com/token", iat: now, exp: now + 3300 }, sa.private_key, "RS256");
+  const r = await fetch("https://oauth2.googleapis.com/token", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: `grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=${jwt}` });
+  const j = await r.json(); if (!j.access_token) throw new Error("fcm auth");
+  return (fcmCache = { token: j.access_token, project: sa.project_id });
+}
+let apnsJwt: string | null = null;
+async function apnsAuth() {
+  if (apnsJwt) return apnsJwt;
+  const p8 = Deno.env.get("APNS_KEY_P8"), kid = Deno.env.get("APNS_KEY_ID"), iss = Deno.env.get("APNS_TEAM_ID");
+  if (!p8 || !kid || !iss) return null;
+  return (apnsJwt = await signJWT({ alg: "ES256", kid }, { iss, iat: Math.floor(Date.now() / 1000) }, p8, "ES256"));
+}
+type Msg = { title: string; body: string; tag: string; url: string };
+// "gone" means the phone uninstalled the app or the token expired: delete it.
+async function sendNative(platform: string, token: string, m: Msg): Promise<"ok" | "gone" | "fail" | "off"> {
+  if (platform === "android") {
+    const a = await fcmAuth(); if (!a) return "off";
+    const r = await fetch(`https://fcm.googleapis.com/v1/projects/${a.project}/messages:send`, {
+      method: "POST", headers: { Authorization: `Bearer ${a.token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ message: { token, notification: { title: m.title, body: m.body }, data: { url: m.url },
+        android: { priority: "high", ttl: "43200s", notification: { tag: m.tag.slice(0, 64), color: "#1e8150" } } } }),
+    });
+    if (r.ok) return "ok";
+    const t = await r.text();
+    return r.status === 404 || /UNREGISTERED|INVALID_ARGUMENT/.test(t) ? "gone" : "fail";
+  }
+  const jwt = await apnsAuth(); if (!jwt) return "off";
+  const host = Deno.env.get("APNS_ENV") === "sandbox" ? "api.sandbox.push.apple.com" : "api.push.apple.com";
+  if (!/^[0-9a-f]{64,200}$/i.test(token)) return "gone";
+  const r = await fetch(`https://${host}/3/device/${token}`, {
+    method: "POST",
+    headers: { authorization: `bearer ${jwt}`, "apns-topic": Deno.env.get("APNS_BUNDLE_ID") ?? "com.valiugt.app", "apns-push-type": "alert",
+      "apns-priority": "10", "apns-expiration": String(Math.floor(Date.now() / 1000) + 43200), "apns-collapse-id": m.tag.slice(0, 60) },
+    body: JSON.stringify({ aps: { alert: { title: m.title, body: m.body }, sound: "default" }, url: m.url }),
+  });
+  if (r.ok) return "ok";
+  const t = await r.text();
+  return r.status === 410 || /BadDeviceToken|Unregistered|DeviceTokenNotForTopic/.test(t) ? "gone" : "fail";
+}
+
 Deno.serve(async (req) => {
   if (!sameSecret(req.headers.get("x-cron-secret"), Deno.env.get("CRON_SECRET"))) {
     return new Response("forbidden", { status: 403 });
@@ -80,7 +146,9 @@ Deno.serve(async (req) => {
 
   const { data: subs, error: e1 } = await sb.from("push_subscriptions").select("endpoint, p256dh, auth, user_id");
   if (e1) return Response.json({ error: e1.message }, { status: 500 });
-  const userIds = [...new Set((subs ?? []).map((s) => s.user_id))];
+  // The store apps' table may not exist yet (update 5 not run): then only web reminders go out.
+  const { data: natives } = await sb.from("native_push_tokens").select("token, platform, user_id");
+  const userIds = [...new Set([...(subs ?? []), ...(natives ?? [])].map((s) => s.user_id))];
   if (!userIds.length) return Response.json({ users: 0, sent: 0 });
 
   const { data: rows, error: e2 } = await sb.from("app_state").select("user_id, data").in("user_id", userIds);
@@ -107,6 +175,17 @@ Deno.serve(async (req) => {
             removed++;
           } else if (res.ok) sent++;
           else failed++;
+        } catch (_e) { failed++; }
+      }
+    }
+    for (const n of (natives ?? []).filter((x) => x.user_id === row.user_id)) {
+      for (const payload of msgs) {
+        if (dryRun) { preview.push({ user: row.user_id, app: n.platform, ...payload }); continue; }
+        try {
+          const r = await sendNative(n.platform, n.token, payload);
+          if (r === "ok") sent++;
+          else if (r === "gone") { await sb.from("native_push_tokens").delete().eq("token", n.token); removed++; }
+          else if (r === "fail") failed++;
         } catch (_e) { failed++; }
       }
     }
