@@ -3439,8 +3439,11 @@
             state.items.push({ id: uid(), ...fields, totalMonths: subtype === 'loan' ? months : 0,
                 monthsPaid: 0, paid: false, completed: false, extraPaid: 0, lastPay: null, history: [] });
         }
+        const wasEdit = !!editingId;
         editingId = null;
         render(); closeModal('entry-modal');
+        toast(wasEdit ? t('tSaved') : t(type === 'debt' ? 'tDebtAdded' : 'tBillAdded', { name }));
+        if (typeof haptic === 'function') haptic(wasEdit ? 'light' : 'success');
     }
 
     function openPaymentModal(id) {
@@ -3514,7 +3517,7 @@
         const item = state.items.find(i => i.id === id);
         if (!item || !(await askConfirm(t('deleteConfirm', { name: item.name }), t('deleteBtn'), true))) return;
         state.items = state.items.filter(i => i.id !== id);
-        render();
+        render(); toast(t('tRemoved', { name: item.name }));
     }
 
     function addExpense() {
@@ -4523,7 +4526,10 @@
                      apr: d.apr, totalMonths: 0, monthsPaid: 0, paid: false, completed: false, extraPaid: 0, lastPay: null, history: [], stmt };
             state.items.push(item);
         }
+        const isNew = !ccEditId;
         closeModal('card-modal'); render();
+        toast(isNew ? t('tCardAdded', { name }) : t('tSaved'));
+        if (typeof haptic === 'function') haptic(isNew ? 'success' : 'light');
         openCardInsight(item.id);
     }
 
@@ -5909,6 +5915,7 @@
 
     // ================= Frog-first layout: add-expense sheet, "why" sheet, month card, frog speech bubbles =================
     Object.assign(I18N.es, {
+        tDebtAdded: '✅ Deuda agregada: {name}', tBillAdded: '✅ Pago fijo agregado: {name}', tCardAdded: '✅ Tarjeta agregada: {name}', tSaved: '✅ Cambios guardados', tRemoved: '🗑️ Eliminado: {name}',
         monthCardT: 'Tu mes', monthCardLine: 'Gastaste {x} de {y}', whyTitle: '¿Cómo se calcula?',
         whyIntro: 'Así sale lo que puedes gastar hoy:', whyIncome: 'Lo que recibes', whyFixed: 'Pagos fijos y deudas', whySave: 'Ahorro y pago extra a deudas',
         whyLeft: 'Te queda para el día a día', whyDays: 'Repartido en {n} días', whyToday: 'Tu límite de hoy', whyClose: 'Entendido',
@@ -5919,6 +5926,7 @@
         saySum: '¡Así va tu mes!', saySumGood: '¡Gran mes!', saySumMeh: 'Podemos mejorar'
     });
     Object.assign(I18N.en, {
+        tDebtAdded: '✅ Debt added: {name}', tBillAdded: '✅ Fixed bill added: {name}', tCardAdded: '✅ Card added: {name}', tSaved: '✅ Changes saved', tRemoved: '🗑️ Removed: {name}',
         monthCardT: 'Your month', monthCardLine: 'You spent {x} of {y}', whyTitle: 'How is this calculated?',
         whyIntro: 'Here\'s how today\'s amount works out:', whyIncome: 'What you earn', whyFixed: 'Fixed bills and debt', whySave: 'Savings and extra to debt',
         whyLeft: 'Left for day-to-day', whyDays: 'Spread over {n} days', whyToday: 'Today\'s limit', whyClose: 'Got it',
@@ -7213,7 +7221,7 @@
     }
 
     // Version shown at the bottom of Profile, so anyone can tell which build they have.
-    window.VALIU_BUILD = '2026.11.05-0017';
+    window.VALIU_BUILD = '2026.11.05-0918';
     (function () { const v = document.getElementById('app-version'); if (v) v.textContent = 'Valiu ' + window.VALIU_BUILD; })();
     // Updates: check for a new version whenever the app comes back to the screen, and reload once when it takes over.
     nativeSetup();
