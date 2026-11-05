@@ -6185,7 +6185,7 @@
         aNoCrypto: 'Este navegador no permite guardar el PIN de forma segura. Abre la app desde su dirección https.',
         eCreds: 'Correo o contraseña incorrectos.', eConfirm: 'Confirma tu correo primero: revisa el enlace que te enviamos.',
         eExists: 'Ya existe una cuenta con ese correo. Inicia sesión.', eWeak: 'La contraseña es muy débil. Usa al menos 8 caracteres.',
-        eMatch: 'Las contraseñas no coinciden.', eEmail: 'Escribe un correo válido.', eRate: 'Demasiados intentos. Espera unos minutos.',
+        eMatch: 'Las contraseñas no coinciden.', eEmail: 'Escribe un correo válido.', eRate: 'Demasiados intentos. Espera unos minutos.', eRateEmail: 'Ahora mismo hay muchas cuentas nuevas y no pudimos mandarte el correo de confirmación. Inténtalo otra vez en una hora.',
         eNetwork: 'No hay conexión con el servidor. Revisa tu internet.', eGeneric: 'Algo salió mal: {msg}'
     });
     Object.assign(I18N.en, {
@@ -6219,7 +6219,7 @@
         aNoCrypto: "This browser can't store the PIN securely. Open the app from its https address.",
         eCreds: 'Wrong email or password.', eConfirm: 'Confirm your email first: check the link we sent you.',
         eExists: 'An account with that email already exists. Sign in.', eWeak: 'Password is too weak. Use at least 8 characters.',
-        eMatch: "Passwords don't match.", eEmail: 'Enter a valid email.', eRate: 'Too many attempts. Wait a few minutes.',
+        eMatch: "Passwords don't match.", eEmail: 'Enter a valid email.', eRate: 'Too many attempts. Wait a few minutes.', eRateEmail: "Lots of new accounts right now and we couldn't send your confirmation email. Please try again in an hour.",
         eNetwork: "Can't reach the server. Check your internet.", eGeneric: 'Something went wrong: {msg}'
     });
 
@@ -6334,6 +6334,7 @@
         if (code === 'email_not_confirmed' || /not confirmed/i.test(msg)) return t('eConfirm');
         if (code === 'user_already_exists' || /already registered/i.test(msg)) return t('eExists');
         if (code === 'weak_password' || /password should/i.test(msg)) return t('eWeak');
+        if (/email.*rate|over_email/i.test(code + ' ' + msg)) return t('eRateEmail');
         if (/rate|too many/i.test(code + msg) || error.status === 429) return t('eRate');
         return t('eGeneric', { msg });
     }
@@ -7221,7 +7222,7 @@
     }
 
     // Version shown at the bottom of Profile, so anyone can tell which build they have.
-    window.VALIU_BUILD = '2026.11.05-0918';
+    window.VALIU_BUILD = '2026.11.05-0924';
     (function () { const v = document.getElementById('app-version'); if (v) v.textContent = 'Valiu ' + window.VALIU_BUILD; })();
     // Updates: check for a new version whenever the app comes back to the screen, and reload once when it takes over.
     nativeSetup();
