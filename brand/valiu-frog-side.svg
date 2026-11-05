@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <clipPath id="badge"><circle cx="256" cy="256" r="246"/></clipPath>
+    <clipPath id="headc"><path id="headp" d="M70 330 C60 250 96 196 150 172 A84 84 0 0 1 300 150 C318 132 350 124 380 134 A62 62 0 0 1 432 196 C466 228 480 268 470 310 C458 366 392 404 296 410 C190 418 82 398 70 330 Z"/></clipPath>
+  </defs>
+  <g clip-path="url(#badge)">
+    <circle cx="256" cy="256" r="246" fill="#D4EBCC"/>
+    <!-- shoulders and throat -->
+    <path d="M10 530 C20 400 110 340 250 340 C390 340 486 400 500 530 Z" fill="#5C935A"/>
+    <path d="M170 530 C176 430 230 372 320 368 C400 366 450 420 452 530 Z" fill="#F4E78A"/>
+    <g fill="#3F7A45"><circle cx="86" cy="452" r="14"/><circle cx="124" cy="494" r="9"/></g>
+    <g fill="#E8D85A"><circle cx="110" cy="430" r="6"/><circle cx="70" cy="490" r="5"/></g>
+    <!-- head -->
+    <path d="M70 330 C60 250 96 196 150 172 A84 84 0 0 1 300 150 C318 132 350 124 380 134 A62 62 0 0 1 432 196 C466 228 480 268 470 310 C458 366 392 404 296 410 C190 418 82 398 70 330 Z" fill="#5C935A"/>
+    <g clip-path="url(#headc)">
+      <path d="M168 316 C248 350 344 350 476 280 L476 430 L268 430 C214 404 182 364 168 316 Z" fill="#F4E78A"/>
+      <g fill="#3F7A45"><circle cx="104" cy="300" r="13"/><circle cx="128" cy="338" r="8"/><circle cx="96" cy="250" r="7"/></g>
+      <g fill="#E8D85A"><circle cx="122" cy="276" r="5"/><circle cx="150" cy="312" r="4"/></g>
+    </g>
+    <!-- smile -->
+    <path d="M168 316 C248 350 344 350 446 290" fill="none" stroke="#2F5E3A" stroke-width="10" stroke-linecap="round"/>
+    <path d="M440 278 C450 284 456 292 456 302" fill="none" stroke="#2F5E3A" stroke-width="8" stroke-linecap="round"/>
+    <ellipse cx="430" cy="236" rx="6" ry="4.5" fill="#2F5E3A"/>
+    <!-- near eye -->
+    <circle cx="214" cy="196" r="54" fill="#FFFFFF"/>
+    <circle cx="220" cy="198" r="37" fill="#D9A02A" stroke="#7A5A16" stroke-width="4"/>
+    <circle cx="224" cy="199" r="19" fill="#17180F"/>
+    <circle cx="232" cy="190" r="6.5" fill="#FFFFFF"/>
+    <!-- far eye -->
+    <circle cx="380" cy="186" r="34" fill="#FFFFFF"/>
+    <circle cx="386" cy="188" r="23" fill="#D9A02A" stroke="#7A5A16" stroke-width="3"/>
+    <circle cx="390" cy="189" r="12" fill="#17180F"/>
+    <circle cx="395" cy="183" r="4" fill="#FFFFFF"/>
+    <path d="M348 160 C362 150 392 148 410 160" fill="none" stroke="#3F7A45" stroke-width="6" stroke-linecap="round"/>
+  </g>
+</svg>
