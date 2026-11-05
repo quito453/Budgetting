@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://valiugt.netlify.app https://*.supabase.co wss://*.supabase.co; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#eef5ec" media="(prefers-color-scheme: light)">
@@ -7196,6 +7196,46 @@
         pushSupported = () => true;
     }
 
+    // ---------- live updates ----------
+    // The store app carries a copy of the web app. Every Netlify deploy also publishes that copy as a zip plus
+    // updates/app.json; the app downloads a newer one quietly and switches to it the next time it goes to the
+    // background, so changes reach phones without a new store review. If a new copy fails to start, the plugin
+    // rolls back on its own (notifyAppReady never arrives), and we stop retrying that version after two tries.
+    const LIVE_URL = 'https://valiugt.netlify.app/updates/app.json';
+    const LIVE_TRIES = 'valiu.liveTries';
+    let liveBusy = false, liveLast = 0;
+    function liveTries() { try { return JSON.parse(localStorage.getItem(LIVE_TRIES) || '{}'); } catch (e) { return {}; } }
+    function liveUpdateStart() {
+        const U = NP().CapacitorUpdater; if (!U) return;
+        U.notifyAppReady().catch(() => {});   // this copy started fine: keep it
+        setTimeout(liveUpdate, 4000);
+    }
+    async function liveUpdate() {
+        const U = NP().CapacitorUpdater, App = NP().App;
+        if (!U || liveBusy || Date.now() - liveLast < 20 * 60 * 1000) return;
+        liveBusy = true; liveLast = Date.now();
+        try {
+            const r = await fetch(LIVE_URL + '?t=' + Date.now(), { cache: 'no-store' });
+            if (!r.ok) return;
+            const m = await r.json();
+            const mine = window.VALIU_BUILD || '';
+            if (!m || typeof m.version !== 'string' || typeof m.url !== 'string' || !/^https:\/\/valiugt\.netlify\.app\//.test(m.url)) return;
+            if (!(m.version > mine)) return;                      // versions are YYYY.MM.DD-HHMM, so text order is time order
+            if (m.minNativeBuild && App && App.getInfo) {         // needs a newer store app (a new native feature)
+                const info = await App.getInfo().catch(() => null);
+                if (info && Number(info.build) < Number(m.minNativeBuild)) return;
+            }
+            const tries = liveTries();
+            if ((tries[m.version] || 0) >= 2) return;
+            tries[m.version] = (tries[m.version] || 0) + 1;
+            try { localStorage.setItem(LIVE_TRIES, JSON.stringify(tries)); } catch (e) {}
+            const b = await U.download({ url: m.url, version: m.version, checksum: m.checksum });
+            await U.next({ id: b.id });                           // applied when the app goes to the background
+        } catch (e) {
+            // offline or a failed download: try again on the next resume
+        } finally { liveBusy = false; }
+    }
+
     // ---------- the rest of the app shell ----------
     function nativeSetup() {
         if (!NATIVE) return;
@@ -7216,13 +7256,18 @@
             if (state.tab !== 'today') { setTab('today'); return; }
             App.minimizeApp ? App.minimizeApp() : App.exitApp();
         });
-        if (App) App.addListener('appStateChange', s => { if (s.isActive && typeof importWalletInbox === 'function') importWalletInbox(); });
+        if (App) App.addListener('appStateChange', s => {
+            if (!s.isActive) return;
+            if (typeof importWalletInbox === 'function') importWalletInbox();
+            liveUpdate();
+        });
+        liveUpdateStart();
         if (PushNotifications) PushNotifications.addListener('pushNotificationActionPerformed', () => setTab('payments'));
         if (SplashScreen) setTimeout(() => SplashScreen.hide().catch(() => {}), 300);
     }
 
     // Version shown at the bottom of Profile, so anyone can tell which build they have.
-    window.VALIU_BUILD = '2026.11.05-0924';
+    window.VALIU_BUILD = '2026.11.05-1133';
     (function () { const v = document.getElementById('app-version'); if (v) v.textContent = 'Valiu ' + window.VALIU_BUILD; })();
     // Updates: check for a new version whenever the app comes back to the screen, and reload once when it takes over.
     nativeSetup();

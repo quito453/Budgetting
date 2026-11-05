@@ -1,0 +1,5 @@
+# Netlify publica la carpeta principal tal cual. El comando solo prepara la actualización en vivo
+# para las apps de iPhone y Android (updates/app.json y el zip), sin paquetes que instalar.
+[build]
+  publish = "."
+  command = "node mobile/scripts/make-update.mjs"

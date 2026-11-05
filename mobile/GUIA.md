@@ -165,9 +165,15 @@ Tu presupuesto diario, tus deudas y tus metas, con una ranita que te acompaña.
 
 ## 8. Cuando cambies la app
 
-1. Haz el cambio en la web (como siempre: GitHub → Netlify).
-2. Sube el número de versión:
+**Cambios normales (pantallas, textos, cálculos, colores):** no tienes que hacer nada en las tiendas.
+1. Haz el cambio en la web, como siempre (GitHub → Netlify).
+2. Netlify publica también una copia para las apps (`updates/app.json`).
+3. Cada app la descarga sola en segundo plano y la usa la siguiente vez que el usuario sale y vuelve a entrar. Si la copia nueva fallara al abrir, la app regresa sola a la anterior.
+
+**Cambios nativos (un plugin nuevo como Face ID, permisos, íconos, nombre de la app):** sí hay que pasar por las tiendas.
+1. Sube el número de versión:
    - **iPhone:** en Xcode → General → Version/Build.
    - **Android:** en `android/app/build.gradle`, sube `versionCode` y `versionName`.
-3. En la Mac, dentro de `Budgetting/mobile`: `git pull` y luego `npm run sync`.
-4. Vuelve a archivar (iPhone) y a generar el `.aab` (Android) y súbelos.
+2. En la Mac, dentro de `Budgetting/mobile`: `git pull` y luego `npm run sync`.
+3. Vuelve a archivar (iPhone) y a generar el `.aab` (Android) y súbelos.
+4. En `mobile/live-update.json`, pon `minNativeBuild` en ese nuevo número de build. Así los teléfonos con la app vieja no reciben código que necesita la parte nativa nueva hasta que actualicen desde la tienda.

@@ -1,0 +1,4 @@
+{
+  "minNativeBuild": 1,
+  "_nota": "Sube minNativeBuild al número de build de la app de las tiendas cuando un cambio necesite algo nativo nuevo (por ejemplo Face ID). Así las apps viejas no reciben código que no pueden correr."
+}

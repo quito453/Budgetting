@@ -3,10 +3,35 @@
   "appName": "Valiu",
   "webDir": "www",
   "backgroundColor": "#eef5ec",
-  "android": { "allowMixedContent": false, "captureInput": true },
-  "ios": { "contentInset": "never", "scrollEnabled": true, "limitsNavigationsToAppBoundDomains": false },
+  "android": {
+    "allowMixedContent": false,
+    "captureInput": true
+  },
+  "ios": {
+    "contentInset": "never",
+    "scrollEnabled": true,
+    "limitsNavigationsToAppBoundDomains": false
+  },
   "plugins": {
-    "SplashScreen": { "launchShowDuration": 900, "launchAutoHide": true, "backgroundColor": "#eef5ec", "showSpinner": false },
-    "PushNotifications": { "presentationOptions": ["badge", "sound", "alert"] }
+    "SplashScreen": {
+      "launchShowDuration": 900,
+      "launchAutoHide": true,
+      "backgroundColor": "#eef5ec",
+      "showSpinner": false
+    },
+    "PushNotifications": {
+      "presentationOptions": [
+        "badge",
+        "sound",
+        "alert"
+      ]
+    },
+    "CapacitorUpdater": {
+      "autoUpdate": false,
+      "appReadyTimeout": 15000,
+      "updateUrl": "",
+      "statsUrl": "",
+      "channelUrl": ""
+    }
   }
 }
