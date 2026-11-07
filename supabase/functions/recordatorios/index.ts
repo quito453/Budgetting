@@ -17,12 +17,16 @@ const TEXT = {
     in: (n: number, name: string) => n === 0 ? `Hoy vence tu tarjeta ${name}.` : n === 1 ? `Mañana vence tu tarjeta ${name}.` : n < 0 ? `Tu tarjeta ${name} venció ayer: paga al menos el mínimo hoy.` : `Tu tarjeta ${name} vence en ${n} días.`,
     amounts: (min: string, full: string) => `Mínimo ${min} · Contado ${full}.`,
     tip: "Pagar el total evita intereses.",
+    recapTitle: (m: string) => `Valiu · Tu resumen de ${m}`,
+    recapBody: (m: string) => `Ya está listo tu resumen de ${m}: cuánto gastaste, ahorraste y abonaste. Abre Valiu para verlo; el mes nuevo empieza en cero.`,
   },
   en: {
     title: "Valiu · Payment reminder",
     in: (n: number, name: string) => n === 0 ? `Your ${name} card is due today.` : n === 1 ? `Your ${name} card is due tomorrow.` : n < 0 ? `Your ${name} card was due yesterday: pay at least the minimum today.` : `Your ${name} card is due in ${n} days.`,
     amounts: (min: string, full: string) => `Minimum ${min} · In full ${full}.`,
     tip: "Paying in full avoids interest.",
+    recapTitle: (m: string) => `Valiu · Your ${m} recap`,
+    recapBody: (m: string) => `Your ${m} recap is ready: what you spent, saved and paid off. Open Valiu to see it; the new month starts from zero.`,
   },
 };
 
@@ -44,8 +48,16 @@ export function remindersFor(data: any, today: string) {
   const days: number[] = Array.isArray(notify.days) && notify.days.length ? notify.days : DEFAULT_DAYS;
   const lang = data?.lang === "en" ? "en" : "es";
   const L = TEXT[lang];
+  const out: { title: string; body: string; tag: string; url: string }[] = [];
+  // On the 1st: the previous month's recap is ready (the app builds it and starts the month from zero).
+  if (today.endsWith("-01") && ((data?.items ?? []).length || (data?.expenses ?? []).length)) {
+    const [y, m] = today.split("-").map(Number);
+    const prev = new Date(Date.UTC(y, m - 2, 15));
+    const name = new Intl.DateTimeFormat(lang === "en" ? "en-US" : "es-GT", { month: "long", timeZone: "UTC" }).format(prev);
+    out.push({ title: L.recapTitle(name), body: L.recapBody(name), tag: `valiu-recap-${prev.toISOString().slice(0, 7)}`, url: "./" });
+  }
   // deno-lint-ignore no-explicit-any
-  return (data?.items ?? []).filter((i: any) => i?.stmt?.due && !i.paid && !i.completed && (i.stmt.full ?? 0) > 0)
+  return out.concat((data?.items ?? []).filter((i: any) => i?.stmt?.due && !i.paid && !i.completed && (i.stmt.full ?? 0) > 0)
     // deno-lint-ignore no-explicit-any
     .map((i: any) => ({ i, n: daysBetween(today, i.stmt.due) }))
     // deno-lint-ignore no-explicit-any
@@ -56,7 +68,7 @@ export function remindersFor(data: any, today: string) {
       body: `${L.in(n, i.name)} ${L.amounts(money(Math.min(i.stmt.min || i.stmt.full, i.stmt.full), data.currencyCode, lang), money(i.stmt.full, data.currencyCode, lang))} ${n >= 0 ? L.tip : ""}`.trim(),
       tag: `valiu-${i.id}-${i.stmt.due}`,
       url: "./",
-    }));
+    })));
 }
 
 // Only send to the real push services (defense in depth: the database also checks this).

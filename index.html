@@ -804,6 +804,34 @@
         .profile-sheet .set-card { background: var(--surface); border: 0; border-radius: 22px; box-shadow: var(--shadow); }
         .profile-sheet .set-head { font: 700 19px/1.2 var(--display); letter-spacing: -.02em; color: var(--text); text-transform: none; }
         .profile-sheet .set-head svg.lucide { display: none; }
+        .back-link { display: inline-flex; align-items: center; gap: 2px; font-weight: 700; font-size: 15px; color: var(--accent); padding: 6px 10px 6px 0; margin-bottom: 2px; }
+        .back-link svg { width: 20px; height: 20px; }
+        .tools-link .tools-ic { width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; background: var(--accent-soft); font-size: 24px; flex-shrink: 0; }
+        .next-step.compact { display: flex; align-items: center; gap: 12px; padding: 12px 14px; }
+        .next-step.compact .lock-ic { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: var(--surface-2); font-size: 19px; flex-shrink: 0; }
+        .next-step.compact .ttl { font-size: 15px; } .next-step.compact p { margin-top: 2px; }
+        .month-exp { padding: 10px 16px 8px; }
+        .month-exp .day-h { display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; color: var(--muted); padding: 12px 0 2px; }
+        .month-exp .day-h:first-child { padding-top: 2px; }
+        .month-exp .mrow { padding: 6px 0; gap: 10px; } .month-exp .mrow .emoji-badge { width: 32px; height: 32px; font-size: 16px; }
+        .rec-tag, .approx-tag { font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 999px; vertical-align: 1px; white-space: nowrap; }
+        .rec-tag { color: var(--accent); background: var(--accent-soft); } .approx-tag { color: var(--warn); background: var(--warn-soft, rgba(242, 180, 60, .16)); }
+        .feed-empty { padding: 8px 2px; }
+        .rec-row { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 16px; background: var(--surface-2); }
+        .rec-row b { display: block; font-size: 14.5px; } .rec-row .tiny { display: block; }
+        .sw { width: 50px; height: 30px; border-radius: 999px; background: var(--border); position: relative; flex-shrink: 0; transition: background .2s; }
+        .sw::after { content: ''; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, .25); transition: transform .2s; }
+        .sw[aria-checked="true"] { background: var(--accent); } .sw[aria-checked="true"]::after { transform: translateX(20px); }
+        .chk-card { display: flex; align-items: center; gap: 12px; text-align: left; padding: 12px 14px; border-radius: 16px; background: var(--surface-2); border: 1.5px solid var(--border); cursor: pointer; margin-top: 14px; }
+        .chk-card.hidden { display: none; }
+        .chk-card input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+        .chk-card .box { width: 26px; height: 26px; border-radius: 8px; border: 2px solid var(--border); display: grid; place-items: center; flex: none; color: transparent; font-weight: 800; font-size: 15px; }
+        .chk-card input:checked + .box { background: var(--accent); border-color: var(--accent); color: #fff; }
+        .chk-card input:focus-visible + .box { outline: 2px solid var(--accent); outline-offset: 2px; }
+        .chk-card b { display: block; font-size: 15px; } .chk-card span span { display: block; font-size: 13px; color: var(--muted); }
+        .chk-card:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+        .inc-sub { border-top: 1px solid var(--border); padding-top: 14px; }
+        .inc-sub-h { font: 700 16px/1.2 'Bricolage Grotesque', system-ui, sans-serif; margin-bottom: 4px; }
         .set-fold > summary { list-style: none; cursor: pointer; } .set-fold > summary::-webkit-details-marker { display: none; }
         .set-fold > summary .grow b { display: block; font-weight: 700; } .set-fold > summary .grow span { display: block; }
         .set-fold[open] .fold-chev { transform: rotate(90deg); } .fold-chev { transition: transform .2s; }
@@ -1014,6 +1042,7 @@
 
         <!-- ================= DEBTS ================= -->
         <section class="tab" id="tab-debts">
+            <div id="debt-main">
             <div class="tab-head" data-frog="planeando"><span class="th-frog" aria-hidden="true"></span><p class="th-say" id="say-debts"></p></div>
             <h1 class="h" data-i18n="navDebts"></h1>
             <div class="card total-card">
@@ -1028,6 +1057,16 @@
                 <button class="more-btn" onclick="openCardModal()"><i data-lucide="credit-card"></i><span data-i18n="ccAdd"></span></button>
                 <button class="more-btn" onclick="openEntryModal('debt')"><i data-lucide="plus"></i><span data-i18n="addDebt"></span></button>
             </div>
+            <button type="button" class="card row-link tools-link mt-3" onclick="openDebtTools()">
+                <span class="tools-ic" aria-hidden="true">🧭</span>
+                <span class="grow"><b data-i18n="toolsT" style="display:block"></b><span class="tiny muted" data-i18n="toolsS"></span></span>
+                <i data-lucide="chevron-right" class="faint"></i>
+            </button>
+            </div>
+            <div id="debt-tools" class="hidden">
+            <button type="button" class="back-link" onclick="closeDebtTools()"><i data-lucide="chevron-left"></i><span data-i18n="toolsBack"></span></button>
+            <div class="tab-head" data-frog="pensando"><span class="th-frog" aria-hidden="true"></span><p class="th-say" data-i18n="sayDebt"></p></div>
+            <h1 class="h" data-i18n="toolsH"></h1>
             <h2 class="h2" data-i18n="planTitle"></h2>
             <div class="card">
                 <div class="surplus-tile">
@@ -1106,6 +1145,7 @@
             </div>
             <h2 class="h2" data-i18n="trophiesTitle"></h2>
             <div class="card"><div id="trophies"></div></div>
+            </div>
         </section>
 
         <!-- ================= GOALS ================= -->
@@ -1116,23 +1156,7 @@
             <div id="goal-simple" class="stack mt-3" style="gap:10px"></div>
             <button class="more-btn" onclick="openGoalModal()"><i data-lucide="plus"></i><span data-i18n="goalNew"></span></button>
             <div id="next-step" class="card next-step mt-3"></div>
-            <h2 class="h2" data-i18n="bonusTitle"></h2>
-            <div class="card">
-                <p class="card-sub" data-i18n="bonusDesc"></p>
-                        <div id="bonus-body" class="mt-4"></div>
-                        <p class="tiny faint mt-4" data-i18n="bonusLaw"></p>
-            </div>
-            <h2 class="h2" data-i18n="incomeTitle"></h2>
-            <div class="card">
-                <p class="card-sub" data-i18n="incomeDesc"></p>
-                        <div class="form-grid mt-4">
-                            <input type="number" id="i-amount" min="0" step="0.01" inputmode="decimal" class="input amount-in full" data-i18n-ph="incomeAmountPh">
-                            <select id="i-dest" class="input full"></select>
-                            <input type="text" id="i-note" maxlength="50" class="input full" data-i18n-ph="incomeNotePh" onkeydown="if(event.key==='Enter')addIncome()">
-                            <button class="btn btn-primary full" onclick="addIncome()"><i data-lucide="plus"></i><span data-i18n="incomeAdd"></span></button>
-                        </div>
-                        <div id="income-list" class="mt-4"></div>
-            </div>
+            <div id="grow-wrap" class="hidden">
             <h2 class="h2" id="invest-h" data-i18n="investTitle"></h2>
             <div class="card">
                 <p class="card-sub" data-i18n="investDesc"></p>
@@ -1154,6 +1178,7 @@
                         <p class="tiny faint mt-4" data-i18n="bondNote"></p>
                         <a class="btn-link mt-3" href="https://www.minfin.gob.gt" target="_blank" rel="noopener"><span data-i18n="bondLink"></span><i data-lucide="chevron-right"></i></a>
             </div>
+            </div>
             <div class="legacy" hidden aria-hidden="true"><div id="ef-body"></div><div id="savings-line"></div><div id="goal-grid"></div></div>
         </section>
 
@@ -1170,6 +1195,9 @@
             </div>
             <div class="between"><h2 class="h2" data-i18n="sumWhere"></h2><button class="btn-link small" onclick="openLimitsModal()" data-i18n="limitsBtn"></button></div>
             <div class="card"><div id="cat-bars"></div></div>
+            <h2 class="h2" data-i18n="monthListT"></h2>
+            <div class="card month-exp" id="month-exp"></div>
+            <div class="note plain small mt-3 month-next"><span aria-hidden="true">📬</span> <span id="month-next"></span></div>
             <h2 class="h2" data-i18n="healthTitle"></h2>
             <div class="card">
                             <div class="health mt-4">
@@ -1223,7 +1251,10 @@
             <div id="cat-chips" class="chips mt-4"></div>
             <div id="quick-spend" class="quick-spend mt-3 hidden"></div>
             <input type="text" id="x-note" maxlength="60" class="input mt-3" data-i18n-ph="spendNotePh" onkeydown="if(event.key==='Enter')addExpense()">
-            <button class="btn btn-primary btn-block mt-4" onclick="addExpense()"><i data-lucide="plus"></i><span data-i18n="spendAdd"></span></button>
+            <div class="rec-row mt-3"><span class="grow"><b>🔁 <span data-i18n="recT"></span></b><span id="x-rec-sub" class="tiny muted"></span></span>
+                <button type="button" class="sw" role="switch" aria-checked="false" id="x-rec" onclick="toggleSpRec()" data-i18n-title="recT"></button></div>
+            <div id="x-rec-opts" class="seg-wide hidden mt-2" style="grid-template-columns:repeat(3,1fr)"><button type="button" data-rec="week" onclick="setSpRec('week')"></button><button type="button" data-rec="biweek" onclick="setSpRec('biweek')"></button><button type="button" data-rec="month" onclick="setSpRec('month')"></button></div>
+            <button class="btn btn-primary btn-block mt-4" onclick="addExpense()"><i data-lucide="plus"></i><span id="x-add-label" data-i18n="spendAdd"></span></button>
         </div>
     </div>
 
@@ -1253,6 +1284,23 @@
                         </select>
                     </div>
                             <button class="btn btn-primary btn-block" onclick="saveProfile()" data-i18n="save"></button>
+                            <div class="inc-sub">
+                                <p class="inc-sub-h" data-i18n="bonusFoldT"></p>
+                                <p class="card-sub" data-i18n="bonusDesc"></p>
+                        <div id="bonus-body" class="mt-4"></div>
+                        <p class="tiny faint mt-4" data-i18n="bonusLaw"></p>
+                            </div>
+                            <div class="inc-sub">
+                                <p class="inc-sub-h" data-i18n="extraFoldT"></p>
+                                <p class="card-sub" data-i18n="incomeDesc"></p>
+                        <div class="form-grid mt-4">
+                            <input type="number" id="i-amount" min="0" step="0.01" inputmode="decimal" class="input amount-in full" data-i18n-ph="incomeAmountPh">
+                            <select id="i-dest" class="input full"></select>
+                            <input type="text" id="i-note" maxlength="50" class="input full" data-i18n-ph="incomeNotePh" onkeydown="if(event.key==='Enter')addIncome()">
+                            <button class="btn btn-primary full" onclick="addIncome()"><i data-lucide="plus"></i><span data-i18n="incomeAdd"></span></button>
+                        </div>
+                        <div id="income-list" class="mt-4"></div>
+                            </div>
                         </div>
                     </details>
                     <details class="set-fold">
@@ -1368,6 +1416,8 @@
                     <div class="full"><label class="label" for="e-name" data-i18n="nameLabel"></label><input type="text" id="e-name" maxlength="40" data-i18n-ph="namePh" class="input"></div>
                     <div class="full"><label class="label" for="e-amount" data-i18n="amountLabel"></label><input type="number" id="e-amount" min="0" step="0.01" inputmode="decimal" class="input amount-in"></div>
                 </div>
+                <label class="chk-card" id="e-approx-row"><input type="checkbox" id="e-approx"><span class="box" aria-hidden="true">✓</span>
+                    <span><b data-i18n="approxT"></b><span data-i18n="approxS"></span></span></label>
                 <div id="debt-inputs" class="hidden stack" style="gap:14px">
                     <button id="cc-callout" class="btn btn-soft btn-block" onclick="openCardModal()" data-i18n="ccAddFromStmt"></button>
                     <div class="form-grid">
@@ -1407,6 +1457,11 @@
                     </div>
                     <div id="pay-cc-amount-wrap" class="hidden"><label class="label" for="pay-cc-amount" data-i18n="ccPayAmount"></label><input type="number" id="pay-cc-amount" min="0" step="0.01" inputmode="decimal" class="input amount-in" oninput="stmtPayPreview()"></div>
                     <div id="pay-cc-msg" class="note small"></div>
+                </div>
+                <div id="pay-exact-wrap" class="hidden">
+                    <label class="label" for="pay-exact" data-i18n="exactLabel"></label>
+                    <input type="number" id="pay-exact" min="0" step="0.01" inputmode="decimal" class="input amount-in">
+                    <p id="pay-exact-hint" class="tiny muted mt-2"></p>
                 </div>
                 <div id="pay-extra-wrap">
                     <label class="label" for="pay-extra-amount" data-i18n="extraLabel"></label>
@@ -2082,7 +2137,11 @@
             totalMonths: +i.totalMonths || 0, monthsPaid: +i.monthsPaid || 0,
             paid: !!i.paid, completed: !!i.completed, extraPaid: +i.extraPaid || 0, lastPay: i.lastPay || null,
             history: Array.isArray(i.history) ? i.history.filter(h => h && +h.ts) : [],
-            stmt: sanitizeStmt(i.stmt)
+            stmt: sanitizeStmt(i.stmt),
+            // Recurring spending from the + sheet (weekly ones need the day they started) and bills whose amount changes.
+            rec: ['week', 'biweek', 'month'].includes(i.rec) && (i.rec === 'month' || /^\d{4}-\d{2}-\d{2}$/.test(i.anchor || '')) ? i.rec : null,
+            anchor: /^\d{4}-\d{2}-\d{2}$/.test(i.anchor || '') ? i.anchor : null,
+            approx: !!i.approx && i.type !== 'debt', cat: CAT_IDS.has(i.cat) ? i.cat : null
         }));
         out.expenses = (Array.isArray(s.expenses) ? s.expenses : []).filter(e => e && +e.amount > 0).map(e => ({
             id: sid(e.id), amount: +e.amount, note: String(e.note || '').slice(0, 120), ts: +e.ts || Date.now(),
@@ -2142,9 +2201,10 @@
                 for (let k = 0; k < elapsed; k++) i.balance = round2(i.balance * (1 + i.apr / 1200));
             }
             i.paid = false; i.extraPaid = 0; i.lastPay = null;
+            recRollover(i);
         });
-        const keep = new Set([0, 1, 2].map(k => { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - k); return periodKey(d); }));
-        state.expenses = state.expenses.filter(e => keep.has(e.period));
+        // The month's recap is saved in state.months; the new month starts from zero.
+        state.expenses = state.expenses.filter(e => e.period === now);
         state.period = now;
     }
 
@@ -2415,13 +2475,15 @@
         // All of this month's commitments stay locked in, so paying a bill never moves the daily limit.
         // Flexible income that is invoiced: the tax reserve is set aside like a fixed bill.
         const taxes = monthlyTaxes();
-        const fixed = state.items.reduce((a, i) => a + i.amount, 0) + taxes;
+        // Recurring spending from the + sheet comes out of the day-to-day money, so it lowers the daily limit for the whole month.
+        const recM = state.items.filter(i => i.rec).reduce((a, i) => a + itemMonthly(i, now), 0);
+        const fixed = state.items.filter(i => !i.rec).reduce((a, i) => a + i.amount, 0) + taxes;
         const afterFixed = Math.max(0, income - fixed);
         const plan = effectivePlan(income, fixed);
         const baseBuffer = Math.min(income * plan.b / 100, afterFixed);
         const remainder = afterFixed - baseBuffer;
         const baseSurplus = remainder * plan.s / 100;
-        const buffer = baseBuffer + ex.spend;
+        const buffer = Math.max(0, baseBuffer + ex.spend - recM);
         const surplus = baseSurplus + ex.debt;
         const savings = remainder - baseSurplus + ex.save;
 
@@ -2452,7 +2514,7 @@
 
         return { income, fixed, baseBuffer, buffer, surplus, savings, extraPaid, surplusLeft, extraFromBuffer, spent, spentToday,
                  bufferLeft, dailyBudget, todayLeft, dsl, daysRemaining, monthExp, ex, biw, inQ1, periodEnd, periodDaysLeft,
-                 allocated, periodLeft, goalSavedMonth, taxes, sch, plan };
+                 allocated, periodLeft, goalSavedMonth, taxes, sch, plan, recM };
     }
 
     // ================= Streak =================
@@ -2770,6 +2832,7 @@
     // ================= Tabs =================
     function setTab(tab) {
         if (!TABS.includes(tab)) return;
+        closeDebtTools(true);
         const changed = state.tab !== tab;
         state.tab = tab;
         document.querySelectorAll('.tab').forEach(s => s.classList.toggle('active', s.id === 'tab-' + tab));
@@ -2820,6 +2883,7 @@
         renderFrogTalk(c);
         renderLook(c, P);
         renderConsQuick();
+        renderMonthList(c);
 
         const overdue = state.items.some(i => itemStatus(i).k === 'overdue');
         $('nav-badge').classList.toggle('hidden', !overdue);
@@ -2838,7 +2902,8 @@
         if (diff <= 3) return { k: 'soon', diff };
         return { k: 'up', diff };
     }
-    function typeLabel(i) { return i.type !== 'debt' ? t('typeFixed') : i.subtype === 'loan' ? t('subLoan') : t('subCC'); }
+    function occursOn(i, d, y, m) { return REC_STEP[i.rec] ? recOccDays(i, y, m).includes(d) : dueDay(i) === d && dueInMonth(i, y, m); }
+    function typeLabel(i) { return i.rec ? '🔁 ' + recLabel(i) : i.type !== 'debt' ? t('typeFixed') : i.subtype === 'loan' ? t('subLoan') : t('subCC'); }
     function whenText(diff) { return diff === 1 ? t('tomorrow') : t('inDays', { n: diff }); }
     function statusPill(i) {
         const s = itemStatus(i);
@@ -2952,10 +3017,11 @@
         countTo($('st-month'), c.spent, v => fmt(v, 0));
         $('st-days').textContent = c.biw ? c.periodDaysLeft : c.daysRemaining;
 
-        $('cat-chips').innerHTML = CATS.map(k => `<button class="chip ${k.id === selectedCat ? 'active' : ''}" onclick="selectCat('${k.id}')"><span class="e">${k.emoji}</span>${esc(t('cat_' + k.id))}</button>`).join('');
+        $('cat-chips').innerHTML = CATS.filter(k => k.id !== 'bills').map(k => `<button class="chip ${k.id === selectedCat ? 'active' : ''}" onclick="selectCat('${k.id}')"><span class="e">${k.emoji}</span>${esc(t('cat_' + k.id))}</button>`).join('');
 
-        const list = [...c.monthExp].sort((a, b) => b.ts - a.ts).slice(0, 6);
+        // Only today's spending here; earlier days live in Tu mes.
         const now = new Date(), yest = new Date(); yest.setDate(yest.getDate() - 1);
+        const list = c.monthExp.filter(e => sameDay(new Date(e.ts), now)).sort((a, b) => b.ts - a.ts);
         $('expense-list').innerHTML = list.length ? list.map(e => {
             const d = new Date(e.ts), cat = catOf(e.cat);
             const when = sameDay(d, now) ? t('today') : sameDay(d, yest) ? t('yesterday') : d.toLocaleDateString(LOCALES[state.lang], { day: 'numeric', month: 'short' });
@@ -2966,7 +3032,7 @@
                 <button class="icon-btn sm rep" onclick="repeatExpense('${e.id}')" title="${esc(t('repeatBtn'))}" aria-label="${esc(t('repeatBtn'))}"><i data-lucide="repeat"></i></button>
                 <button class="icon-btn sm del" onclick="removeExpense('${e.id}')" title="${esc(t('deleteExpense'))}" aria-label="${esc(t('deleteExpense'))}">${X_ICON}</button>
             </div>`;
-        }).join('') : emptyHTML('receipt', t('emptySpendTitle'), t('spendEmpty'));
+        }).join('') : c.monthExp.length ? `<p class="small muted feed-empty">${esc(t('todayEmpty'))}</p>` : emptyHTML('receipt', t('emptySpendTitle'), t('spendEmpty'));
 
         const upcoming = state.items.filter(i => !i.paid && !i.completed).sort((a, b) => dueDiff(a) - dueDiff(b)).slice(0, 4);
         $('upcoming-list').innerHTML = upcoming.length ? upcoming.map(i => obRow(i, 'compact')).join('')
@@ -2990,9 +3056,9 @@
         let html = wds.map(w => `<div class="wd">${esc(w)}</div>`).join('');
         for (let k = 0; k < offset; k++) html += '<div class="day empty"></div>';
         for (let d = 1; d <= dim; d++) {
-            const due = state.items.filter(i => dueDay(i) === d && dueInMonth(i, y, m));
+            const due = state.items.filter(i => occursOn(i, d, y, m));
             const dots = due.slice(0, 4).map(i => {
-                const s = itemStatus(i).k;
+                const s = REC_STEP[i.rec] && (i.paid || d < i.date) ? 'paid' : itemStatus(i).k;
                 return `<i class="dot ${s === 'paid' ? 'paid' : s === 'overdue' ? 'overdue' : (s === 'today' || s === 'soon') ? 'soon' : 'up'}"></i>`;
             }).join('');
             const cls = ['day', d === today ? 'today' : '', d < today ? 'past' : '', d === selectedDay ? 'sel' : ''].join(' ');
@@ -3001,7 +3067,7 @@
         $('cal-grid').innerHTML = html;
 
         const sel = new Date(y, m, selectedDay);
-        const dueSel = state.items.filter(i => dueDay(i) === selectedDay && dueInMonth(i, y, m));
+        const dueSel = state.items.filter(i => occursOn(i, selectedDay, y, m));
         const expSel = c.monthExp.filter(e => new Date(e.ts).getDate() === selectedDay).sort((a, b) => b.ts - a.ts);
         let day = `<p class="serif" style="font-size:19px">${esc(cap(sel.toLocaleDateString(LOCALES[state.lang], { weekday: 'long', day: 'numeric', month: 'long' })))}</p>`;
         if (!dueSel.length && !expSel.length) day += `<p class="muted small mt-2">${esc(t('dayEmpty'))}</p>`;
@@ -3359,7 +3425,7 @@
     function resetEntryForm() {
         if ($('entry-delete')) $('entry-delete').classList.add('hidden');
         ['e-date', 'e-name', 'e-amount', 'e-apr', 'e-total', 'e-balance', 'e-months'].forEach(id => { const el = $(id); el.value = ''; el.classList.remove('invalid'); });
-        $('e-type').value = 'fixed'; $('e-debt-subtype').value = 'cc';
+        $('e-type').value = 'fixed'; $('e-debt-subtype').value = 'cc'; $('e-approx').checked = false;
         $('entry-error').classList.add('hidden'); $('entry-history').classList.add('hidden');
         toggleDebtInputs(); toggleLoanInputs();
     }
@@ -3369,7 +3435,7 @@
         applyStaticTranslations(); openModal('entry-modal');
         setTimeout(() => $('e-name').focus(), 60);
     }
-    function toggleDebtInputs() { $('debt-inputs').classList.toggle('hidden', $('e-type').value !== 'debt'); }
+    function toggleDebtInputs() { const debt = $('e-type').value === 'debt'; $('debt-inputs').classList.toggle('hidden', !debt); $('e-approx-row').classList.toggle('hidden', debt); }
     function toggleLoanInputs() { $('loan-duration-field').classList.toggle('hidden', $('e-debt-subtype').value !== 'loan'); }
 
     function openEditModal(id) {
@@ -3382,6 +3448,7 @@
         set('e-name', i.name); set('e-date', i.date); set('e-amount', i.amount);
         set('e-apr', i.apr); set('e-balance', i.balance); set('e-total', i.startBalance);
         if (i.subtype === 'loan') set('e-months', Math.max(0, i.totalMonths - i.monthsPaid) || '');
+        $('e-approx').checked = !!i.approx;
         toggleDebtInputs(); toggleLoanInputs();
         renderEntryHistory(i);
         $('entry-delete').classList.remove('hidden');
@@ -3423,7 +3490,7 @@
         if (errors.length) { $('entry-error').textContent = errors.join(' '); $('entry-error').classList.remove('hidden'); return; }
 
         const fields = { type, subtype, name, amount: round2(amount), date, balance: round2(balance), startBalance: round2(total),
-                         apr: type === 'debt' ? Math.max(0, parseFloat(v('e-apr')) || 0) : 0 };
+                         apr: type === 'debt' ? Math.max(0, parseFloat(v('e-apr')) || 0) : 0, approx: type !== 'debt' && $('e-approx').checked };
         if (editingId) {
             const item = state.items.find(i => i.id === editingId);
             if (item) {
@@ -3455,9 +3522,14 @@
         $('pay-extra-amount').value = '';
         $('pay-extra-wrap').classList.toggle('hidden', item.type !== 'debt');
         $('pay-extra-hint').textContent = t('extraHint', { left: fmt(compute().surplusLeft) });
+        $('pay-exact-wrap').classList.toggle('hidden', !item.approx);
+        $('pay-exact').value = ''; $('pay-exact').placeholder = String(item.amount); $('pay-exact').classList.remove('invalid');
+        $('pay-exact-hint').textContent = t('exactHint', { x: fmt(item.amount) });
+        if (item.approx) $('pay-target-amount').textContent = '≈ ' + t('payInstallment', { amount: fmt(item.amount) });
         const isStmt = setupStmtPayment(item);
         openModal('payment-modal');
         if (item.type === 'debt' && !isStmt) setTimeout(() => $('pay-extra-amount').focus(), 60);
+        else if (item.approx) setTimeout(() => $('pay-exact').focus(), 60);
     }
 
     function confirmTransaction() {
@@ -3475,7 +3547,15 @@
         if (item && !item.paid) {
             const extra = item.type === 'debt' ? Math.max(0, parseFloat($('pay-extra-amount').value) || 0) : 0;
             const before = itemProgress(item) ?? 0;
-            item.lastPay = { balance: item.balance, monthsPaid: item.monthsPaid, extra };
+            item.lastPay = { balance: item.balance, monthsPaid: item.monthsPaid, extra, date: item.date, amount: item.amount };
+            if (item.approx) {
+                const exact = parseFloat($('pay-exact').value);
+                if (exact > 0) {
+                    const diff = round2(exact - item.amount);
+                    item.amount = round2(exact);   // becomes next month's estimate too
+                    if (Math.abs(diff) >= 0.01) celebrate = { toast: t(diff > 0 ? 'exactMore' : 'exactLess', { name: item.name, x: fmt(Math.abs(diff)) }) };
+                }
+            }
             if (item.type === 'debt') {
                 const hadBalance = item.balance > 0;
                 item.balance = round2(Math.max(0, item.balance - (item.amount + extra)));
@@ -3493,10 +3573,12 @@
             item.paid = true;
             item.history = item.history || [];
             item.history.push({ ts: Date.now(), amount: item.amount, extra });
+            recAdvance(item);
         }
         activePaymentId = null;
         closeModal('payment-modal'); render();
-        if (celebrate) cheer(celebrate.m, celebrate.msg, celebrate.big);
+        if (celebrate && celebrate.toast) toast(celebrate.toast);
+        else if (celebrate) cheer(celebrate.m, celebrate.msg, celebrate.big);
     }
 
     function undoPayment(id) {
@@ -3507,6 +3589,8 @@
             item.monthsPaid = item.lastPay.monthsPaid;
             item.extraPaid = Math.max(0, (item.extraPaid || 0) - (item.lastPay.extra || 0));
             if (item.lastPay.stmt) item.stmt = item.lastPay.stmt;
+            if (item.lastPay.date) item.date = item.lastPay.date;
+            if (item.lastPay.amount > 0) item.amount = item.lastPay.amount;
         }
         if (item.history && item.history.length) item.history.pop();
         item.paid = false; item.completed = false; item.lastPay = null;
@@ -3525,6 +3609,7 @@
         const amount = parseFloat(amtEl.value);
         if (!(amount > 0)) { amtEl.classList.add('invalid'); amtEl.focus(); return; }
         amtEl.classList.remove('invalid');
+        if (spRec.on) { addRecurring(amount, $('x-note').value.trim().slice(0, 60), selectedCat); amtEl.value = ''; $('x-note').value = ''; return; }
         state.expenses.push({ id: uid(), amount: round2(amount), note: $('x-note').value.trim().slice(0, 60), ts: Date.now(), period: state.period, cat: selectedCat });
         amtEl.value = ''; $('x-note').value = '';
         closeModal('spend-modal');
@@ -3801,7 +3886,8 @@
                 ${kpi(t('recapStreak'), '🔥 ' + esc(t('recapDays', { n: m.streak || 0 })))}
             </div>
             ${top ? `<p class="small mt-4">${esc(t('recapTopCat'))}: <b>${catOf(top[0]).emoji} ${esc(t('cat_' + top[0]))}</b> · ${fmt(top[1], 0)}</p>` : ''}
-            ${(m.overCats || []).length ? `<p class="small warn mt-2">${esc(t('recapOverCats', { cats: m.overCats.map(k => t('cat_' + k)).join(', ') }))}</p>` : ''}`;
+            ${(m.overCats || []).length ? `<p class="small warn mt-2">${esc(t('recapOverCats', { cats: m.overCats.map(k => t('cat_' + k)).join(', ') }))}</p>` : ''}
+            ${m.period === state.pendingRecap ? `<p class="small muted mt-3">📬 ${esc(t('recapReset', { month: new Date().toLocaleDateString(LOCALES[state.lang], { month: 'long' }) }))}</p>` : ''}`;
         openModal('recap-modal');
         if ((good) && !reduceMotion()) setTimeout(() => confetti(false), 250);
     }
@@ -5132,16 +5218,17 @@
     let planDraft = null;
     // Use what's typed in the income editor (not yet saved) so the options match it.
     function planBase() {
-        const d = IE.cfg, items = state.items.reduce((a, i) => a + i.amount, 0);
-        if (d && parseFloat(d.amount) > 0) return { income: ieMonthly(d), fixed: items + ieTaxes(d).total };
-        const c = compute(); return { income: c.income, fixed: c.fixed };
+        const d = IE.cfg, items = state.items.filter(i => !i.rec).reduce((a, i) => a + i.amount, 0);
+        const recM = state.items.filter(i => i.rec).reduce((a, i) => a + itemMonthly(i), 0);
+        if (d && parseFloat(d.amount) > 0) return { income: ieMonthly(d), fixed: items + ieTaxes(d).total, recM };
+        const c = compute(); return { income: c.income, fixed: c.fixed, recM };
     }
     function planNumbers(p) {
-        const { income, fixed } = planBase();
+        const { income, fixed, recM } = planBase();
         const afterFixed = Math.max(0, income - fixed);
         const buffer = Math.min(income * p.b / 100, afterFixed);
         const rem = afterFixed - buffer, debt = rem * p.s / 100;
-        return { daily: buffer / daysInMonth(new Date()), debt, save: rem - debt };
+        return { daily: Math.max(0, buffer - (recM || 0)) / daysInMonth(new Date()), debt, save: rem - debt };
     }
     function renderPlanPicker() {
         const el = $('plan-picker'); if (!el) return;
@@ -5622,7 +5709,7 @@
         const today = new Date().getDate();
         const base = { balance: 0, startBalance: 0, apr: 0, totalMonths: 0, monthsPaid: 0, completed: false, extraPaid: 0, lastPay: null, history: [] };
         // A bill whose day already passed this month was most likely paid already.
-        OB.bills.forEach(b => state.items.push({ ...base, id: uid(), type: 'fixed', subtype: null, name: b.name, amount: b.amount, date: b.date, paid: b.date < today }));
+        OB.bills.forEach(b => state.items.push({ ...base, id: uid(), type: 'fixed', subtype: null, name: b.name, amount: b.amount, date: b.date, paid: b.date < today, approx: !!b.approx }));
         OB.debts.forEach(d => state.items.push({ ...base, id: uid(), type: 'debt', subtype: d.kind === 'other' ? null : d.kind, name: d.name, amount: d.pay, date: d.day,
             balance: d.bal, startBalance: d.bal, apr: d.apr, paid: false }));
         state.onboarded = true; state.seenNews = latestNews().id; state.planMode = 'rec';
@@ -5875,7 +5962,8 @@
         if (k === 'bills') {
             const miss = g.bills.findIndex((on, k2) => on && !gNum(g.amt[k2]));
             if (miss >= 0) { const el = document.querySelector(`#onboard [data-gamt="${miss}"]`); if (el) el.focus(); return t('gBillErr', { x: gBillName(miss) }); }
-            OB.bills = g.bills.map((on, k2) => on ? { name: gBillName(k2), amount: round2(gNum(g.amt[k2])), date: G_BILL_DAY[k2] } : null).filter(Boolean);
+            // Power and water change every month: they start as approximate amounts.
+            OB.bills = g.bills.map((on, k2) => on ? { name: gBillName(k2), amount: round2(gNum(g.amt[k2])), date: G_BILL_DAY[k2], approx: k2 === 1 || k2 === 3 } : null).filter(Boolean);
             return '';
         }
         if (k === 'debt') {
@@ -5941,11 +6029,20 @@
     function openSpend() {
         const c = compute(), cur = fmt(0).replace(/[\d.,\s]/g, '').trim();
         $('x-cur').textContent = cur || '$';
+        spRec.on = false; spRec.every = 'month'; renderSpRec();
         openModal('spend-modal'); spendPreview();
         setTimeout(() => { const i = $('x-amount'); if (i) i.focus(); }, 80);
     }
     function spendPreview() {
         const v = parseFloat($('x-amount').value) || 0, c = compute(), after = c.todayLeft - v, el = $('x-after');
+        if (spRec.on) {
+            const nd = v > 0 ? dailyWith(recDraft(v, '', selectedCat)) : c.dailyBudget;
+            el.innerHTML = !v ? esc(t('recAsk')) : t('recPreview', { a: `<b class="num">${esc(fmt(c.dailyBudget))}</b>`, b: `<b class="num">${esc(fmt(nd))}</b>` });
+            el.className = 'small muted';
+            const name = !v ? 'ahorrando' : nd < c.dailyBudget * 0.85 ? 'pensando' : 'ahorrando';
+            const f = $('spend-frog'); if (f && f.dataset.m !== name) { f.dataset.m = name; f.innerHTML = mascot(name, 64); }
+            return;
+        }
         el.innerHTML = !v ? esc(t('spAsk')) : after >= 0 ? t('spAfter', { x: `<b class="num">${esc(fmt(after))}</b>` }) : t('spOver', { x: `<b class="num">${esc(fmt(-after))}</b>` });
         el.className = 'small ' + (v && after < 0 ? 'danger' : 'muted');
         const ratio = c.dailyBudget > 0 ? after / c.dailyBudget : 0;
@@ -5963,7 +6060,7 @@
         const c = compute();
         let el = $('why-modal');
         if (!el) { el = document.createElement('div'); el.id = 'why-modal'; el.className = 'modal'; el.onclick = e => { if (e.target === el) closeModal('why-modal'); }; document.body.appendChild(el); }
-        const save = Math.max(0, c.income - c.fixed - c.buffer);
+        const save = Math.max(0, c.income - c.fixed - c.buffer - (c.recM || 0));
         const days = c.biw ? c.periodDaysLeft : c.daysRemaining;
         const row = (label, val, cls = '') => `<div class="why-row ${cls}"><span>${esc(label)}</span><b class="num">${esc(val)}</b></div>`;
         el.innerHTML = `<div class="sheet" role="dialog" aria-modal="true" aria-labelledby="why-t" style="max-width:440px">
@@ -5971,7 +6068,7 @@
             <div class="center">${mascot('presupuesto', 120)}</div>
             <h2 id="why-t" class="center" style="margin:6px 0 4px">${esc(t('whyTitle'))}</h2>
             <p class="small muted center mb-4">${esc(t('whyIntro'))}</p>
-            ${row(t('whyIncome'), fmt(c.income, 0))}${row(t('whyFixed'), '− ' + fmt(c.fixed, 0))}${row(t('whySave'), '− ' + fmt(save, 0))}
+            ${row(t('whyIncome'), fmt(c.income, 0))}${row(t('whyFixed'), '− ' + fmt(c.fixed, 0))}${row(t('whySave'), '− ' + fmt(save, 0))}${c.recM > 0 ? row(t('whyRec'), '− ' + fmt(c.recM, 0)) : ''}
             ${row(t('whyLeft'), fmt(c.buffer, 0), 'sum')}
             <p class="tiny muted mt-2">${esc(t('whyDays', { n: days }))}</p>
             ${row(t('whyToday'), fmt(c.dailyBudget), 'hl')}
@@ -6051,7 +6148,7 @@
         const ps = $('pay-simple');
         if (ps) ps.innerHTML = items.length ? items.map(i => `<div class="card pay-row ${i.paid ? 'done' : ''} ${!i.paid && dueDiff(i) < 0 ? 'late' : ''}">
                 ${daysBoxHTML(i)}
-                <button type="button" class="what" onclick="openEditModal('${i.id}')"><b class="truncate">${esc(i.name)}</b><span class="num">${fmt(i.amount)} · ${esc(typeLabel(i))}</span></button>
+                <button type="button" class="what" onclick="openEditModal('${i.id}')"><b class="truncate">${esc(i.name)}${i.approx && !i.paid ? ` <span class="approx-tag">${esc(t('approxTag'))}</span>` : ''}</b><span class="num">${i.approx && !i.paid ? '≈ ' : ''}${fmt(i.amount)} · ${esc(typeLabel(i))}</span></button>
                 ${i.paid ? `<button type="button" class="paid-tag" onclick="undoPayment('${i.id}')" title="${esc(t('undoPay'))}">${esc(t('paidTag'))}</button>`
                          : `<button type="button" class="btn btn-primary btn-sm" onclick="openPaymentModal('${i.id}')">${esc(t('payBtn'))}</button>`}
             </div>`).join('') : emptyHTML('calendar-clock', t('emptyBillsTitle'), t('emptySchedule'));
@@ -6099,10 +6196,15 @@
         const ns = $('next-step');
         if (ns) {
             const done = ef && ef.target > 0 && ef.saved >= ef.target;
+            const gw = $('grow-wrap'); if (gw) gw.classList.toggle('hidden', !done);
+            ns.classList.toggle('compact', !done);
             const left = ef ? Math.max(0, ef.target - ef.saved) : 0, p = ef && ef.target > 0 ? Math.min(100, Math.round(ef.saved / ef.target * 100)) : 0;
-            ns.innerHTML = `${mascot('invirtiendo', 92).replace('class="mascot', `class="mascot ${done ? '' : 'locked'}`)}<div class="grow"><span class="tag ${done ? 'ok' : ''}">${esc(t(done ? 'nsOpen' : 'nsLocked'))}</span><b class="ttl">${esc(t('nsTitle'))}</b>
-                <p class="small muted">${esc(done ? t('nsOpenS') : ef ? t('nsLockedS', { x: fmt(left, 0) }) : t('nsNoEf'))}</p>
-                ${done ? `<button class="btn btn-primary btn-sm mt-2" onclick="document.getElementById('invest-h').scrollIntoView({ behavior: 'smooth' })">${esc(t('nsBtn'))}</button>` : ef ? `<span class="bar thin mt-2"><span style="width:${p}%"></span></span>` : ''}</div>`;
+            void p;
+            ns.innerHTML = done ? `${mascot('invirtiendo', 92)}<div class="grow"><span class="tag ok">${esc(t('nsOpen'))}</span><b class="ttl">${esc(t('nsTitle'))}</b>
+                <p class="small muted">${esc(t('nsOpenS'))}</p>
+                <button class="btn btn-primary btn-sm mt-2" onclick="document.getElementById('invest-h').scrollIntoView({ behavior: 'smooth' })">${esc(t('nsBtn'))}</button></div>`
+                : `<span class="lock-ic" aria-hidden="true">🔒</span><div class="grow"><b class="ttl">${esc(t('nsLocked').replace('🔒 ', ''))}: ${esc(t('nsTitle').toLowerCase())}</b>
+                <p class="small muted">${esc(ef ? t('nsLockedS', { x: fmt(left, 0) }) : t('nsNoEf'))}</p></div>`;
         }
 
         // Resumen
@@ -6149,6 +6251,142 @@
         tip.innerHTML = `<span>${good ? '👍' : '✋'}</span><span>${t(good ? 'cqGood' : 'cqBad', { pay: esc(fmt(o.monthly, 0)), now: esc(fmt(now, 0)), save: esc(fmt(o.save, 0)), more: esc(fmt(Math.abs(o.save), 0)) })}</span>`;
         const ds = $('dir-say'); if (ds) ds.textContent = state.items.some(i => i.type === 'debt' && i.subtype === 'cc' && !i.completed) ? t('dirSay') : t('dirSayNone');
     }
+
+    // ================= Month view, recurring spending, approximate bills, debt tools =================
+    Object.assign(I18N.es, {
+        monthListT: 'Tus gastos del mes', monthListEmpty: 'Todavía no hay gastos este mes.', monthNext: 'El 1 de {next} te mando tu resumen de {month} y empiezo el mes en cero. Tus pagos fijos, deudas y metas siguen igual.',
+        recapReset: 'Guardé este resumen y empecé {month} en cero.', todayEmpty: 'Aún no anotas gastos hoy. Toca ＋ cuando gastes algo.',
+        recT: 'Gasto recurrente', recOff: 'Se repite y lo agrego a tus Pagos', recOn: 'Lo agrego a tus Pagos, {every}',
+        rec_week: 'cada semana', rec_biweek: 'cada quincena', rec_month: 'cada mes', recWeekB: 'Cada semana', recBiweekB: 'Cada quincena', recMonthB: 'Cada mes',
+        recPreview: 'No cuenta para hoy: tu límite diario pasa de {a} a {b}', recAsk: '¿Cuánto es el gasto que se repite?', recAdd: 'Guardar gasto recurrente',
+        recToast: '🔁 {name} quedó en tus pagos {every}. Tu límite diario pasó de {a} a {b}', recTag: 'Recurrente',
+        whyRec: 'Gastos recurrentes', approxT: 'La cantidad es aproximada', approxS: 'Cambia cada mes, como la luz, el agua o el gas. Al pagar te pregunto cuánto fue.',
+        approxTag: 'aprox.', exactLabel: '¿Cuánto pagaste exactamente?', exactHint: 'Lo tenías estimado en {x}. Escribe lo que dice tu recibo.',
+        exactMore: '{name}: {x} más de lo estimado. Ajusté tu estimado del próximo mes.', exactLess: '{name}: {x} menos de lo estimado. Ajusté tu estimado del próximo mes.',
+        toolsT: 'Plan para salir de deudas', toolsS: 'Pago extra, juntar tus deudas y tasas reales', toolsBack: 'Deudas', toolsH: 'Tu plan',
+        bonusFoldT: 'Bono 14 y aguinaldo', extraFoldT: 'Ingresos extra'
+    });
+    Object.assign(I18N.en, {
+        monthListT: 'This month\'s spending', monthListEmpty: 'No spending yet this month.', monthNext: 'On {next} 1 I\'ll send you your {month} recap and start the month from zero. Your bills, debts and goals stay the same.',
+        recapReset: 'I saved this recap and started {month} from zero.', todayEmpty: 'Nothing logged today yet. Tap ＋ when you spend.',
+        recT: 'Recurring expense', recOff: 'It repeats and I add it to Payments', recOn: 'I\'ll add it to Payments, {every}',
+        rec_week: 'every week', rec_biweek: 'every two weeks', rec_month: 'every month', recWeekB: 'Weekly', recBiweekB: 'Every 2 weeks', recMonthB: 'Monthly',
+        recPreview: 'Doesn\'t count for today: your daily limit goes from {a} to {b}', recAsk: 'How much is the repeating expense?', recAdd: 'Save recurring expense',
+        recToast: '🔁 {name} is now in your payments {every}. Your daily limit went from {a} to {b}', recTag: 'Recurring',
+        whyRec: 'Recurring expenses', approxT: 'The amount is approximate', approxS: 'It changes every month, like power, water or gas. When you pay I\'ll ask how much it was.',
+        approxTag: 'approx.', exactLabel: 'How much did you pay exactly?', exactHint: 'You estimated {x}. Enter what your bill says.',
+        exactMore: '{name}: {x} more than estimated. I updated next month\'s estimate.', exactLess: '{name}: {x} less than estimated. I updated next month\'s estimate.',
+        toolsT: 'Plan to get out of debt', toolsS: 'Extra payment, combining debts and real rates', toolsBack: 'Debts', toolsH: 'Your plan',
+        bonusFoldT: 'Bono 14 and aguinaldo', extraFoldT: 'Extra income'
+    });
+
+    // ---------- recurring items (weekly / every two weeks / monthly) ----------
+    const REC_STEP = { week: 7, biweek: 14 };
+    // Days of month m (0-based) of year y when a weekly or biweekly item falls, never before it started.
+    function recOccDays(i, y, m) {
+        const step = REC_STEP[i.rec]; if (!step || !i.anchor) return [];
+        const a = parseISO(i.anchor), first = new Date(y, m, 1);
+        const k0 = Math.max(0, Math.ceil(Math.round((first - a) / DAY_MS) / step));
+        const out = [];
+        for (let d = new Date(a.getFullYear(), a.getMonth(), a.getDate() + k0 * step); d.getMonth() === m && d.getFullYear() === y; d.setDate(d.getDate() + step)) out.push(d.getDate());
+        return out;
+    }
+    // What an item costs in the month of ref (weekly ones count every time they fall).
+    function itemMonthly(i, ref = new Date()) { return REC_STEP[i.rec] ? i.amount * recOccDays(i, ref.getFullYear(), ref.getMonth()).length : i.amount; }
+    // After paying one weekly charge: point to the next one this month, or mark the month done.
+    function recAdvance(i) {
+        if (!REC_STEP[i.rec]) return;
+        const now = new Date(), days = recOccDays(i, now.getFullYear(), now.getMonth()), next = days.find(d => d > i.date);
+        if (next) { i.date = next; i.paid = false; return; }
+        i.paid = true;
+        const nm = new Date(now.getFullYear(), now.getMonth() + 1, 1), nd = recOccDays(i, nm.getFullYear(), nm.getMonth());
+        if (nd.length) i.date = nd[0];
+    }
+    // At the start of a month: the first weekly charge of the new month.
+    function recRollover(i) {
+        if (!REC_STEP[i.rec]) return;
+        const now = new Date(), d = recOccDays(i, now.getFullYear(), now.getMonth());
+        if (d.length) i.date = d[0];
+    }
+    function recLabel(i) { return i.rec ? t('rec_' + i.rec) : ''; }
+
+    // ---------- + sheet: the recurring switch ----------
+    const spRec = { on: false, every: 'month' };
+    function renderSpRec() {
+        const sw = $('x-rec'); if (!sw) return;
+        sw.setAttribute('aria-checked', spRec.on);
+        $('x-rec-opts').classList.toggle('hidden', !spRec.on);
+        $('x-rec-sub').textContent = spRec.on ? t('recOn', { every: t('rec_' + spRec.every) }) : t('recOff');
+        document.querySelectorAll('#x-rec-opts [data-rec]').forEach(b => { b.textContent = t({ week: 'recWeekB', biweek: 'recBiweekB', month: 'recMonthB' }[b.dataset.rec]); b.classList.toggle('active', b.dataset.rec === spRec.every); });
+        const add = $('x-add-label'); if (add) add.textContent = t(spRec.on ? 'recAdd' : 'spendAdd');
+    }
+    function toggleSpRec() { spRec.on = !spRec.on; renderSpRec(); spendPreview(); }
+    function setSpRec(k) { spRec.every = k; renderSpRec(); spendPreview(); }
+    function recDraft(amount, note, cat) {
+        const now = new Date();
+        const it = { id: uid(), type: 'fixed', subtype: null, name: (note || t('cat_' + cat)).slice(0, 40), amount: round2(amount), date: now.getDate(),
+            balance: 0, startBalance: 0, apr: 0, totalMonths: 0, monthsPaid: 0, paid: true, completed: false, extraPaid: 0, lastPay: null,
+            history: [{ ts: Date.now(), amount: round2(amount), extra: 0 }], stmt: null, rec: spRec.every, anchor: isoDate(now), approx: false, cat };
+        recAdvance(it);
+        return it;
+    }
+    // Daily limit if this recurring expense were added (it comes out of the whole month, not today).
+    function dailyWith(it) { state.items.push(it); const d = compute().dailyBudget; state.items.pop(); return d; }
+    function addRecurring(amount, note, cat) {
+        const it = recDraft(amount, note, cat), before = compute().dailyBudget;
+        state.items.push(it);
+        spRec.on = false;
+        closeModal('spend-modal'); render(); frogHop();
+        toast(t('recToast', { name: it.name, every: t('rec_' + it.rec), a: fmt(before), b: fmt(compute().dailyBudget) }));
+        if (typeof haptic === 'function') haptic('success');
+    }
+
+    // ---------- Tu mes: every expense of the month, by day ----------
+    function renderMonthList(c) {
+        const el = $('month-exp'); if (!el) return;
+        const now = new Date(), yest = new Date(); yest.setDate(yest.getDate() - 1);
+        const rows = c.monthExp.map(e => ({ ts: e.ts, emoji: catOf(e.cat).emoji, name: e.note || t('cat_' + e.cat), amount: e.amount, id: e.id }));
+        state.items.filter(i => i.rec).forEach(i => (i.history || []).filter(h => periodKey(new Date(h.ts)) === state.period)
+            .forEach(h => rows.push({ ts: h.ts, emoji: i.cat ? catOf(i.cat).emoji : '🔁', name: i.name, amount: h.amount, rec: true })));
+        const byDay = {};
+        rows.forEach(r => { const d = new Date(r.ts); const k = d.getDate(); (byDay[k] = byDay[k] || []).push(r); });
+        const days = Object.keys(byDay).map(Number).sort((a, b) => b - a);
+        el.innerHTML = days.length ? days.map(d => {
+            const xs = byDay[d].sort((a, b) => b.ts - a.ts), dt = new Date(now.getFullYear(), now.getMonth(), d);
+            const label = sameDay(dt, now) ? t('today') : sameDay(dt, yest) ? t('yesterday') : cap(dt.toLocaleDateString(LOCALES[state.lang], { weekday: 'long', day: 'numeric' }));
+            return `<div class="day-h"><span>${esc(label)}</span><span class="num">${fmt(xs.reduce((a, x) => a + x.amount, 0), 0)}</span></div>` + xs.map(x => `<div class="list-row mrow">
+                <span class="emoji-badge">${x.emoji}</span><span class="grow truncate">${esc(x.name)}${x.rec ? ` <span class="rec-tag">🔁 ${esc(t('recTag'))}</span>` : ''}</span><b class="num shrink-0">${fmt(x.amount)}</b>
+                ${x.id ? `<button class="icon-btn sm del" onclick="removeExpense('${x.id}')" title="${esc(t('deleteExpense'))}" aria-label="${esc(t('deleteExpense'))}">${X_ICON}</button>` : '<span class="icon-btn sm" aria-hidden="true"></span>'}</div>`).join('');
+        }).join('') : `<p class="small muted">${esc(t('monthListEmpty'))}</p>`;
+        const nx = $('month-next');
+        if (nx) {
+            const nm = new Date(now.getFullYear(), now.getMonth() + 1, 1), loc = LOCALES[state.lang];
+            nx.textContent = t('monthNext', { next: nm.toLocaleDateString(loc, { month: 'long' }), month: now.toLocaleDateString(loc, { month: 'long' }) });
+        }
+    }
+
+    // ---------- Deudas: the plan, consolidation and rates on their own screen ----------
+    function openDebtTools() {
+        $('debt-main').classList.add('hidden'); $('debt-tools').classList.remove('hidden');
+        window.scrollTo({ top: 0 }); render();
+    }
+    function closeDebtTools(silent) {
+        const tl = $('debt-tools'); if (!tl || tl.classList.contains('hidden')) return false;
+        tl.classList.add('hidden'); $('debt-main').classList.remove('hidden');
+        if (!silent) window.scrollTo({ top: 0 });
+        return true;
+    }
+
+    // ---------- What's new ----------
+    NEWS.unshift({
+        id: '2026-11-07',
+        items: [
+            { icon: 'sun', es: ['Hoy, solo lo de hoy', 'En Hoy ves únicamente los gastos del día. Los de días anteriores están en Tu mes, ordenados por día. El 1 de cada mes te mando tu resumen y el mes empieza en cero.'], en: ['Today, just today', 'Today shows only today\'s spending. Earlier days are in Your month, grouped by day. On the 1st of each month I send your recap and the month starts from zero.'] },
+            { icon: 'repeat', es: ['Gastos recurrentes', 'Al anotar un gasto con ＋, actívalo como recurrente (cada semana, quincena o mes). No cuenta para hoy: se agrega a Pagos y a tu calendario, y tu límite diario se ajusta para todo el mes.'], en: ['Recurring expenses', 'When you log with ＋, mark it as recurring (weekly, every two weeks or monthly). It doesn\'t count for today: it goes to Payments and your calendar, and your daily limit adjusts for the whole month.'] },
+            { icon: 'receipt', es: ['Pagos aproximados', 'Para la luz, el agua o el gas, marca la cantidad como aproximada. Al pagar te pregunto cuánto fue y ajusto el estimado del próximo mes.'], en: ['Approximate bills', 'For power, water or gas, mark the amount as approximate. When you pay I ask how much it was and update next month\'s estimate.'] },
+            { icon: 'list-checks', es: ['Menos scroll', 'En Deudas, el plan, juntar deudas y las tasas reales están en «Plan para salir de deudas». En Metas, invertir aparece cuando llenes tu fondo de emergencia. Bono 14, aguinaldo e ingresos extra ahora están en Perfil → Ingreso.'], en: ['Less scrolling', 'In Debts, the plan, combining debts and real rates live in "Plan to get out of debt". In Goals, investing shows up once your emergency fund is full. Bono 14, aguinaldo and extra income are now in Profile → Income.'] }
+        ]
+    });
 
     // ================= Web version: account login (Supabase) + 6-digit device PIN =================
     // Security model: email + password identify you to the server. The 6-digit PIN never leaves the device:
@@ -7252,6 +7490,7 @@
         if (App) App.addListener('backButton', () => {
             const open = [...document.querySelectorAll('.modal.open')].pop();
             if (open) { closeModal(open.id); return; }
+            if (closeDebtTools()) return;
             if (OB && OB.open) { if (OB.step > 0) obGo(OB.step - 1); return; }
             if (state.tab !== 'today') { setTab('today'); return; }
             App.minimizeApp ? App.minimizeApp() : App.exitApp();
@@ -7267,7 +7506,7 @@
     }
 
     // Version shown at the bottom of Profile, so anyone can tell which build they have.
-    window.VALIU_BUILD = '2026.11.05-1605';
+    window.VALIU_BUILD = '2026.11.07-1546';
     (function () { const v = document.getElementById('app-version'); if (v) v.textContent = 'Valiu ' + window.VALIU_BUILD; })();
     // Updates: check for a new version whenever the app comes back to the screen, and reload once when it takes over.
     nativeSetup();
