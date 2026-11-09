@@ -808,7 +808,7 @@
         .back-link svg { width: 20px; height: 20px; }
         .tools-link .tools-ic { width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; background: var(--accent-soft); font-size: 24px; flex-shrink: 0; }
         .next-step.compact { display: flex; align-items: center; gap: 12px; padding: 12px 14px; }
-        .next-step.compact .lock-ic { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: var(--surface-2); font-size: 19px; flex-shrink: 0; }
+        .next-step.compact img { width: 64px; height: 64px; flex-shrink: 0; }
         .next-step.compact .ttl { font-size: 15px; } .next-step.compact p { margin-top: 2px; }
         .month-exp { padding: 10px 16px 8px; }
         .month-exp .day-h { display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; color: var(--muted); padding: 12px 0 2px; }
@@ -6203,7 +6203,7 @@
             ns.innerHTML = done ? `${mascot('invirtiendo', 92)}<div class="grow"><span class="tag ok">${esc(t('nsOpen'))}</span><b class="ttl">${esc(t('nsTitle'))}</b>
                 <p class="small muted">${esc(t('nsOpenS'))}</p>
                 <button class="btn btn-primary btn-sm mt-2" onclick="document.getElementById('invest-h').scrollIntoView({ behavior: 'smooth' })">${esc(t('nsBtn'))}</button></div>`
-                : `<span class="lock-ic" aria-hidden="true">🔒</span><div class="grow"><b class="ttl">${esc(t('nsLocked').replace('🔒 ', ''))}: ${esc(t('nsTitle').toLowerCase())}</b>
+                : `${mascot('invirtiendo', 64).replace('class="mascot', 'class="mascot locked')}<div class="grow"><b class="ttl">${esc(t('nsLocked').replace('🔒 ', ''))}: ${esc(t('nsTitle').toLowerCase())}</b>
                 <p class="small muted">${esc(ef ? t('nsLockedS', { x: fmt(left, 0) }) : t('nsNoEf'))}</p></div>`;
         }
 
@@ -7506,7 +7506,7 @@
     }
 
     // Version shown at the bottom of Profile, so anyone can tell which build they have.
-    window.VALIU_BUILD = '2026.11.07-1546';
+    window.VALIU_BUILD = '2026.11.08-2134';
     (function () { const v = document.getElementById('app-version'); if (v) v.textContent = 'Valiu ' + window.VALIU_BUILD; })();
     // Updates: check for a new version whenever the app comes back to the screen, and reload once when it takes over.
     nativeSetup();
