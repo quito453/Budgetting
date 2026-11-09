@@ -1,6 +1,7 @@
 // Valiu · Edge Function "recordatorios"
-// Runs once a day (pg_cron). For every user with reminders on, finds statement credit cards that are
-// due in 3 days / tomorrow / today / were due yesterday, and sends a notification:
+// Runs once a day (pg_cron). For every user with reminders on, finds what is due in 3 days / tomorrow / today /
+// was due yesterday (cards with their statement, plus fixed bills, loan installments and cards by their payment day)
+// and sends a notification:
 //   - Web Push to browsers and home-screen apps (push_subscriptions)
 //   - FCM to the Android app and APNs to the iPhone app (native_push_tokens)
 // Secrets (Edge Functions → Secrets): VAPID_PRIVATE_JWK, VAPID_CONTACT, CRON_SECRET,
@@ -17,6 +18,9 @@ const TEXT = {
     in: (n: number, name: string) => n === 0 ? `Hoy vence tu tarjeta ${name}.` : n === 1 ? `Mañana vence tu tarjeta ${name}.` : n < 0 ? `Tu tarjeta ${name} venció ayer: paga al menos el mínimo hoy.` : `Tu tarjeta ${name} vence en ${n} días.`,
     amounts: (min: string, full: string) => `Mínimo ${min} · Contado ${full}.`,
     tip: "Pagar el total evita intereses.",
+    billIn: (n: number, what: string) => n === 0 ? `Hoy vence ${what}.` : n === 1 ? `Mañana vence ${what}.` : n < 0 ? `Ayer venció ${what}.` : `En ${n} días vence ${what}.`,
+    what: (kind: string, name: string) => kind === "loan" ? `la cuota de ${name}` : kind === "cc" ? `tu tarjeta ${name}` : `tu pago de ${name}`,
+    approx: "aprox.",
     recapTitle: (m: string) => `Valiu · Tu resumen de ${m}`,
     recapBody: (m: string) => `Ya está listo tu resumen de ${m}: cuánto gastaste, ahorraste y abonaste. Abre Valiu para verlo; el mes nuevo empieza en cero.`,
   },
@@ -25,6 +29,9 @@ const TEXT = {
     in: (n: number, name: string) => n === 0 ? `Your ${name} card is due today.` : n === 1 ? `Your ${name} card is due tomorrow.` : n < 0 ? `Your ${name} card was due yesterday: pay at least the minimum today.` : `Your ${name} card is due in ${n} days.`,
     amounts: (min: string, full: string) => `Minimum ${min} · In full ${full}.`,
     tip: "Paying in full avoids interest.",
+    billIn: (n: number, what: string) => n === 0 ? `${what} is due today.` : n === 1 ? `${what} is due tomorrow.` : n < 0 ? `${what} was due yesterday.` : `${what} is due in ${n} days.`,
+    what: (kind: string, name: string) => kind === "loan" ? `The ${name} installment` : kind === "cc" ? `Your ${name} card` : `Your ${name} payment`,
+    approx: "approx.",
     recapTitle: (m: string) => `Valiu · Your ${m} recap`,
     recapBody: (m: string) => `Your ${m} recap is ready: what you spent, saved and paid off. Open Valiu to see it; the new month starts from zero.`,
   },
@@ -68,7 +75,36 @@ export function remindersFor(data: any, today: string) {
       body: `${L.in(n, i.name)} ${L.amounts(money(Math.min(i.stmt.min || i.stmt.full, i.stmt.full), data.currencyCode, lang), money(i.stmt.full, data.currencyCode, lang))} ${n >= 0 ? L.tip : ""}`.trim(),
       tag: `valiu-${i.id}-${i.stmt.due}`,
       url: "./",
-    })));
+    })))
+    .concat(billReminders(data, today, days, lang, L));
+}
+
+// Everything else in Payments: fixed bills, loan installments and cards without a statement, by their day of the month.
+// Weekly recurring charges and items already paid this month are skipped.
+// deno-lint-ignore no-explicit-any
+function billReminders(data: any, today: string, days: number[], lang: string, L: any) {
+  const [y, m] = today.split("-").map(Number);
+  const iso = (yy: number, mm: number, d: number) => {
+    const last = new Date(Date.UTC(yy, mm, 0)).getUTCDate();
+    return `${yy}-${String(mm).padStart(2, "0")}-${String(Math.min(d, last)).padStart(2, "0")}`;
+  };
+  // deno-lint-ignore no-explicit-any
+  return (data?.items ?? []).filter((i: any) => i && !i.paid && !i.completed && !i.stmt?.due && (i.amount ?? 0) > 0 && i.date >= 1 && i.date <= 31 && i.rec !== "week" && i.rec !== "biweek")
+    // deno-lint-ignore no-explicit-any
+    .map((i: any) => {
+      // This month's day, or next month's when "in 3 days" crosses the end of the month.
+      let n = daysBetween(today, iso(y, m, i.date));
+      if (n < -1) n = daysBetween(today, iso(m === 12 ? y + 1 : y, m === 12 ? 1 : m + 1, i.date));
+      return { i, n };
+    })
+    // deno-lint-ignore no-explicit-any
+    .filter(({ n }: any) => days.includes(n))
+    // deno-lint-ignore no-explicit-any
+    .map(({ i, n }: any) => {
+      const kind = i.type === "debt" ? (i.subtype === "loan" ? "loan" : "cc") : "fixed";
+      const amt = money(i.amount, data.currencyCode, lang) + (i.approx ? ` ${L.approx}` : "");
+      return { title: L.title, body: `${L.billIn(n, L.what(kind, i.name))} ${amt}${i.approx ? "" : "."}`, tag: `valiu-${i.id}-${today.slice(0, 7)}-${i.date}`, url: "./" };
+    });
 }
 
 // Only send to the real push services (defense in depth: the database also checks this).

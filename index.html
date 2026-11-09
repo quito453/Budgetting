@@ -6854,6 +6854,7 @@
         resetCharts(); render();
         if (AUTH.offline) toast(t('aOffline'));
         initWebSync();
+        setTimeout(healPush, 5000);
     }
 
     async function pullRemote(force) {
@@ -6961,7 +6962,8 @@
         nDenied: 'Las notificaciones están bloqueadas. Actívalas en la configuración del navegador para este sitio.',
         nUnsupported: 'Este navegador no permite notificaciones.', nIos: 'En iPhone: primero agrega Valiu a tu pantalla de inicio (Compartir → Agregar a inicio) y ábrela desde ahí.',
         nEnabled: 'Recordatorios activados 🔔', nDisabled: 'Recordatorios desactivados.', nFail: 'No pudimos activar los recordatorios: {msg}',
-        nNote: 'Te avisamos a las 8:00 a. m. (hora de Guatemala) sobre las tarjetas que agregaste con su estado de cuenta.',
+        nNote: 'Te avisamos a las 8:00 a. m. (hora de Guatemala) antes de tus pagos fijos, cuotas de préstamos y tarjetas.',
+        nReenable: 'Tus recordatorios se apagaron en este teléfono. Actívalos otra vez en Perfil → Recordatorios.',
         delTitle: 'Eliminar mi cuenta', delBtn: 'Eliminar mi cuenta', delBody: 'Esto borra para siempre tu cuenta, tus datos financieros y tus recordatorios. No se puede deshacer.',
         delExport: 'Antes de borrar, puedes guardar una copia:', delExportBtn: 'Exportar respaldo', delPass: 'Escribe tu contraseña para confirmar',
         delConfirm: 'Eliminar para siempre', delDone: 'Tu cuenta y tus datos fueron eliminados.', delFail: 'No se pudo eliminar la cuenta: {msg}',
@@ -6976,7 +6978,8 @@
         nDenied: 'Notifications are blocked. Allow them for this site in your browser settings.',
         nUnsupported: "This browser doesn't support notifications.", nIos: 'On iPhone: first add Valiu to your Home Screen (Share → Add to Home Screen) and open it from there.',
         nEnabled: 'Reminders turned on 🔔', nDisabled: 'Reminders turned off.', nFail: "Couldn't turn on reminders: {msg}",
-        nNote: 'We notify you at 8:00 a.m. (Guatemala time) about cards you added with their statement.',
+        nNote: 'We notify you at 8:00 a.m. (Guatemala time) before your bills, loan installments and cards.',
+        nReenable: 'Your reminders turned off on this phone. Turn them on again in Profile → Reminders.',
         delTitle: 'Delete my account', delBtn: 'Delete my account', delBody: 'This permanently deletes your account, your financial data and your reminders. It cannot be undone.',
         delExport: 'Before deleting, you can save a copy:', delExportBtn: 'Export backup', delPass: 'Enter your password to confirm',
         delConfirm: 'Delete forever', delDone: 'Your account and data were deleted.', delFail: "Couldn't delete the account: {msg}",
@@ -7028,6 +7031,26 @@
         } catch (e) { /* still turn it off locally */ }
         state.notify = { ...notifyPrefs(), on: false };
         render(); renderProfileExtras(); toast(t('nDisabled'));
+    }
+    // Browsers renew or drop the reminder address now and then (and a home-screen app added again on iPhone gets a new one).
+    // On every start we save the current one again, so reminders keep reaching this phone.
+    async function healPush() {
+        try {
+            if (typeof NATIVE !== 'undefined' && NATIVE) return;
+            if (!pushSupported() || !AUTH.sb || !AUTH.user || !notifyPrefs().on) return;
+            if (Notification.permission !== 'granted') {
+                const k = 'valiu.reenable', today = new Date().toDateString();
+                if (Notification.permission === 'default' && (!isIOS() || isStandalone()) && lsGet(k) !== today) { lsSet(k, today); toast(t('nReenable')); }
+                return;
+            }
+            const reg = await swReady();
+            let sub = await reg.pushManager.getSubscription();
+            if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64urlToBytes(vapidKey()) });
+            const j = sub.toJSON();
+            await AUTH.sb.from('push_subscriptions').upsert({
+                endpoint: j.endpoint, user_id: AUTH.user.id, p256dh: j.keys.p256dh, auth: j.keys.auth, lang: state.lang, ua: navigator.userAgent.slice(0, 180)
+            });
+        } catch (e) { /* offline or not allowed: try again next time */ }
     }
     function toggleNotifyDay(d) {
         const p = notifyPrefs();
@@ -7506,7 +7529,7 @@
     }
 
     // Version shown at the bottom of Profile, so anyone can tell which build they have.
-    window.VALIU_BUILD = '2026.11.08-2134';
+    window.VALIU_BUILD = '2026.11.09-1149';
     (function () { const v = document.getElementById('app-version'); if (v) v.textContent = 'Valiu ' + window.VALIU_BUILD; })();
     // Updates: check for a new version whenever the app comes back to the screen, and reload once when it takes over.
     nativeSetup();
