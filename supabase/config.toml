@@ -3,9 +3,10 @@
 # las Edge Functions de esta lista. Los secretos (CRON_SECRET, VAPID, FCM, APNS) se quedan en Supabase, no aquí.
 project_id = "fbcmeqsxrvusnpcfwufu"
 
-# Las tablas se crean con los archivos update-*.sql (SQL Editor), no con migraciones automáticas.
+# Migraciones: los archivos nuevos de supabase/migrations se aplican solos al hacer push a main.
+# Los update-*.sql anteriores ya se corrieron a mano en el SQL Editor y no están aquí.
 [db.migrations]
-enabled = false
+enabled = true
 
 # Apple Pay y Back Tap: el iPhone no inicia sesión, se identifica con el enlace personal (?t=...).
 [functions.gasto]
