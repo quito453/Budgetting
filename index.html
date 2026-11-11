@@ -7530,7 +7530,7 @@
     }
 
     // Version shown at the bottom of Profile, so anyone can tell which build they have.
-    window.VALIU_BUILD = '2026.11.11-1140';
+    window.VALIU_BUILD = '2026.11.11-1200';
     (function () { const v = document.getElementById('app-version'); if (v) v.textContent = 'Valiu ' + window.VALIU_BUILD; })();
     // Updates: check for a new version whenever the app comes back to the screen, and reload once when it takes over.
     nativeSetup();
@@ -7547,6 +7547,75 @@
             document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') reg.update().catch(() => {}); });
         }).catch(() => {}));
     }
+
+    // ---------- iPhone: keep the bottom bar in place ----------
+    // After the keyboard (or a Shortcuts prompt) closes, iOS can leave the page's fixed layer shifted, and the bar floats
+    // mid-screen until the next scroll. A tiny scroll and a repaint put it back.
+    (function () {
+        let t = 0;
+        function settle() {
+            clearTimeout(t);
+            t = setTimeout(() => {
+                const y = window.scrollY;
+                window.scrollTo(window.scrollX, y + 1); window.scrollTo(window.scrollX, y);
+                const nav = document.querySelector('.bottom-nav');
+                if (nav) { nav.style.transform = 'translateZ(0)'; void nav.offsetHeight; nav.style.transform = ''; }
+            }, 260);
+        }
+        document.addEventListener('focusout', settle);
+        window.addEventListener('pageshow', settle);
+        window.addEventListener('orientationchange', settle);
+        document.addEventListener('visibilitychange', () => { if (!document.hidden) settle(); });
+        if (window.visualViewport) window.visualViewport.addEventListener('resize', settle);
+    })();
+
+    // ---------- sheets close by swiping them down ----------
+    // Drag from the top of a sheet (or anywhere once its content is scrolled to the top). Closing goes through the same
+    // path as tapping outside, so each sheet keeps its own closing rules (news marked as seen, confirm answered no, …).
+    (function () {
+        let s = null;
+        document.addEventListener('touchstart', e => {
+            if (e.touches.length !== 1 || window.innerWidth >= 640) return;
+            const sheet = e.target.closest('.modal.open .sheet');
+            if (!sheet || e.target.closest('input, textarea, select, [type="range"], .no-swipe, canvas')) return;
+            const nearTop = e.touches[0].clientY - sheet.getBoundingClientRect().top < 70;
+            if (sheet.scrollTop > 0 && !nearTop) return;
+            s = { sheet, y0: e.touches[0].clientY, t0: Date.now(), dy: 0, on: false };
+        }, { passive: true });
+        document.addEventListener('touchmove', e => {
+            if (!s) return;
+            const dy = e.touches[0].clientY - s.y0;
+            if (!s.on) {
+                if (dy < -4) { s = null; return; }
+                if (dy < 10) return;
+                s.on = true; s.sheet.style.transition = 'none'; s.sheet.style.animation = 'none';
+            }
+            s.dy = Math.max(0, dy);
+            s.sheet.style.transform = `translateY(${s.dy}px)`;
+            if (e.cancelable) e.preventDefault();
+        }, { passive: false });
+        function end() {
+            if (!s) return;
+            const { sheet, dy, t0, on } = s; s = null;
+            if (!on) return;
+            const fast = dy / Math.max(1, Date.now() - t0) > 0.55;
+            sheet.style.transition = 'transform .22s cubic-bezier(.2, .8, .2, 1)';
+            if (dy > 110 || (fast && dy > 40)) {
+                sheet.style.transform = 'translateY(110%)';
+                setTimeout(() => {
+                    const m = sheet.closest('.modal');
+                    if (m) m.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+                    if (m && m.classList.contains('open') && m.id) closeModal(m.id);
+                    sheet.style.transition = ''; sheet.style.transform = ''; sheet.style.animation = '';
+                }, 200);
+            } else {
+                sheet.style.transform = '';
+                setTimeout(() => { sheet.style.transition = ''; sheet.style.animation = ''; }, 230);
+            }
+        }
+        document.addEventListener('touchend', end);
+        document.addEventListener('touchcancel', end);
+    })();
 
     </script>
 </body>
