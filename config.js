@@ -12,5 +12,5 @@ window.APP_CONFIG = {
     vapidPublicKey: 'BGI4aCyLzVW9O9POAsVfgqEEorcD9dv9SXXY9v2d1tlYZ2-QxtbXDGF0la63VUXZqCF_PhoPj3iTb5M7jl04_5Y',
     // Atajos listos de iCloud (Atajos → compartir → Copiar enlace de iCloud). Vacío = la app muestra los pasos manuales.
     shortcutUrl: '',      // "Valiu gasto" (Apple Pay)
-    tapShortcutUrl: ''    // "Anotar en Valiu" (Back Tap)
+    tapShortcutUrl: 'https://www.icloud.com/shortcuts/a17bd8509f624844bc5ab788956d836a'    // "Anotar en Valiu" (Back Tap)
 };
