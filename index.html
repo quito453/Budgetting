@@ -7218,8 +7218,8 @@
 
     // ---------- category guess from the store name ----------
     const CAT_RULES = [
-        ['food', /walmart|paiz|la torre|despensa|maxi ?despensa|super|pricesmart|econosuper|mercado|carnicer|tienda|abarrot/i],
-        ['eat', /pollo campero|campero|mcdonald|burger|pizza|domino|kfc|subway|starbucks|caf[eé]|restaur|taco|sushi|wendy|little caesars|panader|pastel|uber ?eats|pedidos ?ya|hugo|rappi/i],
+        ['eat', /pollo campero|campero|mcdonald|burger|burgir|hamburgues|pizza|domino|kfc|subway|starbucks|caf[eé]|restaur|taco|sushi|wendy|little caesars|panader|pastel|uber ?eats|pedidos ?ya|hugo|rappi|almuerz|desayun|cena\b|comida|lunch|dinner|breakfast|pollo|pupus|shuco|tortill|refacci|snack|antojo|helado|gaseosa|coca|pepsi|soda|jugo|licuado|chicle|golosin|dulces|vending|vendor|m[aá]quina/i],
+        ['food', /walmart|paiz|la torre|despensa|maxi ?despensa|s[uú]per|pricesmart|econosuper|mercado|carnicer|tienda|abarrot|leche|milk|huevo|verdur|fruta|groceries/i],
         ['transport', /uber|indriver|didi|gasolin|shell|puma|texaco|uno |parqueo|parking|transmetro|bus|peaje/i],
         ['health', /farmacia|cruz verde|galeno|batres|meykos|hospital|cl[ií]nica|laborator|dental|[oó]ptica/i],
         ['bills', /tigo|claro|eegsa|energuate|empagua|cable|internet|netflix|spotify|apple\.com|icloud|google|disney|hbo|amazon prime|youtube/i],
@@ -7530,7 +7530,7 @@
     }
 
     // Version shown at the bottom of Profile, so anyone can tell which build they have.
-    window.VALIU_BUILD = '2026.11.11-1200';
+    window.VALIU_BUILD = '2026.11.11-1215';
     (function () { const v = document.getElementById('app-version'); if (v) v.textContent = 'Valiu ' + window.VALIU_BUILD; })();
     // Updates: check for a new version whenever the app comes back to the screen, and reload once when it takes over.
     nativeSetup();
@@ -7549,24 +7549,37 @@
     }
 
     // ---------- iPhone: keep the bottom bar in place ----------
-    // After the keyboard (or a Shortcuts prompt) closes, iOS can leave the page's fixed layer shifted, and the bar floats
-    // mid-screen until the next scroll. A tiny scroll and a repaint put it back.
+    // iOS home-screen apps can keep a shrunken viewport after a keyboard closes (also the one from a Back Tap / Shortcuts
+    // prompt over the app): innerHeight stays low and the bottom bar floats mid-screen. Hiding and showing a full-height
+    // element makes WebKit measure the screen again. We only do it when the height is really stuck and nobody is typing.
     (function () {
-        let t = 0;
-        function settle() {
-            clearTimeout(t);
-            t = setTimeout(() => {
-                const y = window.scrollY;
-                window.scrollTo(window.scrollX, y + 1); window.scrollTo(window.scrollX, y);
-                const nav = document.querySelector('.bottom-nav');
-                if (nav) { nav.style.transform = 'translateZ(0)'; void nav.offsetHeight; nav.style.transform = ''; }
-            }, 260);
+        let maxVH = window.innerHeight, t = 0;
+        const probe = document.createElement('div');
+        probe.setAttribute('aria-hidden', 'true');
+        probe.style.cssText = 'position:fixed;left:0;top:0;width:1px;height:100vh;height:100dvh;visibility:hidden;pointer-events:none;z-index:-1';
+        document.body.appendChild(probe);
+        const typing = () => { const a = document.activeElement; return !!(a && /INPUT|TEXTAREA|SELECT/.test(a.tagName)); };
+        const stuck = () => maxVH - window.innerHeight > 4 && !typing();
+        function flip(el) { el.style.display = 'none'; void el.offsetHeight; el.style.display = ''; }
+        function heal() {
+            if (!stuck()) return;
+            const y = window.scrollY;
+            flip(probe);
+            if (stuck()) flip(document.body);
+            window.scrollTo(window.scrollX, y);
+            const nav = document.querySelector('.bottom-nav');
+            if (nav) { nav.style.transform = 'translateZ(0)'; void nav.offsetHeight; nav.style.transform = ''; }
         }
-        document.addEventListener('focusout', settle);
-        window.addEventListener('pageshow', settle);
-        window.addEventListener('orientationchange', settle);
-        document.addEventListener('visibilitychange', () => { if (!document.hidden) settle(); });
-        if (window.visualViewport) window.visualViewport.addEventListener('resize', settle);
+        const soon = (ms = 160) => { clearTimeout(t); t = setTimeout(heal, ms); };
+        window.addEventListener('resize', () => { if (!typing()) maxVH = Math.max(maxVH, window.innerHeight); soon(300); });
+        window.addEventListener('orientationchange', () => { maxVH = 0; setTimeout(() => { maxVH = window.innerHeight; }, 600); });
+        document.addEventListener('focusout', () => soon(160));
+        document.addEventListener('visibilitychange', () => { if (!document.hidden) soon(250); });
+        window.addEventListener('pageshow', () => soon(250));
+        window.addEventListener('focus', () => soon(250));
+        if (window.visualViewport) window.visualViewport.addEventListener('resize', () => soon(300));
+        // Safety net: the first touch after it got stuck fixes it.
+        document.addEventListener('touchstart', () => { if (stuck()) heal(); }, { passive: true });
     })();
 
     // ---------- sheets close by swiping them down ----------
