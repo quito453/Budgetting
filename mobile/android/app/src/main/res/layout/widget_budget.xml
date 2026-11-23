@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/w_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_bg"
+    android:orientation="vertical"
+    android:padding="12dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+        <ImageView
+            android:id="@+id/w_frog"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:contentDescription="@null"
+            android:scaleType="fitStart"
+            android:src="@drawable/frog_equilibrio" />
+        <ImageView
+            android:id="@+id/w_plus"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:layout_gravity="top"
+            android:background="@drawable/widget_plus_bg"
+            android:contentDescription="@string/w_add"
+            android:padding="7dp"
+            android:src="@drawable/ic_w_plus" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/w_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="@string/w_can"
+        android:textColor="@color/w_muted"
+        android:textSize="12sp" />
+    <TextView
+        android:id="@+id/w_amount"
+        android:layout_width="match_parent"
+        android:layout_height="34dp"
+        android:autoSizeMaxTextSize="28sp"
+        android:autoSizeMinTextSize="14sp"
+        android:autoSizeTextType="uniform"
+        android:fontFamily="sans-serif-black"
+        android:maxLines="1"
+        android:text="—"
+        android:textColor="@color/w_accent"
+        android:textSize="26sp" />
+    <TextView
+        android:id="@+id/w_of"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="@string/w_open"
+        android:textColor="@color/w_muted"
+        android:textSize="11sp" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="6dp"
+        android:layout_marginTop="6dp">
+        <ProgressBar android:id="@+id/w_bar_ok" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="6dp" android:max="100" android:progress="0" android:progressDrawable="@drawable/widget_bar_ok" />
+        <ProgressBar android:id="@+id/w_bar_warn" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="6dp" android:max="100" android:progress="0" android:progressDrawable="@drawable/widget_bar_warn" android:visibility="gone" />
+        <ProgressBar android:id="@+id/w_bar_danger" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="6dp" android:max="100" android:progress="100" android:progressDrawable="@drawable/widget_bar_danger" android:visibility="gone" />
+    </FrameLayout>
+</LinearLayout>

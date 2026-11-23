@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="w_bg">#FFFFFF</color>
+    <color name="w_text">#12302A</color>
+    <color name="w_muted">#52695F</color>
+    <color name="w_faint">#8AA197</color>
+    <color name="w_accent">#1E8150</color>
+    <color name="w_accent_soft">#DCF1E2</color>
+    <color name="w_warn">#A06400</color>
+    <color name="w_warn_soft">#FBEFD3</color>
+    <color name="w_danger">#C9423F</color>
+    <color name="w_danger_soft">#FBE3E1</color>
+    <color name="w_track">#E5EFE3</color>
+    <color name="w_on_accent">#FFFFFF</color>
+</resources>

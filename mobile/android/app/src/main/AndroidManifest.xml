@@ -19,7 +19,34 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <!-- Long-press the icon: "Anotar gasto" and "Pagos". -->
+            <meta-data android:name="android.app.shortcuts" android:resource="@xml/shortcuts" />
         </activity>
+
+        <!-- Automatic capture: reads only payment notifications (Wallet / bank) once the user allows it. -->
+        <service
+            android:name=".PaymentListener"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+
+        <!-- Home-screen widgets. -->
+        <receiver android:name=".BudgetWidget" android:exported="false" android:label="@string/w_budget_desc">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_budget_info" />
+        </receiver>
+        <receiver android:name=".PaymentsWidget" android:exported="false" android:label="@string/w_payments_desc">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_payments_info" />
+        </receiver>
 
         <provider
             android:name="androidx.core.content.FileProvider"

@@ -2890,6 +2890,7 @@
         setupInfoToggles(); obCheckRemote(); placeCardMascots();
         if (window.lucide) lucide.createIcons();
         saveState();
+        if (typeof widgetSync === 'function') widgetSync();
         if (state.pendingRecap && !recapShown && !$('lock').classList.contains('open') && state.months.some(m => m.period === state.pendingRecap)) showRecap(state.pendingRecap);
     }
 
@@ -7458,6 +7459,284 @@
         pushSupported = () => true;
     }
 
+    // ================= Android only: purchases noted on their own, home-screen widgets, shortcuts =================
+    // The Google Play app adds a small native plugin (ValiuAndroid). With the user's OK it reads payment
+    // notifications (Google Wallet or the bank), keeps amount + merchant on the phone, and hands them to us here.
+    // We also send it what the widgets show: today's budget (for the rest of the month, so the 2×2 stays right
+    // even if Valiu isn't opened) and this month's payment calendar for the 4×4.
+    const ANDROID = NATIVE && nativePlatform() === 'android';
+    const VA = () => (ANDROID && NP().ValiuAndroid) || null;
+    const CAP = { waiting: false, st: null };
+    Object.assign(I18N.es, {
+        capGroup: 'Anotar más rápido', capRow: 'Anotar compras solo', capRowOn: 'Activado', capRowOff: 'Con Google Wallet o tu banco',
+        capT: 'Anota tus compras solo', capIntro: 'Cuando pagas con Google Wallet o con tu tarjeta, tu banco te manda una notificación. Valiu la lee y anota el gasto por ti, sin que abras la app.',
+        capHow: 'Cómo funciona', capP1: 'Solo se fija en notificaciones de pagos y toma el monto y el comercio.',
+        capP2: 'Ignora chats, correos y todo lo demás. Nada sale de tu teléfono hasta que se vuelve un gasto en tu cuenta de Valiu.',
+        capP3: 'Si tu banco no te avisa cuando pagas, activa las notificaciones de compras en la app de tu banco.',
+        capP4: 'Te aviso con una notificación cada vez que anoto algo. Si no era un gasto, bórralo en Hoy.',
+        capOn: 'Activado: anotaré tus compras cuando lleguen sus notificaciones.', capNeed: 'Falta un paso: en la pantalla de Android, busca Valiu y activa "Permitir acceso a notificaciones".',
+        capEnable: 'Aceptar y activar', capOpenSettings: 'Abrir ajustes de Android', capOff: 'Apagar', capOffDone: 'Apagado. Ya no anotaré compras de tus notificaciones.',
+        capOnToast: '¡Listo! Anotaré tus compras solo 🐸', capDefault: 'Compra con tarjeta',
+        capToast1: '🧾 Anoté {x} · {m}', capToastN: '🧾 Anoté {n} compras de tus notificaciones', capOtherCur: 'Hubo una compra en otra moneda ({x}). Anótala tú con el monto en {cur}.',
+        wgRow: 'Widgets en tu pantalla', wgRowS: 'Tu presupuesto de hoy y tu calendario de pagos',
+        wgT: 'Valiu en tu pantalla de inicio', wgIntro: 'Mira cuánto puedes gastar hoy y tus próximos pagos sin abrir la app.',
+        wgBudget: 'Tu presupuesto de hoy', wgBudgetS: '2 × 2 · lo que te queda hoy, con tu ranita. El + anota un gasto.',
+        wgPay: 'Calendario de pagos', wgPayS: '4 × 4 · el mes con tus fechas de pago y lo próximo que toca pagar.',
+        wgAdd: 'Agregar a mi pantalla', wgManual: 'También puedes mantener presionado un espacio vacío de tu pantalla de inicio → Widgets → Valiu.',
+        wgShortcut: 'Tip: mantén presionado el ícono de Valiu para "Anotar gasto" o ir directo a Pagos.',
+        wgNoPin: 'Tu teléfono no deja agregarlo desde aquí. Mantén presionada tu pantalla de inicio → Widgets → Valiu.',
+        wgCanToday: 'Puedes gastar hoy', wgOver: 'Te pasaste hoy', wgOpen: 'Abre Valiu para ver tu día', wgToday: 'Hoy', wgTomorrow: 'Mañana',
+        wgInDays: '{n} días', wgOverdue: 'Vencido', wgAllPaid: 'Todo pagado este mes 🎉', wgPending1: '1 pago pendiente', wgPendingN: '{n} pagos pendientes',
+        wgCapTitle: 'Anoté {x}', wgCapText: 'Toca para verlo en Valiu.', wgCapChannel: 'Compras anotadas'
+    });
+    Object.assign(I18N.en, {
+        capGroup: 'Log faster', capRow: 'Log purchases automatically', capRowOn: 'On', capRowOff: 'With Google Wallet or your bank',
+        capT: 'Log your purchases automatically', capIntro: 'When you pay with Google Wallet or your card, your bank sends you a notification. Valiu reads it and logs the expense for you, without opening the app.',
+        capHow: 'How it works', capP1: 'It only looks at payment notifications and takes the amount and the merchant.',
+        capP2: 'It ignores chats, email and everything else. Nothing leaves your phone until it becomes an expense in your Valiu account.',
+        capP3: "If your bank doesn't notify you when you pay, turn on purchase alerts in your bank's app.",
+        capP4: "I'll send you a notification each time I log something. If it wasn't an expense, delete it in Today.",
+        capOn: "On: I'll log your purchases when their notifications arrive.", capNeed: 'One more step: on the Android screen, find Valiu and turn on "Allow notification access".',
+        capEnable: 'Accept and turn on', capOpenSettings: 'Open Android settings', capOff: 'Turn off', capOffDone: "Off. I won't log purchases from your notifications anymore.",
+        capOnToast: "Done! I'll log your purchases for you 🐸", capDefault: 'Card purchase',
+        capToast1: '🧾 Logged {x} · {m}', capToastN: '🧾 Logged {n} purchases from your notifications', capOtherCur: 'There was a purchase in another currency ({x}). Log it yourself with the amount in {cur}.',
+        wgRow: 'Home-screen widgets', wgRowS: "Today's budget and your payment calendar",
+        wgT: 'Valiu on your home screen', wgIntro: "See what you can spend today and your next payments without opening the app.",
+        wgBudget: "Today's budget", wgBudgetS: "2 × 2 · what's left today, with your frog. The + logs an expense.",
+        wgPay: 'Payment calendar', wgPayS: '4 × 4 · the month with your payment dates and what comes next.',
+        wgAdd: 'Add to my home screen', wgManual: 'You can also long-press an empty spot on your home screen → Widgets → Valiu.',
+        wgShortcut: 'Tip: long-press the Valiu icon to "Add expense" or jump to Payments.',
+        wgNoPin: "Your phone doesn't allow adding it from here. Long-press your home screen → Widgets → Valiu.",
+        wgCanToday: 'You can spend today', wgOver: 'You went over today', wgOpen: 'Open Valiu to see your day', wgToday: 'Today', wgTomorrow: 'Tomorrow',
+        wgInDays: '{n} days', wgOverdue: 'Overdue', wgAllPaid: 'All paid this month 🎉', wgPending1: '1 payment left', wgPendingN: '{n} payments left',
+        wgCapTitle: 'Logged {x}', wgCapText: 'Tap to see it in Valiu.', wgCapChannel: 'Logged purchases'
+    });
+
+    // ---------- what the widgets show ----------
+    let widgetTimer = null, widgetLast = '';
+    function widgetSync() {
+        if (!VA() || !AUTH.started) return;
+        clearTimeout(widgetTimer);
+        widgetTimer = setTimeout(widgetPush, 700);
+    }
+    function moneyParts() {
+        try {
+            const parts = new Intl.NumberFormat(LOCALES[state.lang], { style: 'currency', currency: state.currencyCode, minimumFractionDigits: 2 }).formatToParts(1234.5);
+            const iFirst = parts.findIndex(p => p.type === 'integer');
+            let iLast = -1; parts.forEach((p, k) => { if (['integer', 'group', 'decimal', 'fraction'].includes(p.type)) iLast = k; });
+            return {
+                pre: parts.slice(0, iFirst).map(p => p.value).join(''), post: parts.slice(iLast + 1).map(p => p.value).join(''),
+                dec: (parts.find(p => p.type === 'decimal') || {}).value || '.', grp: (parts.find(p => p.type === 'group') || {}).value || ','
+            };
+        } catch (e) { return { pre: '', post: '', dec: '.', grp: ',' }; }
+    }
+    function widgetPayload() {
+        const now = new Date(), y = now.getFullYear(), m = now.getMonth(), dim = daysInMonth(now), today = now.getDate();
+        const loc = LOCALES[state.lang];
+        const c = compute(now);
+        // Today's budget for the rest of the month, as if nothing else is spent: the widget picks the right day itself.
+        const days = [];
+        if (state.income > 0 && state.period === periodKey(now)) {
+            for (let d = today; d <= dim; d++) {
+                const ref = new Date(y, m, d, 12);
+                const cc = d === today ? c : compute(ref);
+                days.push({ d: isoDate(ref), daily: round2(cc.dailyBudget), spent: d === today ? round2(c.spentToday) : 0 });
+            }
+        }
+        const streak = typeof currentStreak === 'function' ? currentStreak(c) : 0;
+        const due = {};
+        for (let d = 1; d <= dim; d++) {
+            const list = state.items.filter(i => occursOn(i, d, y, m));
+            if (!list.length) continue;
+            const open = list.some(i => !(REC_STEP[i.rec] && (i.paid || d < i.date)) && itemStatus(i).k !== 'paid');
+            due[d] = open ? 'due' : 'paid';
+        }
+        const base = new Date(y, m, today);
+        const next = state.items.filter(i => !i.paid && !i.completed).sort((a, b) => dueDiff(a) - dueDiff(b)).slice(0, 6)
+            .map(i => ({ name: i.name, amt: round2(i.amount), due: isoDate(new Date(y, m, today + dueDiff(i))) }));
+        return {
+            v: 1, lang: state.lang, cur: state.currencyCode, nf: moneyParts(), day: isoDate(base), days,
+            mascot: streak >= 14 ? 'nivel-superior' : streak >= 5 ? 'en-racha' : c.spentToday === 0 ? 'equilibrio' : 'ahorrando',
+            month: {
+                y, m: m + 1, title: cap(now.toLocaleDateString(loc, { month: 'long', year: 'numeric' })), due,
+                wds: Array.from({ length: 7 }, (_, k) => new Date(2023, 0, 1 + k).toLocaleDateString(loc, { weekday: 'narrow' }).toUpperCase())
+            },
+            next,
+            str: {
+                can: t('wgCanToday'), over: t('wgOver'), of: t('heroOf', { x: '{x}' }), open: t('wgOpen'), today: t('wgToday'), tomorrow: t('wgTomorrow'),
+                inDays: t('wgInDays', { n: '{n}' }), overdue: t('wgOverdue'), allPaid: t('wgAllPaid'), pending1: t('wgPending1'), pendingN: t('wgPendingN', { n: '{n}' }),
+                capTitle: t('wgCapTitle', { x: '{x}' }), capText: t('wgCapText'), capChannel: t('wgCapChannel')
+            }
+        };
+    }
+    function widgetPush() {
+        const P = VA(); if (!P) return;
+        let json;
+        try { json = JSON.stringify(widgetPayload()); } catch (e) { return; }
+        if (json === widgetLast) return;
+        widgetLast = json;
+        P.setWidgetData({ json }).catch(() => { widgetLast = ''; });
+    }
+
+    // ---------- purchases caught from notifications → expenses ----------
+    let capImporting = false;
+    async function importNativePayments() {
+        const P = VA(); if (!P || !AUTH.started || capImporting) return;
+        capImporting = true;
+        try {
+            const r = await P.takePayments();
+            let list = [];
+            try { list = JSON.parse((r && r.json) || '[]'); } catch (e) { list = []; }
+            const added = [], other = [];
+            list.forEach(p => {
+                const id = ('n' + String(p.id || '').replace(/[^A-Za-z0-9]/g, '')).slice(0, 40);
+                if (id.length < 2 || state.expenses.some(e => e.id === id)) return;
+                const amount = round2(+p.amount);
+                if (!(amount > 0)) return;
+                if (p.currency && p.currency !== state.currencyCode) { other.push(p); return; }
+                const ts = +p.ts || Date.now();
+                const merchant = String(p.merchant || '').trim();
+                const e = { id, amount, note: (merchant || t('capDefault')).slice(0, 60), ts, period: periodKey(new Date(ts)), cat: guessCat(merchant) };
+                state.expenses.push(e); added.push(e);
+            });
+            if (added.length) {
+                render();
+                toast(added.length === 1 ? t('capToast1', { x: fmt(added[0].amount), m: added[0].note }) : t('capToastN', { n: added.length }));
+                haptic('success');
+            }
+            if (other.length) {
+                const p = other[0], x = (p.currency === 'USD' ? 'US$' : p.currency + ' ') + (+p.amount).toFixed(2) + (p.merchant ? ' · ' + p.merchant : '');
+                setTimeout(() => toast(t('capOtherCur', { x, cur: state.currencyCode })), added.length ? 3800 : 0);
+            }
+        } catch (e) { /* the queue stays on the phone until next time */ } finally { capImporting = false; }
+    }
+
+    // ---------- widget / shortcut / notice taps open a screen ----------
+    let actTries = 0;
+    async function takeNativeAction() {
+        const P = VA(); if (!P) return;
+        if (!AUTH.started || $('auth').classList.contains('open')) {   // still logging in or unlocking: wait for it
+            if (actTries++ < 60) setTimeout(takeNativeAction, 800);
+            return;
+        }
+        actTries = 0;
+        let a = '';
+        try { a = ((await P.takeAction()) || {}).action || ''; } catch (e) { return; }
+        if (!a) return;
+        document.querySelectorAll('.modal.open').forEach(el => closeModal(el.id));
+        if (typeof closeDebtTools === 'function') closeDebtTools();
+        if (a === 'add') { setTab('today'); setTimeout(openSpend, 150); }
+        else if (a === 'payments') setTab('payments');
+        else setTab('today');
+    }
+
+    // ---------- Profile: the two Android rows ----------
+    function androidProfileRows() {
+        const g = $('wallet-group'); if (!g || !VA()) return;
+        g.classList.remove('hidden');
+        const head = g.querySelector('.set-head span'); if (head) { head.removeAttribute('data-i18n'); head.textContent = t('capGroup'); }
+        const on = CAP.st && CAP.st.on && CAP.st.allowed;
+        g.querySelector('.set-card').innerHTML =
+            `<button class="set-row" onclick="closeModal('config-modal'); openAutoCapture()"><span class="set-ic"><i data-lucide="receipt"></i></span><span class="grow"><span>${esc(t('capRow'))}</span><span class="tiny ${on ? '' : 'muted'}" style="display:block${on ? ';color:var(--accent)' : ''}">${esc(on ? t('capRowOn') : t('capRowOff'))}</span></span><i data-lucide="chevron-right" class="faint"></i></button>
+             <button class="set-row" onclick="closeModal('config-modal'); openWidgets()"><span class="set-ic"><i data-lucide="smartphone"></i></span><span class="grow"><span>${esc(t('wgRow'))}</span><span class="tiny muted" style="display:block">${esc(t('wgRowS'))}</span></span><i data-lucide="chevron-right" class="faint"></i></button>`;
+        if (window.lucide) lucide.createIcons();
+    }
+    async function capRefresh() {
+        const P = VA(); if (!P) return null;
+        try { CAP.st = await P.captureStatus(); } catch (e) { CAP.st = null; }
+        return CAP.st;
+    }
+    function androidSheet(id, html) {
+        let el = $(id);
+        if (!el) {
+            el = document.createElement('div'); el.id = id; el.className = 'modal';
+            el.onclick = e => { if (e.target === el) closeModal(id); };
+            document.body.appendChild(el);
+        }
+        el.innerHTML = `<div class="sheet" role="dialog" aria-modal="true" style="max-width:520px"><div class="grab"></div>
+            <div class="between mb-2"><span></span><button class="icon-btn" onclick="closeModal('${id}')" aria-label="${esc(t('close'))}"><i data-lucide="x"></i></button></div>${html}</div>`;
+        if (window.lucide) lucide.createIcons();
+        return el;
+    }
+    async function openAutoCapture() {
+        await capRefresh();
+        renderAutoCapture();
+        openModal('cap-modal');
+    }
+    function renderAutoCapture() {
+        const st = CAP.st || {}, on = st.on && st.allowed;
+        const li = keys => keys.map((k, i) => `<li><span class="w-n">${i + 1}</span><span>${esc(t(k))}</span></li>`).join('');
+        androidSheet('cap-modal', `<div class="w-hero">${mascot('pagando', 140)}<h2 class="ob-h" style="font-size:24px">${esc(t('capT'))}</h2><p class="small muted">${esc(t('capIntro'))}</p></div>
+            ${on ? `<div class="note ok small">${esc(t('capOn'))}</div>` : st.on && !st.allowed ? `<div class="note warn small">${esc(t('capNeed'))}</div>` : ''}
+            <section class="w-step"><h3>${esc(t('capHow'))}</h3><ol class="w-list">${li(['capP1', 'capP2', 'capP3', 'capP4'])}</ol></section>
+            ${on ? `<button class="btn btn-ghost btn-block mt-3" onclick="capDisable()">${esc(t('capOff'))}</button>`
+                 : st.on && !st.allowed ? `<button class="btn btn-primary btn-block mt-3" onclick="capSettings()">${esc(t('capOpenSettings'))}</button>`
+                 : `<button class="btn btn-primary btn-block mt-3" onclick="capEnable()">${esc(t('capEnable'))}</button>`}`);
+    }
+    async function capSettings() {
+        const P = VA(); if (!P) return;
+        CAP.waiting = true;
+        try { await P.openCaptureSettings(); } catch (e) { CAP.waiting = false; toast(t('capNeed')); }
+    }
+    async function capEnable() {
+        const P = VA(); if (!P) return;
+        try { await P.setCapture({ on: true }); } catch (e) { return; }
+        const st = await capRefresh();
+        if (st && st.allowed) { renderAutoCapture(); androidProfileRows(); toast(t('capOnToast')); haptic('success'); return; }
+        renderAutoCapture();
+        capSettings();
+    }
+    async function capDisable() {
+        const P = VA(); if (!P) return;
+        try { await P.setCapture({ on: false }); } catch (e) { /* ok */ }
+        await capRefresh(); renderAutoCapture(); androidProfileRows(); toast(t('capOffDone'));
+    }
+    // Back from Android's settings screen: see whether access was given.
+    async function capBack() {
+        if (!CAP.waiting) return;
+        CAP.waiting = false;
+        const st = await capRefresh();
+        if ($('cap-modal')) renderAutoCapture();
+        androidProfileRows();
+        if (st && st.on && st.allowed) { toast(t('capOnToast')); haptic('success'); if (window.confetti && !reduceMotion()) confetti(true); }
+    }
+
+    function openWidgets() {
+        const card = (frog, title, sub, kind) => `<section class="w-step"><div class="row" style="gap:12px; align-items:center">${mascot(frog, 72)}<div class="grow"><h3 style="margin:0">${esc(title)}</h3><p class="tiny muted">${esc(sub)}</p></div></div>
+            <button class="btn btn-primary btn-block mt-3" onclick="pinWidget('${kind}')"><i data-lucide="plus"></i>${esc(t('wgAdd'))}</button></section>`;
+        androidSheet('wg-modal', `<div class="w-hero">${mascot('presupuesto', 130)}<h2 class="ob-h" style="font-size:24px">${esc(t('wgT'))}</h2><p class="small muted">${esc(t('wgIntro'))}</p></div>
+            ${card('equilibrio', t('wgBudget'), t('wgBudgetS'), 'budget')}
+            ${card('pagando', t('wgPay'), t('wgPayS'), 'payments')}
+            <p class="tiny muted mt-3">${esc(t('wgManual'))}</p><p class="tiny muted mt-2">${esc(t('wgShortcut'))}</p>`);
+        widgetLast = ''; widgetPush();   // make sure a new widget starts with fresh numbers
+        openModal('wg-modal');
+    }
+    async function pinWidget(kind) {
+        const P = VA(); if (!P) return;
+        let ok = false;
+        try { ok = !!((await P.pinWidget({ kind })) || {}).ok; } catch (e) { ok = false; }
+        if (!ok) toast(t('wgNoPin'));
+    }
+
+    function androidSetup() {
+        const P = VA(); if (!P) return;
+        const prev = renderProfileExtras;
+        renderProfileExtras = function () { prev(); androidProfileRows(); };
+        capRefresh().then(() => { if ($('config-modal') && $('config-modal').classList.contains('open')) androidProfileRows(); });
+        P.addListener('action', () => { actTries = 0; takeNativeAction(); });
+        const App = NP().App;
+        if (App) App.addListener('appStateChange', s => {
+            if (s.isActive) { capBack(); importNativePayments(); takeNativeAction(); widgetSync(); }
+            else { clearTimeout(widgetTimer); widgetPush(); }
+        });
+        // First open: wait until the account is loaded, then pick up purchases and any widget tap.
+        let tries = 0;
+        (function first() {
+            if (!AUTH.started) { if (tries++ < 120) setTimeout(first, 700); return; }
+            importNativePayments(); takeNativeAction(); widgetSync();
+        })();
+    }
+
     // ---------- live updates ----------
     // The store app carries a copy of the web app. Every Netlify deploy also publishes that copy as a zip plus
     // updates/app.json; the app downloads a newer one quietly and switches to it the next time it goes to the
@@ -7530,10 +7809,11 @@
     }
 
     // Version shown at the bottom of Profile, so anyone can tell which build they have.
-    window.VALIU_BUILD = '2026.11.11-1215';
+    window.VALIU_BUILD = '2026.11.22-2310';
     (function () { const v = document.getElementById('app-version'); if (v) v.textContent = 'Valiu ' + window.VALIU_BUILD; })();
     // Updates: check for a new version whenever the app comes back to the screen, and reload once when it takes over.
     nativeSetup();
+    androidSetup();
     if (!NATIVE && 'serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
         const hadController = !!navigator.serviceWorker.controller;
         let reloaded = false;

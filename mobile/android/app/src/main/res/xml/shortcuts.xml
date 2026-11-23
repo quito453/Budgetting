@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_add"
+        android:shortcutId="add"
+        android:shortcutLongLabel="@string/s_add_long"
+        android:shortcutShortLabel="@string/s_add">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="com.valiugt.app.MainActivity"
+            android:targetPackage="com.valiugt.app">
+            <extra android:name="valiu_action" android:value="add" />
+        </intent>
+    </shortcut>
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_cal"
+        android:shortcutId="payments"
+        android:shortcutLongLabel="@string/s_payments_long"
+        android:shortcutShortLabel="@string/s_payments">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="com.valiugt.app.MainActivity"
+            android:targetPackage="com.valiugt.app">
+            <extra android:name="valiu_action" android:value="payments" />
+        </intent>
+    </shortcut>
+</shortcuts>

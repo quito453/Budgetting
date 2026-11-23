@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="w_can">You can spend today</string>
+    <string name="w_open">Open Valiu to see your day</string>
+    <string name="w_add">Add an expense</string>
+    <string name="w_payments">Payments</string>
+    <string name="w_budget_desc">Today\'s budget</string>
+    <string name="w_payments_desc">Payment calendar</string>
+    <string name="s_add">Add expense</string>
+    <string name="s_add_long">Add an expense</string>
+    <string name="s_payments">Payments</string>
+    <string name="s_payments_long">Payment calendar</string>
+</resources>
