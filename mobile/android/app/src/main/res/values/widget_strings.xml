@@ -10,4 +10,6 @@
     <string name="s_add_long">Add an expense</string>
     <string name="s_payments">Payments</string>
     <string name="s_payments_long">Payment calendar</string>
+    <string name="w_budget_more">What you can still spend today, with your frog</string>
+    <string name="w_payments_more">Your payment dates this month and what comes next</string>
 </resources>

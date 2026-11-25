@@ -10,4 +10,6 @@
     <string name="s_add_long">Anotar un gasto</string>
     <string name="s_payments">Pagos</string>
     <string name="s_payments_long">Calendario de pagos</string>
+    <string name="w_budget_more">Lo que te queda para gastar hoy, con tu ranita</string>
+    <string name="w_payments_more">Tus fechas de pago del mes y lo próximo que toca pagar</string>
 </resources>
