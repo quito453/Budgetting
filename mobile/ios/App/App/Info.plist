@@ -8,6 +8,19 @@
 	<string>en</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Valiu usa Face ID para abrir la app sin escribir tu PIN.</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.valiugt.app</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>valiu</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleDisplayName</key>
         <string>Valiu</string>
 	<key>CFBundleExecutable</key>

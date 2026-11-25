@@ -7472,6 +7472,9 @@
     // even if Valiu isn't opened) and this month's payment calendar for the 4×4.
     const ANDROID = NATIVE && nativePlatform() === 'android';
     const VA = () => (ANDROID && NP().ValiuAndroid) || null;
+    const IOS_APP = NATIVE && nativePlatform() === 'ios';
+    const VI = () => (IOS_APP && NP().ValiuIOS) || null;
+    const WIDGET = () => VA() || VI();
     const CAP = { waiting: false, st: null };
     Object.assign(I18N.es, {
         capGroup: 'Anotar más rápido', capRow: 'Anotar compras solo', capRowOn: 'Activado', capRowOff: 'Con Google Wallet o tu banco',
@@ -7493,7 +7496,9 @@
         wgNoPin: 'Tu teléfono no deja agregarlo desde aquí. Mantén presionada tu pantalla de inicio → Widgets → Valiu.',
         wgCanToday: 'Puedes gastar hoy', wgOver: 'Te pasaste hoy', wgOpen: 'Abre Valiu para ver tu día', wgToday: 'Hoy', wgTomorrow: 'Mañana',
         wgInDays: '{n} días', wgOverdue: 'Vencido', wgAllPaid: 'Todo pagado este mes 🎉', wgPending1: '1 pago pendiente', wgPendingN: '{n} pagos pendientes',
-        wgCapTitle: 'Anoté {x}', wgCapText: 'Toca para verlo en Valiu.', wgCapChannel: 'Compras anotadas'
+        wgCapTitle: 'Anoté {x}', wgCapText: 'Toca para verlo en Valiu.', wgCapChannel: 'Compras anotadas',
+        wgBudgetIos: 'Pequeño · lo que te queda hoy, con tu ranita. Tócalo para anotar un gasto.', wgPayIos: 'Grande · el mes con tus fechas de pago y lo próximo que toca pagar.',
+        wgIosHow: 'Para agregarlos: mantén presionado un espacio vacío de tu pantalla de inicio → Editar → Agregar widget → busca Valiu.'
     });
     Object.assign(I18N.en, {
         capGroup: 'Log faster', capRow: 'Log purchases automatically', capRowOn: 'On', capRowOff: 'With Google Wallet or your bank',
@@ -7515,13 +7520,15 @@
         wgNoPin: "Your phone doesn't allow adding it from here. Long-press your home screen → Widgets → Valiu.",
         wgCanToday: 'You can spend today', wgOver: 'You went over today', wgOpen: 'Open Valiu to see your day', wgToday: 'Today', wgTomorrow: 'Tomorrow',
         wgInDays: '{n} days', wgOverdue: 'Overdue', wgAllPaid: 'All paid this month 🎉', wgPending1: '1 payment left', wgPendingN: '{n} payments left',
-        wgCapTitle: 'Logged {x}', wgCapText: 'Tap to see it in Valiu.', wgCapChannel: 'Logged purchases'
+        wgCapTitle: 'Logged {x}', wgCapText: 'Tap to see it in Valiu.', wgCapChannel: 'Logged purchases',
+        wgBudgetIos: "Small · what's left today, with your frog. Tap it to log an expense.", wgPayIos: 'Large · the month with your payment dates and what comes next.',
+        wgIosHow: 'To add them: long-press an empty spot on your home screen → Edit → Add Widget → search for Valiu.'
     });
 
     // ---------- what the widgets show ----------
     let widgetTimer = null, widgetLast = '';
     function widgetSync() {
-        if (!VA() || !AUTH.started) return;
+        if (!WIDGET() || !AUTH.started) return;
         clearTimeout(widgetTimer);
         widgetTimer = setTimeout(widgetPush, 700);
     }
@@ -7576,7 +7583,7 @@
         };
     }
     function widgetPush() {
-        const P = VA(); if (!P) return;
+        const P = WIDGET(); if (!P) return;
         let json;
         try { json = JSON.stringify(widgetPayload()); } catch (e) { return; }
         if (json === widgetLast) return;
@@ -7628,6 +7635,9 @@
         actTries = 0;
         let a = '';
         try { a = ((await P.takeAction()) || {}).action || ''; } catch (e) { return; }
+        goAction(a);
+    }
+    function goAction(a) {
         if (!a) return;
         document.querySelectorAll('.modal.open').forEach(el => closeModal(el.id));
         if (typeof closeDebtTools === 'function') closeDebtTools();
@@ -7708,12 +7718,13 @@
     }
 
     function openWidgets() {
+        const ios = !!VI();
         const card = (frog, title, sub, kind) => `<section class="w-step"><div class="row" style="gap:12px; align-items:center">${mascot(frog, 72)}<div class="grow"><h3 style="margin:0">${esc(title)}</h3><p class="tiny muted">${esc(sub)}</p></div></div>
-            <button class="btn btn-primary btn-block mt-3" onclick="pinWidget('${kind}')"><i data-lucide="plus"></i>${esc(t('wgAdd'))}</button></section>`;
+            ${ios ? '' : `<button class="btn btn-primary btn-block mt-3" onclick="pinWidget('${kind}')"><i data-lucide="plus"></i>${esc(t('wgAdd'))}</button>`}</section>`;
         androidSheet('wg-modal', `<div class="w-hero">${mascot('presupuesto', 130)}<h2 class="ob-h" style="font-size:24px">${esc(t('wgT'))}</h2><p class="small muted">${esc(t('wgIntro'))}</p></div>
-            ${card('equilibrio', t('wgBudget'), t('wgBudgetS'), 'budget')}
-            ${card('pagando', t('wgPay'), t('wgPayS'), 'payments')}
-            <p class="tiny muted mt-3">${esc(t('wgManual'))}</p><p class="tiny muted mt-2">${esc(t('wgShortcut'))}</p>`);
+            ${card('equilibrio', t('wgBudget'), ios ? t('wgBudgetIos') : t('wgBudgetS'), 'budget')}
+            ${card('pagando', t('wgPay'), ios ? t('wgPayIos') : t('wgPayS'), 'payments')}
+            ${ios ? `<div class="note small mt-3">${esc(t('wgIosHow'))}</div>` : `<p class="tiny muted mt-3">${esc(t('wgManual'))}</p><p class="tiny muted mt-2">${esc(t('wgShortcut'))}</p>`}`);
         widgetLast = ''; widgetPush();   // make sure a new widget starts with fresh numbers
         openModal('wg-modal');
     }
@@ -7741,6 +7752,151 @@
             if (!AUTH.started) { if (tries++ < 120) setTimeout(first, 700); return; }
             importNativePayments(); takeNativeAction(); widgetSync();
         })();
+    }
+
+    // ================= Face ID / huella (app de iPhone y Android) =================
+    // The PIN still opens the encrypted session on this phone. With Face ID on, the PIN is kept in the phone's
+    // secure keychain, locked behind Face ID / fingerprint, and Valiu asks for it instead of the number pad.
+    const NB = () => (NATIVE && NP().NativeBiometric) || null;
+    const BIO = { pin: null, avail: null, type: 0, prompting: false, asked: false };
+    const BIO_SERVER = 'com.valiugt.app.pin';
+    ICONS['scan-face'] = '<path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><path d="M9 9h.01"/><path d="M15 9h.01"/>';
+    Object.assign(I18N.es, {
+        bioRow: 'Abrir con {x}', bioOnRow: '{x} activado · toca para apagar', bioBtn: 'Usar {x}', bioReason: 'Abre Valiu', bioTitle: 'Abrir Valiu', bioUsePin: 'Usar PIN',
+        bioOffer: '¿Quieres abrir Valiu con {x} la próxima vez, sin escribir tu PIN?', bioOfferYes: 'Sí, usar {x}',
+        bioOnToast: 'Listo: la próxima vez abre con {x} 🐸', bioOffToast: '{x} apagado. Abrirás Valiu con tu PIN.',
+        bioNeedPin: 'Bloquea Valiu y ábrela con tu PIN una vez; después actívalo aquí.', bioUnavailable: 'Este teléfono no tiene {x} configurado.',
+        bioFail: 'No se pudo activar. Inténtalo otra vez.', bioStale: 'Tu PIN cambió. Escríbelo y vuelve a activar {x} en Perfil.',
+        bioFinger: 'tu huella', bioSaveTitle: 'Confirma para activar'
+    });
+    Object.assign(I18N.en, {
+        bioRow: 'Open with {x}', bioOnRow: '{x} on · tap to turn off', bioBtn: 'Use {x}', bioReason: 'Open Valiu', bioTitle: 'Open Valiu', bioUsePin: 'Use PIN',
+        bioOffer: 'Open Valiu with {x} next time, without typing your PIN?', bioOfferYes: 'Yes, use {x}',
+        bioOnToast: 'Done: next time it opens with {x} 🐸', bioOffToast: '{x} off. You will open Valiu with your PIN.',
+        bioNeedPin: 'Lock Valiu and open it with your PIN once; then turn this on here.', bioUnavailable: "This phone doesn't have {x} set up.",
+        bioFail: "Couldn't turn it on. Try again.", bioStale: 'Your PIN changed. Type it and turn {x} back on in Profile.',
+        bioFinger: 'your fingerprint', bioSaveTitle: 'Confirm to turn on'
+    });
+    const bioOn = () => lsGet('ap.bio') === '1';
+    function bioName() { return BIO.type === 2 ? 'Face ID' : BIO.type === 1 ? 'Touch ID' : t('bioFinger'); }
+    async function bioCheck() {
+        const P = NB(); if (!P) return false;
+        try { const r = await P.isAvailable({ useFallback: false }); BIO.avail = !!(r && r.isAvailable); BIO.type = (r && r.biometryType) || 0; }
+        catch (e) { BIO.avail = false; }
+        return BIO.avail;
+    }
+    async function bioEnable() {
+        const P = NB(); if (!P) return;
+        if (!BIO.pin) { toast(t('bioNeedPin')); return; }
+        if (!(await bioCheck())) { toast(t('bioUnavailable', { x: bioName() })); return; }
+        try {
+            await P.setCredentials({ username: ((getDevice() || {}).email || 'valiu'), password: BIO.pin, server: BIO_SERVER,
+                accessControl: 2, title: t('bioSaveTitle'), negativeButtonText: t('cancel') });
+            lsSet('ap.bio', '1'); haptic('success'); toast(t('bioOnToast', { x: bioName() }));
+        } catch (e) { toast(t('bioFail')); }
+        renderProfileExtras();
+    }
+    async function bioDisable(quiet) {
+        const P = NB();
+        try { if (P) await P.deleteCredentials({ server: BIO_SERVER }); } catch (e) { /* nothing saved */ }
+        lsDel('ap.bio');
+        if (!quiet) { toast(t('bioOffToast', { x: bioName() })); renderProfileExtras(); }
+    }
+    // Keep the PIN in memory once it is typed right, so turning Face ID on doesn't ask for it again,
+    // and keep the keychain copy in step when the PIN changes on this phone.
+    const openVaultPlain = openVault;
+    openVault = async function (pinStr) { const ok = await openVaultPlain(pinStr); if (ok) { BIO.pin = pinStr; bioOfferSoon(); } return ok; };
+    const setupVaultPlain = setupDeviceVault;
+    setupDeviceVault = async function (pinStr, user) {
+        const r = await setupVaultPlain(pinStr, user);
+        BIO.pin = pinStr;
+        if (bioOn()) { await bioDisable(true); lsSet('ap.bio', '1'); bioEnableQuiet(pinStr); } else bioOfferSoon();
+        return r;
+    };
+    async function bioEnableQuiet(pinStr) {
+        const P = NB(); if (!P) return;
+        try { await P.setCredentials({ username: ((getDevice() || {}).email || 'valiu'), password: pinStr, server: BIO_SERVER, accessControl: 2, title: t('bioSaveTitle'), negativeButtonText: t('cancel') }); }
+        catch (e) { lsDel('ap.bio'); }
+    }
+    // Offer it once, right after the first time the PIN opens the app.
+    function bioOfferSoon() {
+        if (!NB() || bioOn() || BIO.asked || lsGet('ap.bioAsked')) return;
+        BIO.asked = true;
+        setTimeout(async () => {
+            if (!AUTH.started || $('auth').classList.contains('open') || !(await bioCheck())) { BIO.asked = false; return; }
+            lsSet('ap.bioAsked', '1');
+            if (await askConfirm(t('bioOffer', { x: bioName() }), t('bioOfferYes', { x: bioName() }))) bioEnable();
+        }, 2500);
+    }
+    async function bioUnlock() {
+        const P = NB(); if (!P || !bioOn() || BIO.prompting || AUTH.view !== 'pin') return;
+        BIO.prompting = true;
+        try {
+            const saved = await P.isCredentialsSaved({ server: BIO_SERVER }).catch(() => ({ isSaved: true }));
+            if (saved && saved.isSaved === false) { await bioDisable(true); bioButton(); return; }
+            const c = await P.getSecureCredentials({ server: BIO_SERVER, reason: t('bioReason'), title: t('bioTitle'), negativeButtonText: t('bioUsePin') });
+            if (!c || !c.password || AUTH.view !== 'pin') return;
+            if (!(await openVaultPlain(c.password))) { await bioDisable(true); bioButton(); setAuthMsg(t('bioStale', { x: bioName() })); return; }
+            await pinUnlock(c.password);
+        } catch (e) { /* cancelled: the number pad is still there */ }
+        finally { BIO.prompting = false; }
+    }
+    // A "Use Face ID" button under the number pad, and the prompt right away.
+    function bioButton() {
+        const links = $('auth') && $('auth').querySelector('.auth-pin .auth-links');
+        const old = $('a-bio'); if (old) old.remove();
+        if (!links || !bioOn()) return;
+        links.insertAdjacentHTML('afterbegin', `<button id="a-bio" class="btn btn-ghost btn-block" onclick="bioUnlock()"><i data-lucide="scan-face"></i>${esc(t('bioBtn', { x: bioName() }))}</button>`);
+        if (window.lucide) lucide.createIcons();
+    }
+    function bioSetup() {
+        if (!NB()) return;
+        bioCheck().then(() => { if (AUTH.view === 'pin') bioButton(); });
+        const showAuthPlain = showAuth;
+        showAuth = function (view, opts) {
+            showAuthPlain(view, opts || {});
+            if (view === 'pin' && bioOn()) { bioButton(); setTimeout(bioUnlock, 350); }
+        };
+        const prev = renderProfileExtras;
+        renderProfileExtras = function () {
+            prev();
+            const box = $('pin-actions');
+            if (!box || !BIO.avail) return;
+            const x = bioName();
+            box.insertAdjacentHTML('afterbegin', setRow('scan-face', bioOn() ? t('bioOnRow', { x }) : t('bioRow', { x }), bioOn() ? 'bioDisable()' : 'bioEnable()'));
+            if (window.lucide) lucide.createIcons();
+        };
+        if (AUTH.view === 'pin' && bioOn()) { bioButton(); setTimeout(bioUnlock, 350); }
+    }
+
+    // ================= iPhone app: widgets and valiu:// links =================
+    function iosSetup() {
+        if (!IOS_APP) return;
+        const App = NP().App;
+        let pendingAct = '', tries = 0;
+        const fromUrl = u => { const m = /^valiu:\/\/([a-z]+)/i.exec(String(u || '')); return m ? m[1].toLowerCase() : ''; };
+        const run = () => {
+            if (!pendingAct) return;
+            if (!AUTH.started || $('auth').classList.contains('open')) { if (tries++ < 60) setTimeout(run, 800); return; }
+            tries = 0; const a = pendingAct; pendingAct = ''; goAction(a);
+        };
+        if (App) {
+            App.addListener('appUrlOpen', e => { pendingAct = fromUrl(e && e.url); tries = 0; run(); });
+            if (App.getLaunchUrl) App.getLaunchUrl().then(r => { if (r && r.url) { pendingAct = fromUrl(r.url); run(); } }).catch(() => { });
+            if (VI()) App.addListener('appStateChange', s => { if (s.isActive) widgetSync(); else { clearTimeout(widgetTimer); widgetPush(); } });
+        }
+        if (VI()) {
+            const prev = renderProfileExtras;
+            renderProfileExtras = function () {
+                prev();
+                const card = $('wallet-group') && $('wallet-group').querySelector('.set-card');
+                if (!card || $('ios-wg-row')) return;
+                card.insertAdjacentHTML('beforeend', `<button class="set-row" id="ios-wg-row" onclick="closeModal('config-modal'); openWidgets()"><span class="set-ic"><i data-lucide="smartphone"></i></span><span class="grow"><span>${esc(t('wgRow'))}</span><span class="tiny muted" style="display:block">${esc(t('wgRowS'))}</span></span><i data-lucide="chevron-right" class="faint"></i></button>`);
+                if (window.lucide) lucide.createIcons();
+            };
+            let n = 0;
+            (function first() { if (!AUTH.started) { if (n++ < 120) setTimeout(first, 700); return; } widgetSync(); })();
+        }
     }
 
     // ---------- live updates ----------
@@ -7815,11 +7971,13 @@
     }
 
     // Version shown at the bottom of Profile, so anyone can tell which build they have.
-    window.VALIU_BUILD = '2026.11.24-2316';
+    window.VALIU_BUILD = '2026.11.24-2359';
     (function () { const v = document.getElementById('app-version'); if (v) v.textContent = 'Valiu ' + window.VALIU_BUILD; })();
     // Updates: check for a new version whenever the app comes back to the screen, and reload once when it takes over.
     nativeSetup();
     androidSetup();
+    iosSetup();
+    bioSetup();
     if (!NATIVE && 'serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
         const hadController = !!navigator.serviceWorker.controller;
         let reloaded = false;

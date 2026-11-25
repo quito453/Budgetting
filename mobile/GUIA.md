@@ -76,6 +76,25 @@ Identificador de la app (no se puede cambiar después de publicar): **com.valiug
 4. Conecta tu iPhone con cable, elígelo arriba y toca ▶︎. La primera vez, en el iPhone ve a Ajustes → General → VPN y gestión de dispositivos y confía en tu cuenta.
 5. Prueba: crea cuenta, agrega una tarjeta con estado de cuenta y activa los recordatorios en Perfil.
 
+**Widgets de iPhone (una sola vez, cuando ya tengas la cuenta de Apple Developer pagada):**
+
+Los widgets necesitan un "App Group" para leer los datos de Valiu, y eso solo funciona con la cuenta pagada.
+
+1. En Xcode: **File → New → Target… → Widget Extension → Next**.
+   - **Product Name:** `ValiuWidget`
+   - **Desmarca** "Include Live Activity", "Include Control" e "Include Configuration App Intent".
+   - **Finish**. Si pregunta "Activate scheme?", dale **Activate**.
+2. En la Terminal, dentro de `Budgetting/mobile`:
+   ```
+   npm run ios-widget
+   ```
+   Eso reemplaza los archivos de ejemplo de Xcode con los widgets de Valiu.
+3. En Xcode, target **ValiuWidget** → pestaña **General** → **Minimum Deployments**: pon **iOS 17.0**.
+4. **App Groups, en los dos targets (App y ValiuWidget):** Signing & Capabilities → **+ Capability → App Groups** → **+** → `group.com.valiugt.app`. Debe quedar marcado en los dos.
+5. Arriba elige el esquema **App** (no ValiuWidget) y dale ▶︎. Luego, en el iPhone: mantén presionada la pantalla de inicio → **Editar → Agregar widget → Valiu**.
+
+**Face ID:** ya viene incluido. Valiu lo ofrece la primera vez que abres con tu PIN, y se puede activar o apagar en Perfil.
+
 **Subir a la App Store:**
 1. Arriba elige **Any iOS Device (arm64)** → menú **Product → Archive**.
 2. Cuando termine: **Distribute App → App Store Connect → Upload**.
