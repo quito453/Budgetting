@@ -2213,14 +2213,20 @@
     function round2(n) { return Math.round(n * 100) / 100; }
     function clampInt(v, min, max, fallback) { const n = parseInt(v, 10); return isNaN(n) ? fallback : Math.min(max, Math.max(min, n)); }
     function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+    // Quetzales always as "Q": some Android phones would otherwise write "GTQ".
+    function moneyFormat(opts) {
+        const base = { style: 'currency', currency: state.currencyCode, ...opts };
+        if (state.currencyCode === 'GTQ') { try { return new Intl.NumberFormat(LOCALES[state.lang], { ...base, currencyDisplay: 'narrowSymbol' }); } catch (e) { /* older browsers */ } }
+        return new Intl.NumberFormat(LOCALES[state.lang], base);
+    }
     function fmt(n, dec = 2) {
         try {
-            return new Intl.NumberFormat(LOCALES[state.lang], { style: 'currency', currency: state.currencyCode, minimumFractionDigits: dec, maximumFractionDigits: dec }).format(n || 0);
+            return moneyFormat({ minimumFractionDigits: dec, maximumFractionDigits: dec }).format(n || 0);
         } catch (e) { return (n || 0).toFixed(dec); }
     }
     function fmtCompact(n) {
         try {
-            return new Intl.NumberFormat(LOCALES[state.lang], { style: 'currency', currency: state.currencyCode, notation: 'compact', maximumFractionDigits: 1 }).format(n || 0);
+            return moneyFormat({ notation: 'compact', maximumFractionDigits: 1 }).format(n || 0);
         } catch (e) { return String(Math.round(n)); }
     }
     function daysInMonth(d = new Date()) { return new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate(); }
@@ -7521,7 +7527,7 @@
     }
     function moneyParts() {
         try {
-            const parts = new Intl.NumberFormat(LOCALES[state.lang], { style: 'currency', currency: state.currencyCode, minimumFractionDigits: 2 }).formatToParts(1234.5);
+            const parts = moneyFormat({ minimumFractionDigits: 2 }).formatToParts(1234.5);
             const iFirst = parts.findIndex(p => p.type === 'integer');
             let iLast = -1; parts.forEach((p, k) => { if (['integer', 'group', 'decimal', 'fraction'].includes(p.type)) iLast = k; });
             return {
@@ -7809,7 +7815,7 @@
     }
 
     // Version shown at the bottom of Profile, so anyone can tell which build they have.
-    window.VALIU_BUILD = '2026.11.22-2310';
+    window.VALIU_BUILD = '2026.11.24-2316';
     (function () { const v = document.getElementById('app-version'); if (v) v.textContent = 'Valiu ' + window.VALIU_BUILD; })();
     // Updates: check for a new version whenever the app comes back to the screen, and reload once when it takes over.
     nativeSetup();
